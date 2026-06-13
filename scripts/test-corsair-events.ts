@@ -37,7 +37,9 @@ async function main() {
 
   console.log(`✅ Retrieved ${events.length} event(s):\n`);
   for (const evt of events as Array<Record<string, unknown>>) {
-    const start = (evt.start as Record<string, string>)?.dateTime ?? (evt.start as Record<string, string>)?.date;
+    const start =
+      (evt.start as Record<string, string>)?.dateTime ??
+      (evt.start as Record<string, string>)?.date;
     console.log(`  [${start}] ${evt.summary ?? "(no title)"}  id: ${evt.id}`);
   }
 }

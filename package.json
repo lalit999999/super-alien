@@ -11,11 +11,13 @@
     "test:corsair:emails": "npx tsx scripts/test-corsair-emails.ts",
     "test:corsair:send": "npx tsx scripts/test-corsair-send.ts",
     "test:corsair:events": "npx tsx scripts/test-corsair-events.ts",
-    "test:corsair:create-event": "npx tsx scripts/test-corsair-create-event.ts"
+    "test:corsair:create-event": "npx tsx scripts/test-corsair-create-event.ts",
+    "list:users": "npx tsx scripts/list-users.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.5.2",
     "@clerk/ui": "^1.16.1",
+    "@corsair-dev/cli": "^0.1.19",
     "@corsair-dev/gmail": "^0.1.4",
     "@corsair-dev/googlecalendar": "^0.1.4",
     "@prisma/adapter-pg": "^7.8.0",

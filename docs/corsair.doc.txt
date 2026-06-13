@@ -1,0 +1,261 @@
+Quick Start
+Get a working integration in a few steps.
+
+1
+​
+Install
+
+npm
+
+yarn
+
+pnpm
+
+bun
+npm install corsair
+2
+​
+Generate your encryption key
+Corsair encrypts every stored credential with a Key Encryption Key (KEK). Click Generate to create one, or run the command yourself:
+bash
+Copy
+openssl rand -base64 32
+.env
+Regenerate
+Copy
+CORSAIR_KEK="6PvjhoXtwBIdyGX2GlhCLvi3uDR84qmK2T0QoctzsTA="
+Keep this key safe If you lose it, you lose access to all stored credentials. Treat it like a root password.
+3
+​
+Migrate the database
+Corsair needs four tables. Run this once, then you’re done.
+SQLite
+PostgreSQL
+Install the driver, then run the migration:
+
+npm
+
+yarn
+
+pnpm
+
+bun
+npm install pg
+
+npm
+
+yarn
+
+pnpm
+
+bun
+npm install --save-dev @types/pg
+SQLite
+PostgreSQL
+SQL
+Drizzle
+Prisma
+View Prisma schema
+
+schema.prisma
+model CorsairIntegration {
+  id        String           @id
+  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  name      String
+  config    Json             @default("{}")
+  dek       String?
+  accounts  CorsairAccount[]
+
+  @@map("corsair_integrations")
+}
+
+model CorsairAccount {
+  id            String             @id
+  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+  tenantId      String             @map("tenant_id")
+  integrationId String             @map("integration_id")
+  config        Json               @default("{}")
+  dek           String?
+  integration   CorsairIntegration @relation(fields: [integrationId], references: [id])
+  entities      CorsairEntity[]
+  events        CorsairEvent[]
+
+  @@map("corsair_accounts")
+}
+
+model CorsairEntity {
+  id         String         @id
+  createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  accountId  String         @map("account_id")
+  entityId   String         @map("entity_id")
+  entityType String         @map("entity_type")
+  version    String
+  data       Json           @default("{}")
+  account    CorsairAccount @relation(fields: [accountId], references: [id])
+
+  @@map("corsair_entities")
+}
+
+model CorsairEvent {
+  id        String         @id
+  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  accountId String         @map("account_id")
+  eventType String         @map("event_type")
+  payload   Json           @default("{}")
+  status    String?
+  account   CorsairAccount @relation(fields: [accountId], references: [id])
+
+  @@map("corsair_events")
+}
+Then run the migration:
+npx prisma migrate dev
+4
+​
+Install GitHub plugin and create corsair.ts
+
+npm
+
+yarn
+
+pnpm
+
+bun
+npm install @corsair-dev/github
+This is the one file that wires everything together. Create it at src/server/corsair.ts:
+SQLite
+PostgreSQL
+SQL
+Drizzle / Prisma
+Pass the underlying pg Pool to Corsair — not the ORM client. Use Drizzle or Prisma for your own app tables on the same pool.
+Drizzle:
+src/server/corsair.ts
+import 'dotenv/config';
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const db = drizzle(pool); // your app tables
+
+export const corsair = createCorsair({
+    plugins: [github()],
+    database: pool,
+    kek: process.env.CORSAIR_KEK!,
+    multiTenancy: false,
+});
+Prisma:
+src/server/corsair.ts
+import 'dotenv/config';
+import { Pool } from 'pg';
+import { PrismaClient } from '@prisma/client';
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient(); // your app tables
+
+export const corsair = createCorsair({
+    plugins: [github()],
+    database: pool,
+    kek: process.env.CORSAIR_KEK!,
+    multiTenancy: false,
+});
+See Database for SQLite, postgres.js, and Kysely options.
+You’ll add more plugins here later — slack(), linear(), gmail() — same pattern, just append to the array.
+CORSAIR_KEK not loading?
+
+5
+​
+Add your GitHub token and run setup
+Use Corsair with any integration. Here’s an example of how to get started with Github.
+Go to GitHub → Settings → Developer settings → Personal access tokens (classic)
+Click Generate new token (classic)
+Select scopes: repo, read:org, read:user
+Copy the token — it starts with ghp_
+macOS / Linux
+Windows (PowerShell)
+export GITHUB_TOKEN=ghp_...
+Run setup once with the Corsair CLI:
+
+npm
+
+yarn
+
+pnpm
+
+bun
+npm install @corsair-dev/cli
+macOS / Linux
+Windows (PowerShell)
+
+npm
+
+yarn
+
+pnpm
+
+bun
+npx corsair setup --plugin=github api_key=$GITHUB_TOKEN --backfill
+pnpm: command not found or setup fails?
+
+Corsair stores your token, creates the database rows, and fetches your GitHub data locally. Your agent can now query it instantly — no API call needed every time.
+6
+​
+Interact with Corsair
+There’s multiple ways to use Corsair. Here’s three easy ways:
+MCP / Agent
+CLI
+Direct (Hardcode)
+Let the agent discover and call endpoints on its own. You prompt in plain English — Corsair handles the rest.
+Install the MCP adapter alongside your preferred framework:
+Anthropic SDK
+
+Claude Agent SDK
+
+OpenAI Agents
+
+
+npm
+
+yarn
+
+pnpm
+
+bun
+npm install @corsair-dev/mcp @openai/agents
+agent.ts
+import { OpenAIAgentsProvider } from '@corsair-dev/mcp';
+import { Agent, run, tool } from '@openai/agents';
+import { corsair } from './src/server/corsair';
+
+async function main() {
+    const provider = new OpenAIAgentsProvider();
+    const tools = provider.build({ corsair, tool });
+
+    const agent = new Agent({
+        name: 'corsair-agent',
+        model: 'gpt-4.1',
+        instructions:
+            'You have access to Corsair tools. Use list_operations to discover ' +
+            'available APIs, get_schema to understand arguments, and run_script ' +
+            'to execute them.',
+        tools,
+    });
+
+    const result = await run(agent, 'Use Corsair. List my GitHub repos with the most open issues.');
+    console.log(result.finalOutput);
+}
+
+main().catch(console.error);
+Your agent gets four tools automatically — regardless of which framework you use:
+Tool	What it does
+corsair_setup	Check auth and get credential instructions
+list_operations	Discover every available API endpoint
+get_schema	Inspect parameters for a specific endpoint
+run_script	Execute a JS snippet with corsair in scope
+See MCP Adapters for Vercel AI SDK, Mastra, and more.

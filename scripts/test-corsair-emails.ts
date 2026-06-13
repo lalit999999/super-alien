@@ -10,8 +10,7 @@
 
 import { config } from "dotenv";
 config({ path: ".env.local" });
-import { getEmails } from "../src/modules/corsair";
-
+import { getEmails } from "../src/modules/corsair"
 const userId = process.argv[2];
 
 if (!userId) {
