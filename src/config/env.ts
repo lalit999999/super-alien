@@ -1,0 +1,31 @@
+import { z } from "zod";
+
+const envSchema = z.object({
+  // Database
+  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+
+  // Corsair
+  CORSAIR_KEK: z
+    .string()
+    .min(32, "CORSAIR_KEK must be at least 32 characters for AES-256"),
+
+  // Clerk
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+  CLERK_SECRET_KEY: z.string().min(1),
+});
+
+function validateEnv() {
+  const parsed = envSchema.safeParse(process.env);
+
+  if (!parsed.success) {
+    const missing = parsed.error.issues
+      .map((i) => `  ${i.path.join(".")}: ${i.message}`)
+      .join("\n");
+    throw new Error(`Environment validation failed:\n${missing}`);
+  }
+
+  return parsed.data;
+}
+
+// Validate once at import time — crashes loudly on startup rather than at runtime.
+export const env = validateEnv();

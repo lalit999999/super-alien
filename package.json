@@ -6,19 +6,27 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "corsair:setup": "npx tsx scripts/corsair-setup.ts",
+    "test:corsair:emails": "npx tsx scripts/test-corsair-emails.ts",
+    "test:corsair:send": "npx tsx scripts/test-corsair-send.ts",
+    "test:corsair:events": "npx tsx scripts/test-corsair-events.ts",
+    "test:corsair:create-event": "npx tsx scripts/test-corsair-create-event.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.5.2",
+    "@corsair-dev/gmail": "^0.1.4",
+    "@corsair-dev/googlecalendar": "^0.1.4",
     "@prisma/client": "^7.8.0",
     "@prisma/config": "^7.8.0",
     "@tanstack/react-query": "^5.101.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "dotenv": "^17.4.2",
+    "corsair": "^0.1.76",
     "lucide-react": "^1.18.0",
     "next": "16.2.9",
+    "pg": "^8.21.0",
     "radix-ui": "^1.5.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -31,13 +39,16 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "prisma": "^7.8.0",
     "tailwindcss": "^4",
+    "tsx": "^4.22.4",
     "typescript": "^5"
   }
 }
