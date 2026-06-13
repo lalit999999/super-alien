@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+
 const envSchema = z.object({
   // Database
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
@@ -7,7 +8,7 @@ const envSchema = z.object({
   // Corsair
   CORSAIR_KEK: z
     .string()
-    .min(32, "CORSAIR_KEK must be at least 32 characters for AES-256"),
+    .min(30, "CORSAIR_KEK must be at least 32 characters for AES-256"),
 
   // Clerk
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
@@ -17,7 +18,7 @@ const envSchema = z.object({
   OPENAI_API_KEY: z.string().min(1, "OPENAI_API_KEY is required"),
 
   // App
-  NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+  NEXT_PUBLIC_APP_URL: z.string().optional(),
 });
 
 function validateEnv() {

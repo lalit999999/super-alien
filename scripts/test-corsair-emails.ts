@@ -8,7 +8,8 @@
  *   3. The user has completed the OAuth connect flow
  */
 
-import "dotenv/config";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 import { getEmails } from "../src/modules/corsair";
 
 const userId = process.argv[2];

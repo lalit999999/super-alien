@@ -5,7 +5,8 @@
  * Creates a 30-minute test event starting 1 hour from now.
  */
 
-import "dotenv/config";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 import { createEvent } from "../src/modules/corsair";
 
 const userId = process.argv[2];

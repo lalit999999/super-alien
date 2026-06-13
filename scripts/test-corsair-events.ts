@@ -5,7 +5,8 @@
  * Fetches the next 5 upcoming events from the user's primary Google Calendar.
  */
 
-import "dotenv/config";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 import { getEvents } from "../src/modules/corsair";
 
 const userId = process.argv[2];

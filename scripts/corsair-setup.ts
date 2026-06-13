@@ -19,7 +19,8 @@
  *     --googlecalendar.client_secret=YOUR_SECRET
  */
 
-import "dotenv/config";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 import { setupCorsair } from "corsair";
 import { corsairInstance } from "../src/modules/corsair/corsair.client";
 

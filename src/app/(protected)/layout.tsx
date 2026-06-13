@@ -16,6 +16,7 @@ export default async function ProtectedLayout({
   return (
     <div className="min-h-screen">
       <header className="flex items-center justify-end px-6 py-3 border-b border-zinc-800">
+        <h1>Profile here ---</h1>
         <UserButton />
       </header>
       <main>{children}</main>

@@ -6,7 +6,8 @@
  *   npx tsx scripts/test-corsair-send.ts user_abc test@example.com "Hello from SuperAlien"
  */
 
-import "dotenv/config";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 import { sendEmail } from "../src/modules/corsair";
 
 const [userId, to, subject] = process.argv.slice(2);
