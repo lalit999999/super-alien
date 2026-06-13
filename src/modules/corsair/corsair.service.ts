@@ -187,11 +187,3 @@ export async function searchEmails(
   return getEmails(userId, { q: query, maxResults });
 }
 
-/**
- * Subscribe to Gmail push notifications via a Cloud Pub/Sub topic.
- * Placeholder — implement fully when the webhooks module is built.
- */
-export async function subscribeWebhook(_userId: string): Promise<void> {
-  // TODO: call corsair.gmail.webhooks.watch() when the webhooks module is built.
-  throw new Error("subscribeWebhook: not yet implemented");
-}

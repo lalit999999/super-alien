@@ -1,11 +1,15 @@
 import { getEmails, getEmailById } from "@/modules/corsair";
 import type { MessagePart } from "@corsair-dev/gmail";
+import type { AiService } from "@/modules/ai";
 import type { GmailRepository } from "./gmail.repository";
 import type { DbEmail, GmailSyncResult, GmailListOptions, GmailUpsertInput, ParsedMessage } from "./gmail.types";
 import { GMAIL_SYNC_MAX_RESULTS } from "./gmail.constants";
 
 export class GmailService {
-  constructor(private readonly repo: GmailRepository) {}
+  constructor(
+    private readonly repo: GmailRepository,
+    private readonly ai?: AiService
+  ) {}
 
   async syncEmailsFromCorsair(
     clerkUserId: string,
@@ -70,6 +74,34 @@ export class GmailService {
     emailId: string
   ): Promise<DbEmail | null> {
     return this.repo.getEmailById(emailId, dbUserId);
+  }
+
+  async classifyEmailsForUser(
+    dbUserId: string,
+    limit = 10
+  ): Promise<{ classified: number; failed: number }> {
+    if (!this.ai) throw new Error("AiService not injected");
+
+    const emails = await this.repo.getEmailsWithoutClassification(dbUserId, limit);
+
+    let classified = 0;
+    let failed = 0;
+
+    for (const email of emails) {
+      try {
+        await this.ai.classifyAndSummarizeEmail(email.id, {
+          subject: email.subject,
+          sender: email.sender,
+          snippet: email.snippet,
+          body: email.body,
+        });
+        classified++;
+      } catch {
+        failed++;
+      }
+    }
+
+    return { classified, failed };
   }
 }
 

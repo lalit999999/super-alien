@@ -1,0 +1,10 @@
+export const WEBHOOK_ERRORS = {
+  TENANT_MISSING: "WEBHOOK_TENANT_MISSING",
+  USER_NOT_FOUND: "WEBHOOK_USER_NOT_FOUND",
+  PROCESS_FAILED: "WEBHOOK_PROCESS_FAILED",
+} as const;
+
+export const WEBHOOK_PLUGINS = {
+  GMAIL: "gmail",
+  GOOGLE_CALENDAR: "googlecalendar",
+} as const;

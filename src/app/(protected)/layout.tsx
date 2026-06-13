@@ -1,9 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
+import { UserButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-// Double-guard: middleware already blocks unauthenticated users, but this
-// Server Component guard ensures no authenticated-layout content is ever
-// rendered for a signed-out user even if middleware config changes.
 export default async function ProtectedLayout({
   children,
 }: {
@@ -15,5 +13,12 @@ export default async function ProtectedLayout({
     redirect("/sign-in");
   }
 
-  return <>{children}</>;
+  return (
+    <div className="min-h-screen">
+      <header className="flex items-center justify-end px-6 py-3 border-b border-zinc-800">
+        <UserButton />
+      </header>
+      <main>{children}</main>
+    </div>
+  );
 }

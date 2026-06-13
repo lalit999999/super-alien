@@ -85,4 +85,12 @@ export class GmailRepository {
   async countEmailsByUser(userId: string): Promise<number> {
     return this.db.email.count({ where: { userId } });
   }
+
+  async getEmailsWithoutClassification(userId: string, limit: number): Promise<DbEmail[]> {
+    return this.db.email.findMany({
+      where: { userId, classification: null },
+      orderBy: { receivedAt: "desc" },
+      take: limit,
+    });
+  }
 }

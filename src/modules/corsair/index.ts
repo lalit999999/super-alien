@@ -12,7 +12,6 @@ export {
   updateEvent,
   deleteEvent,
   searchEmails,
-  subscribeWebhook,
 } from "./corsair.service";
 
 export {

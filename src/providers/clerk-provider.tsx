@@ -1,7 +1,7 @@
 import { ClerkProvider as BaseClerkProvider } from "@clerk/nextjs";
+import { shadcn } from "@clerk/ui/themes";
+import { authConfig } from "@/config/auth.config";
 
-// Server component wrapper — lets us centralise Clerk config in one place
-// without scattering appearance/localization props across every layout.
 export async function ClerkProvider({
   children,
 }: {
@@ -9,9 +9,9 @@ export async function ClerkProvider({
 }) {
   return (
     <BaseClerkProvider
-      appearance={{
-        variables: { colorPrimary: "#000000" },
-      }}
+      signInUrl={authConfig.signInUrl}
+      signUpUrl={authConfig.signUpUrl}
+      appearance={{ theme: shadcn }}
     >
       {children}
     </BaseClerkProvider>
