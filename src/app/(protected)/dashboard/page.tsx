@@ -1,12 +1,11 @@
-import { auth } from "@clerk/nextjs/server";
+import { getCurrentUser } from "@/lib/test-auth";
 
 export default async function DashboardPage() {
-  const { userId } = await auth();
+  const user = await getCurrentUser();
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      <p>User ID: {userId}</p>
+      <pre>{JSON.stringify(user, null, 2)}</pre>
     </div>
   );
 }
