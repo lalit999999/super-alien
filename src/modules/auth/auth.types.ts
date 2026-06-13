@@ -17,13 +17,12 @@ export type AuthSession = {
   orgId: string | undefined;
 };
 
-// Shape stored in our own database, synced from Clerk via webhook
+// Shape stored in our own database, synced from Clerk via webhook.
+// Matches the User model in prisma/schema.prisma exactly.
 export type DbUser = {
   id: string;
-  clerkId: string;
+  clerkUserId: string;
   email: string;
-  name: string | null;
-  imageUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
