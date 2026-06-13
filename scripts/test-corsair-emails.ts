@@ -3,13 +3,13 @@
  * Usage: npx tsx scripts/test-corsair-emails.ts <clerkUserId>
  *
  * Prerequisites:
- *   1. CORSAIR_KEK and DATABASE_URL set in .env.local
+ *   1. CORSAIR_KEK and DATABASE_URL set in .env
  *   2. corsair-setup.ts has been run
  *   3. The user has completed the OAuth connect flow
  */
 
 import { config } from "dotenv";
-config({ path: ".env.local" });
+config({ path: ".env" });
 import { getEmails } from "../src/modules/corsair"
 const userId = process.argv[2];
 

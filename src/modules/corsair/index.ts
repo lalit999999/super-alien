@@ -28,6 +28,7 @@ export {
 export type {
   GetEmailsOutput,
   GetEmailByIdOutput,
+  SendEmailInput,
   SendEmailOutput,
   GetEventsOutput,
   CreateEventOutput,
@@ -38,6 +39,7 @@ export type {
   CorsairCreateEventOptions,
   CorsairUpdateEventOptions,
   CorsairDeleteEventOptions,
+  CorsairMessagePart,
 } from "./corsair.types";
 
 export {

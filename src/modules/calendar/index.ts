@@ -5,11 +5,14 @@ export {
   handleListEvents,
   handleCreateEvent,
   handleGetEvent,
+  handleUpdateEvent,
+  handleDeleteEvent,
 } from "./calendar.controller";
 export {
   calendarListQuerySchema,
   calendarSyncBodySchema,
   createCalendarEventSchema,
+  updateCalendarEventSchema,
 } from "./calendar.schema";
 export { CALENDAR_ERRORS, CALENDAR_SYNC_MAX_RESULTS } from "./calendar.constants";
 export type {

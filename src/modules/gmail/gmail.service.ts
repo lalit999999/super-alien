@@ -1,8 +1,8 @@
-import { getEmails, getEmailById } from "@/modules/corsair";
-import type { MessagePart } from "@corsair-dev/gmail";
+import { getEmails, getEmailById, sendEmail as corsairSendEmail, searchEmails as corsairSearchEmails } from "@/modules/corsair";
+import type { CorsairMessagePart, SendEmailOutput, GetEmailsOutput } from "@/modules/corsair";
 import type { AiService } from "@/modules/ai";
 import type { GmailRepository } from "./gmail.repository";
-import type { DbEmail, GmailSyncResult, GmailListOptions, GmailUpsertInput, ParsedMessage } from "./gmail.types";
+import type { DbEmail, GmailSyncResult, GmailListOptions, GmailUpsertInput, ParsedMessage, SendEmailInput } from "./gmail.types";
 import { GMAIL_SYNC_MAX_RESULTS } from "./gmail.constants";
 
 export class GmailService {
@@ -76,6 +76,21 @@ export class GmailService {
     return this.repo.getEmailById(emailId, dbUserId);
   }
 
+  async sendEmail(
+    clerkUserId: string,
+    input: SendEmailInput
+  ): Promise<SendEmailOutput> {
+    return corsairSendEmail(clerkUserId, input);
+  }
+
+  async searchEmails(
+    clerkUserId: string,
+    query: string,
+    maxResults?: number
+  ): Promise<GetEmailsOutput> {
+    return corsairSearchEmails(clerkUserId, query, maxResults);
+  }
+
   async classifyEmailsForUser(
     dbUserId: string,
     limit = 10
@@ -112,7 +127,7 @@ type RawMessage = {
   threadId?: string;
   snippet?: string;
   internalDate?: string | Date | null;
-  payload?: MessagePart;
+  payload?: CorsairMessagePart;
 };
 
 function parseMessage(raw: RawMessage): ParsedMessage | null {
@@ -153,7 +168,7 @@ function parseInternalDate(
   return isNaN(ms) ? new Date() : new Date(ms);
 }
 
-function extractTextBody(part?: MessagePart): string | null {
+function extractTextBody(part?: CorsairMessagePart): string | null {
   if (!part) return null;
 
   if (part.mimeType === "text/plain" && part.body?.data) {

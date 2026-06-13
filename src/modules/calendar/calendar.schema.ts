@@ -45,3 +45,15 @@ export const createCalendarEventSchema = z.object({
 });
 
 export type CreateCalendarEventInput = z.infer<typeof createCalendarEventSchema>;
+
+export const updateCalendarEventSchema = z.object({
+  summary: z.string().min(1).optional(),
+  description: z.string().optional(),
+  location: z.string().optional(),
+  start: calendarDateTimeSchema.optional(),
+  end: calendarDateTimeSchema.optional(),
+  attendees: z.array(attendeeSchema).optional(),
+  sendUpdates: z.enum(["all", "externalOnly", "none"]).optional(),
+});
+
+export type UpdateCalendarEventInput = z.infer<typeof updateCalendarEventSchema>;

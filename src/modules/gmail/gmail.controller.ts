@@ -6,7 +6,7 @@ import { AiService, AiRepository, openai } from "@/modules/ai";
 import { prisma } from "@/lib/prisma";
 import { GmailRepository } from "./gmail.repository";
 import { GmailService } from "./gmail.service";
-import { gmailListQuerySchema, gmailSyncBodySchema } from "./gmail.schema";
+import { gmailListQuerySchema, gmailSyncBodySchema, sendEmailBodySchema, searchEmailsQuerySchema } from "./gmail.schema";
 import { GMAIL_ERRORS, GMAIL_SYNC_MAX_RESULTS } from "./gmail.constants";
 
 function makeService(): GmailService {
@@ -85,6 +85,50 @@ export async function handleGetEmail(
   }
 
   return ok(email);
+}
+
+export async function handleSendEmail(req: NextRequest) {
+  const { userId: clerkUserId } = await requireAuth();
+
+  const body = await req.json().catch(() => ({}));
+  const parsed = sendEmailBodySchema.safeParse(body);
+  if (!parsed.success) {
+    return fail(
+      parsed.error.issues.map((i) => i.message).join(", "),
+      "VALIDATION_ERROR"
+    );
+  }
+
+  const service = makeService();
+  const result = await service.sendEmail(clerkUserId, parsed.data);
+
+  return ok(result, 200);
+}
+
+export async function handleSearchEmails(req: NextRequest) {
+  const { userId: clerkUserId } = await requireAuth();
+
+  const { searchParams } = new URL(req.url);
+  const queryParsed = searchEmailsQuerySchema.safeParse({
+    q: searchParams.get("q"),
+    maxResults: searchParams.get("maxResults"),
+  });
+
+  if (!queryParsed.success) {
+    return fail(
+      queryParsed.error.issues.map((i) => i.message).join(", "),
+      "VALIDATION_ERROR"
+    );
+  }
+
+  const service = makeService();
+  const result = await service.searchEmails(
+    clerkUserId,
+    queryParsed.data.q,
+    queryParsed.data.maxResults
+  );
+
+  return ok(result);
 }
 
 export async function handleClassifyEmails(req: NextRequest) {

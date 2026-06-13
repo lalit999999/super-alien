@@ -18,3 +18,19 @@ export const gmailSyncBodySchema = z.object({
 });
 
 export type GmailSyncBody = z.infer<typeof gmailSyncBodySchema>;
+
+export const sendEmailBodySchema = z.object({
+  to: z.string().email({ message: "Invalid recipient email address" }),
+  subject: z.string().min(1, "Subject is required"),
+  body: z.string().min(1, "Email body is required"),
+  threadId: z.string().optional(),
+});
+
+export type SendEmailBody = z.infer<typeof sendEmailBodySchema>;
+
+export const searchEmailsQuerySchema = z.object({
+  q: z.string().min(1, "Search query is required"),
+  maxResults: z.coerce.number().int().positive().max(500).optional(),
+});
+
+export type SearchEmailsQuery = z.infer<typeof searchEmailsQuerySchema>;

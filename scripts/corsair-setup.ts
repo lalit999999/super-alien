@@ -20,7 +20,7 @@
  */
 
 import { config } from "dotenv";
-config({ path: ".env.local" });
+config({ path: ".env" });
 import { setupCorsair } from "corsair";
 import { corsairInstance } from "../src/modules/corsair/corsair.client";
 

@@ -82,4 +82,10 @@ export class CalendarRepository {
   async countEventsByUser(userId: string): Promise<number> {
     return this.db.calendarEvent.count({ where: { userId } });
   }
+
+  async deleteEvent(corsairEventId: string, userId: string): Promise<void> {
+    await this.db.calendarEvent.deleteMany({
+      where: { corsairEventId, userId },
+    });
+  }
 }

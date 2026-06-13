@@ -1,4 +1,4 @@
-import { getEvents, createEvent } from "@/modules/corsair";
+import { getEvents, createEvent, updateEvent as corsairUpdateEvent, deleteEvent as corsairDeleteEvent } from "@/modules/corsair";
 import type { CalendarRepository } from "./calendar.repository";
 import type {
   DbCalendarEvent,
@@ -6,7 +6,7 @@ import type {
   CalendarListOptions,
   CalendarEventUpsertInput,
 } from "./calendar.types";
-import type { CreateCalendarEventInput } from "./calendar.schema";
+import type { CreateCalendarEventInput, UpdateCalendarEventInput } from "./calendar.schema";
 import { CALENDAR_SYNC_MAX_RESULTS } from "./calendar.constants";
 
 export class CalendarService {
@@ -90,6 +90,42 @@ export class CalendarService {
     }
 
     return this.repo.upsertEvent(parsed);
+  }
+
+  async updateCalendarEvent(
+    clerkUserId: string,
+    dbUserId: string,
+    corsairEventId: string,
+    input: UpdateCalendarEventInput
+  ): Promise<DbCalendarEvent> {
+    const updated = await corsairUpdateEvent(clerkUserId, {
+      id: corsairEventId,
+      event: {
+        summary: input.summary,
+        description: input.description,
+        location: input.location,
+        start: input.start,
+        end: input.end,
+        attendees: input.attendees,
+      },
+      ...(input.sendUpdates ? { sendUpdates: input.sendUpdates } : {}),
+    });
+
+    const parsed = parseEvent(updated, dbUserId);
+    if (!parsed) {
+      throw new Error("Failed to parse updated event returned from Corsair");
+    }
+
+    return this.repo.upsertEvent(parsed);
+  }
+
+  async deleteCalendarEvent(
+    clerkUserId: string,
+    dbUserId: string,
+    corsairEventId: string
+  ): Promise<void> {
+    await corsairDeleteEvent(clerkUserId, { id: corsairEventId });
+    await this.repo.deleteEvent(corsairEventId, dbUserId);
   }
 }
 

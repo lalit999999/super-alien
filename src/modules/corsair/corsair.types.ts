@@ -1,4 +1,5 @@
 import type { GmailEndpointInputs, GmailEndpointOutputs } from "@corsair-dev/gmail";
+import type { MessagePart as GmailMessagePartSdk } from "@corsair-dev/gmail";
 import type {
   GoogleCalendarEndpointInputs,
   GoogleCalendarEndpointOutputs,
@@ -17,6 +18,9 @@ export type SendEmailInput = {
   threadId?: string;
 };
 export type SendEmailOutput = GmailEndpointOutputs["messagesSend"];
+
+// Re-exported so downstream Gmail module code never imports from @corsair-dev/gmail directly.
+export type CorsairMessagePart = GmailMessagePartSdk;
 
 // ─── Calendar ────────────────────────────────────────────────────────────────
 

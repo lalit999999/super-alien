@@ -6,7 +6,7 @@
  */
 
 import { config } from "dotenv";
-config({ path: ".env.local" });
+config({ path: ".env" });
 import { getEvents } from "../src/modules/corsair";
 
 const userId = process.argv[2];

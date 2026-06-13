@@ -7,7 +7,7 @@
  */
 
 import { config } from "dotenv";
-config({ path: ".env.local" });
+config({ path: ".env" });
 import { sendEmail } from "../src/modules/corsair";
 
 const [userId, to, subject] = process.argv.slice(2);
