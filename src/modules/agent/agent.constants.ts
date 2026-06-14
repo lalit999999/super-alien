@@ -1,4 +1,7 @@
-export const AGENT_MODEL = "google/gemma-4-31b-it:free" as const;
+// gpt-4o-mini: reliably supports tool calling + JSON structured output via OpenRouter.
+// Do NOT use ":free" suffix models — they share a global rate limit and break under
+// multi-tool workflows that make 10+ LLM calls per request.
+export const AGENT_MODEL = "gemini-2.5-flash" as const;
 export const AGENT_MAX_TOKENS = 2048;
 export const AGENT_MAX_TOOL_ITERATIONS = 8;
 

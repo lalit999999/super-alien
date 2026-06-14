@@ -11,6 +11,31 @@ import {
   AGENT_ERRORS,
 } from "./agent.constants";
 
+// ─── Logger ───────────────────────────────────────────────────────────────────
+
+function log(prefix: string, message: string, meta?: Record<string, unknown>) {
+  const ts = new Date().toISOString();
+  const metaStr = meta ? ` ${JSON.stringify(meta)}` : "";
+  console.log(`${ts} [${prefix}] ${message}${metaStr}`);
+}
+
+// ─── Rate-limit detection ─────────────────────────────────────────────────────
+
+function isRateLimitError(err: unknown): boolean {
+  if (err instanceof Error) {
+    const msg = err.message.toLowerCase();
+    return (
+      msg.includes("429") ||
+      msg.includes("rate limit") ||
+      msg.includes("too many requests") ||
+      msg.includes("quota")
+    );
+  }
+  return false;
+}
+
+// ─── Service ──────────────────────────────────────────────────────────────────
+
 export class AgentService {
   constructor(
     private readonly openai: OpenAI,
@@ -19,9 +44,16 @@ export class AgentService {
   ) {}
 
   async chat(input: AgentChatInput): Promise<AgentChatOutput> {
-    // Resolve the DB primary-key userId (FK on AgentExecution) from the Clerk userId
+    log("AGENT", "Chat request received", {
+      userId: input.userId,
+      promptLength: input.prompt.length,
+      model: AGENT_MODEL,
+      maxIterations: AGENT_MAX_TOOL_ITERATIONS,
+    });
+
     const dbUserId = await this.repo.findDbUserIdByClerkId(input.userId);
     if (!dbUserId) {
+      log("AGENT", "User not found in DB", { clerkUserId: input.userId });
       return {
         executionId: "",
         response: AGENT_ERRORS.USER_NOT_FOUND,
@@ -31,6 +63,8 @@ export class AgentService {
     }
 
     const execution = await this.repo.create(dbUserId, input.prompt);
+    log("AGENT", "Execution record created", { executionId: execution.id });
+
     const toolsUsed: string[] = [];
     const toolResults: ToolResult[] = [];
 
@@ -45,23 +79,51 @@ export class AgentService {
 
       while (iterations < AGENT_MAX_TOOL_ITERATIONS) {
         iterations++;
-
-        const response = await this.openai.chat.completions.create({
+        log("PLANNER", `Iteration ${iterations}/${AGENT_MAX_TOOL_ITERATIONS}`, {
           model: AGENT_MODEL,
-          max_tokens: AGENT_MAX_TOKENS,
-          messages,
-          tools: agentTools,
-          tool_choice: "auto",
+          maxTokens: AGENT_MAX_TOKENS,
+          messageCount: messages.length,
         });
+
+        let response: OpenAI.Chat.Completions.ChatCompletion;
+        try {
+          response = await this.openai.chat.completions.create({
+            model: AGENT_MODEL,
+            max_tokens: AGENT_MAX_TOKENS,
+            messages,
+            tools: agentTools,
+            tool_choice: "auto",
+          });
+        } catch (err) {
+          if (isRateLimitError(err)) {
+            const msg = err instanceof Error ? err.message : String(err);
+            log("AI", "Rate limit hit from provider", { iteration: iterations, error: msg });
+            await this.repo.updateFailed(execution.id, "AI provider rate limit exceeded");
+            return {
+              executionId: execution.id,
+              response: "AI provider rate limit exceeded",
+              toolsUsed,
+              status: "FAILED",
+            };
+          }
+          throw err;
+        }
 
         const choice = response.choices[0];
         if (!choice) throw new Error(AGENT_ERRORS.NO_RESPONSE);
+
+        log("AI", "Provider response received", {
+          finishReason: choice.finish_reason,
+          toolCallCount: choice.message.tool_calls?.length ?? 0,
+          usage: response.usage,
+        });
 
         const assistantMessage = choice.message;
         messages.push(assistantMessage);
 
         if (choice.finish_reason === "stop" || !assistantMessage.tool_calls?.length) {
           finalResponse = assistantMessage.content ?? "";
+          log("PLANNER", "Agent reached final response", { iteration: iterations });
           break;
         }
 
@@ -73,8 +135,16 @@ export class AgentService {
           try {
             parsedArgs = JSON.parse(toolCall.function.arguments);
           } catch {
+            log("TOOL", `Failed to parse args for ${toolName}`, {
+              raw: toolCall.function.arguments.slice(0, 200),
+            });
             parsedArgs = {};
           }
+
+          log("TOOL", `Executing ${toolName}`, {
+            toolCallId: toolCall.id,
+            args: parsedArgs,
+          });
 
           const result = await this.workflow.executeToolCall(
             input.userId,
@@ -82,8 +152,15 @@ export class AgentService {
             toolName,
             parsedArgs
           );
+
           toolsUsed.push(toolName);
           toolResults.push(result);
+
+          if (result.success) {
+            log("TOOL", `${toolName} succeeded`);
+          } else {
+            log("TOOL", `${toolName} failed`, { error: result.error });
+          }
 
           messages.push({
             role: "tool",
@@ -95,12 +172,19 @@ export class AgentService {
         }
       }
 
-      if (!finalResponse) {
-        finalResponse = "Actions completed successfully.";
+      if (iterations >= AGENT_MAX_TOOL_ITERATIONS && !finalResponse) {
+        log("PLANNER", "Max iterations reached without final response", { iterations });
+        finalResponse = "Actions completed (max planning steps reached).";
       }
 
       const resultPayload = { response: finalResponse, toolsUsed, toolResults };
       await this.repo.updateSuccess(execution.id, resultPayload);
+
+      log("AGENT", "Execution completed", {
+        executionId: execution.id,
+        toolsUsed,
+        iterations,
+      });
 
       return {
         executionId: execution.id,
@@ -110,6 +194,7 @@ export class AgentService {
       };
     } catch (err) {
       const message = err instanceof Error ? err.message : AGENT_ERRORS.EXECUTION_FAILED;
+      log("AGENT", "Execution failed with unexpected error", { error: message });
       await this.repo.updateFailed(execution.id, message);
 
       return {

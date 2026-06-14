@@ -4,6 +4,16 @@ import { requireAuth } from "@/lib/auth";
 import { agentChatRequestSchema } from "./agent.schema";
 import type { AgentService } from "./agent.service";
 
+function isRateLimitMessage(message: string): boolean {
+  const lower = message.toLowerCase();
+  return (
+    lower.includes("rate limit") ||
+    lower.includes("429") ||
+    lower.includes("too many requests") ||
+    lower.includes("quota")
+  );
+}
+
 export async function handleAgentChat(
   req: NextRequest,
   service: AgentService
@@ -22,6 +32,9 @@ export async function handleAgentChat(
   });
 
   if (result.status === "FAILED") {
+    if (isRateLimitMessage(result.response)) {
+      return fail("AI provider rate limit exceeded. Please wait a moment and try again.", "RATE_LIMIT", 429);
+    }
     return fail(result.response, "AGENT_FAILED", 500);
   }
 

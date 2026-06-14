@@ -17,6 +17,16 @@ import {
 import { AGENT_TOOL_NAMES } from "./agent.constants";
 import type { ToolResult } from "./agent.types";
 
+// ─── Logger ───────────────────────────────────────────────────────────────────
+
+function log(prefix: string, message: string, meta?: Record<string, unknown>) {
+  const ts = new Date().toISOString();
+  const metaStr = meta ? ` ${JSON.stringify(meta)}` : "";
+  console.log(`${ts} [${prefix}] ${message}${metaStr}`);
+}
+
+// ─── Workflow ─────────────────────────────────────────────────────────────────
+
 export class AgentWorkflow {
   constructor(
     private readonly gmail: GmailService,
@@ -30,35 +40,56 @@ export class AgentWorkflow {
     toolName: string,
     rawArgs: unknown
   ): Promise<ToolResult> {
+    log("TOOL", `Starting ${toolName}`);
     try {
+      let result: ToolResult;
       switch (toolName) {
         case AGENT_TOOL_NAMES.SEARCH_EMAILS:
-          return await this.handleSearchEmails(clerkUserId, rawArgs);
+          result = await this.handleSearchEmails(clerkUserId, rawArgs);
+          break;
         case AGENT_TOOL_NAMES.GET_EMAIL:
-          return await this.handleGetEmail(clerkUserId, rawArgs);
+          result = await this.handleGetEmail(clerkUserId, rawArgs);
+          break;
         case AGENT_TOOL_NAMES.SUMMARIZE_EMAIL:
-          return await this.handleSummarizeEmail(clerkUserId, rawArgs);
+          result = await this.handleSummarizeEmail(clerkUserId, rawArgs);
+          break;
         case AGENT_TOOL_NAMES.CLASSIFY_EMAIL:
-          return await this.handleClassifyEmail(clerkUserId, rawArgs);
+          result = await this.handleClassifyEmail(clerkUserId, rawArgs);
+          break;
         case AGENT_TOOL_NAMES.GENERATE_DRAFT:
-          return await this.handleGenerateDraft(clerkUserId, rawArgs);
+          result = await this.handleGenerateDraft(clerkUserId, rawArgs);
+          break;
         case AGENT_TOOL_NAMES.SEND_EMAIL:
-          return await this.handleSendEmail(clerkUserId, rawArgs);
+          result = await this.handleSendEmail(clerkUserId, rawArgs);
+          break;
         case AGENT_TOOL_NAMES.GET_EVENTS:
-          return await this.handleGetEvents(dbUserId, rawArgs);
+          result = await this.handleGetEvents(dbUserId, rawArgs);
+          break;
         case AGENT_TOOL_NAMES.CREATE_EVENT:
-          return await this.handleCreateEvent(clerkUserId, dbUserId, rawArgs);
+          result = await this.handleCreateEvent(clerkUserId, dbUserId, rawArgs);
+          break;
         case AGENT_TOOL_NAMES.UPDATE_EVENT:
-          return await this.handleUpdateEvent(clerkUserId, dbUserId, rawArgs);
+          result = await this.handleUpdateEvent(clerkUserId, dbUserId, rawArgs);
+          break;
         case AGENT_TOOL_NAMES.DELETE_EVENT:
-          return await this.handleDeleteEvent(clerkUserId, dbUserId, rawArgs);
+          result = await this.handleDeleteEvent(clerkUserId, dbUserId, rawArgs);
+          break;
         case AGENT_TOOL_NAMES.SCHEDULE_MEETING_AND_INVITE:
-          return await this.handleScheduleMeetingAndInvite(clerkUserId, dbUserId, rawArgs);
+          result = await this.handleScheduleMeetingAndInvite(clerkUserId, dbUserId, rawArgs);
+          break;
         default:
-          return { toolName, success: false, error: `Unknown tool: ${toolName}` };
+          result = { toolName, success: false, error: `Unknown tool: ${toolName}` };
       }
+
+      if (result.success) {
+        log("TOOL", `${toolName} completed successfully`);
+      } else {
+        log("TOOL", `${toolName} returned failure`, { error: result.error });
+      }
+      return result;
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
+      log("TOOL", `${toolName} threw unexpected error`, { error: message });
       return { toolName, success: false, error: message };
     }
   }
@@ -67,6 +98,8 @@ export class AgentWorkflow {
 
   private async handleSearchEmails(clerkUserId: string, rawArgs: unknown): Promise<ToolResult> {
     const args = searchEmailsArgsSchema.parse(rawArgs);
+    log("GMAIL", "Searching emails", { q: args.q, sender: args.sender, limit: args.limit });
+
     const emails = await this.gmail.searchEmailsInDb(clerkUserId, {
       q: args.q,
       sender: args.sender,
@@ -75,6 +108,8 @@ export class AgentWorkflow {
       to: args.to ? new Date(args.to) : undefined,
       limit: args.limit,
     });
+
+    log("GMAIL", "Search complete", { count: emails.length });
 
     const data = {
       emails: emails.map((e) => ({
@@ -93,8 +128,11 @@ export class AgentWorkflow {
 
   private async handleGetEmail(clerkUserId: string, rawArgs: unknown): Promise<ToolResult> {
     const args = getEmailArgsSchema.parse(rawArgs);
+    log("GMAIL", "Fetching email", { emailId: args.emailId });
+
     const email = await this.gmail.getEmailDetails(clerkUserId, args.emailId);
     if (!email) {
+      log("GMAIL", "Email not found", { emailId: args.emailId });
       return { toolName: AGENT_TOOL_NAMES.GET_EMAIL, success: false, error: "Email not found" };
     }
     return { toolName: AGENT_TOOL_NAMES.GET_EMAIL, success: true, data: email };
@@ -102,13 +140,19 @@ export class AgentWorkflow {
 
   private async handleSummarizeEmail(clerkUserId: string, rawArgs: unknown): Promise<ToolResult> {
     const args = summarizeEmailArgsSchema.parse(rawArgs);
+    log("AI", "Summarizing email", { emailId: args.emailId });
+
     const result = await this.ai.summarizeEmailById(args.emailId, clerkUserId);
+    log("AI", "Summarization complete", { emailId: args.emailId });
     return { toolName: AGENT_TOOL_NAMES.SUMMARIZE_EMAIL, success: true, data: result };
   }
 
   private async handleClassifyEmail(clerkUserId: string, rawArgs: unknown): Promise<ToolResult> {
     const args = classifyEmailArgsSchema.parse(rawArgs);
+    log("AI", "Classifying email", { emailId: args.emailId });
+
     const result = await this.ai.classifyEmail(args.emailId, clerkUserId);
+    log("AI", "Classification complete", { emailId: args.emailId, category: result.category });
     return { toolName: AGENT_TOOL_NAMES.CLASSIFY_EMAIL, success: true, data: result };
   }
 
@@ -116,14 +160,18 @@ export class AgentWorkflow {
     const args = generateDraftArgsSchema.parse(rawArgs);
 
     if (args.emailId) {
+      log("AI", "Generating reply draft", { emailId: args.emailId, tone: args.tone });
       const result = await this.ai.generateDraftFromEmail(args.emailId, args.tone, clerkUserId);
+      log("AI", "Reply draft generated", { emailId: args.emailId });
       return { toolName: AGENT_TOOL_NAMES.GENERATE_DRAFT, success: true, data: result };
     }
 
+    log("AI", "Generating new email draft", { tone: args.tone });
     const result = await this.ai.generateDraft({
       prompt: args.prompt ?? "Write a professional email",
       context: args.context,
     });
+    log("AI", "New draft generated");
     return { toolName: AGENT_TOOL_NAMES.GENERATE_DRAFT, success: true, data: result };
   }
 
@@ -131,12 +179,15 @@ export class AgentWorkflow {
 
   private async handleSendEmail(clerkUserId: string, rawArgs: unknown): Promise<ToolResult> {
     const args = sendEmailArgsSchema.parse(rawArgs);
+    log("GMAIL", "Sending email", { to: args.to, subject: args.subject });
+
     const data = await this.gmail.sendEmail(clerkUserId, {
       to: args.to,
       subject: args.subject,
       body: args.body,
       threadId: args.threadId,
     });
+    log("GMAIL", "Email sent", { to: args.to });
     return { toolName: AGENT_TOOL_NAMES.SEND_EMAIL, success: true, data };
   }
 
@@ -145,6 +196,7 @@ export class AgentWorkflow {
   private async handleGetEvents(dbUserId: string, rawArgs: unknown): Promise<ToolResult> {
     const args = getEventsArgsSchema.parse(rawArgs);
     const limit = args.limit ?? 10;
+    log("CALENDAR", "Fetching events", { timeMin: args.timeMin, timeMax: args.timeMax, limit });
 
     let events;
     if (args.timeMin ?? args.timeMax) {
@@ -157,6 +209,7 @@ export class AgentWorkflow {
       events = await this.calendar.getUpcomingEvents(dbUserId, limit);
     }
 
+    log("CALENDAR", "Events fetched", { count: events.length });
     return {
       toolName: AGENT_TOOL_NAMES.GET_EVENTS,
       success: true,
@@ -173,6 +226,12 @@ export class AgentWorkflow {
   ): Promise<ToolResult> {
     const args = createEventArgsSchema.parse(rawArgs);
     const tz = args.timeZone ?? "UTC";
+    log("CALENDAR", "Creating event", {
+      summary: args.summary,
+      start: args.startDateTime,
+      end: args.endDateTime,
+      attendees: args.attendees?.length ?? 0,
+    });
 
     const event = await this.calendar.createCalendarEvent(clerkUserId, dbUserId, {
       summary: args.summary,
@@ -183,6 +242,7 @@ export class AgentWorkflow {
       attendees: args.attendees?.map((email) => ({ email })),
       sendUpdates: args.attendees?.length ? "all" : "none",
     });
+    log("CALENDAR", "Event created");
     return { toolName: AGENT_TOOL_NAMES.CREATE_EVENT, success: true, data: event };
   }
 
@@ -193,6 +253,7 @@ export class AgentWorkflow {
   ): Promise<ToolResult> {
     const args = updateEventArgsSchema.parse(rawArgs);
     const tz = args.timeZone ?? "UTC";
+    log("CALENDAR", "Updating event", { corsairEventId: args.corsairEventId });
 
     const event = await this.calendar.updateCalendarEvent(
       clerkUserId,
@@ -207,6 +268,7 @@ export class AgentWorkflow {
         attendees: args.attendees?.map((email) => ({ email })),
       }
     );
+    log("CALENDAR", "Event updated", { corsairEventId: args.corsairEventId });
     return { toolName: AGENT_TOOL_NAMES.UPDATE_EVENT, success: true, data: event };
   }
 
@@ -216,7 +278,10 @@ export class AgentWorkflow {
     rawArgs: unknown
   ): Promise<ToolResult> {
     const args = deleteEventArgsSchema.parse(rawArgs);
+    log("CALENDAR", "Deleting event", { corsairEventId: args.corsairEventId });
+
     await this.calendar.deleteCalendarEvent(clerkUserId, dbUserId, args.corsairEventId);
+    log("CALENDAR", "Event deleted", { corsairEventId: args.corsairEventId });
     return {
       toolName: AGENT_TOOL_NAMES.DELETE_EVENT,
       success: true,
@@ -233,6 +298,11 @@ export class AgentWorkflow {
   ): Promise<ToolResult> {
     const args = scheduleMeetingAndInviteArgsSchema.parse(rawArgs);
     const tz = args.timeZone ?? "UTC";
+    log("CALENDAR", "Scheduling meeting with invites", {
+      summary: args.summary,
+      start: args.startDateTime,
+      attendees: args.attendeeEmails,
+    });
 
     const event = await this.calendar.createCalendarEvent(clerkUserId, dbUserId, {
       summary: args.summary,
@@ -243,6 +313,7 @@ export class AgentWorkflow {
       attendees: args.attendeeEmails.map((email) => ({ email })),
       sendUpdates: "all",
     });
+    log("CALENDAR", "Meeting event created");
 
     const defaultBody =
       `You're invited to "${args.summary}".\n\n` +
@@ -255,25 +326,37 @@ export class AgentWorkflow {
     const invitations: Array<{ to: string; success: boolean; error?: string }> = [];
     for (const attendeeEmail of args.attendeeEmails) {
       try {
+        log("GMAIL", "Sending invitation email", { to: attendeeEmail });
         await this.gmail.sendEmail(clerkUserId, {
           to: attendeeEmail,
           subject: `Invitation: ${args.summary}`,
           body,
         });
         invitations.push({ to: attendeeEmail, success: true });
+        log("GMAIL", "Invitation email sent", { to: attendeeEmail });
       } catch (err) {
-        invitations.push({
-          to: attendeeEmail,
-          success: false,
-          error: err instanceof Error ? err.message : String(err),
-        });
+        const error = err instanceof Error ? err.message : String(err);
+        log("GMAIL", "Invitation email failed", { to: attendeeEmail, error });
+        invitations.push({ to: attendeeEmail, success: false, error });
       }
     }
+
+    const allInvitesSent = invitations.every((i) => i.success);
+    log("TOOL", "scheduleMeetingAndInvite finished", {
+      eventCreated: true,
+      invitationsSent: invitations.filter((i) => i.success).length,
+      invitationsFailed: invitations.filter((i) => !i.success).length,
+    });
 
     return {
       toolName: AGENT_TOOL_NAMES.SCHEDULE_MEETING_AND_INVITE,
       success: true,
-      data: { event, invitations },
+      data: {
+        event,
+        invitations,
+        eventCreated: true,
+        allInvitesSent,
+      },
     };
   }
 }

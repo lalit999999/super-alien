@@ -120,9 +120,9 @@ export default function ChatPage() {
                   {msg.agentData && msg.agentData.toolsUsed.length > 0 && (
                     <div className="flex flex-wrap gap-1 pt-1 border-t">
                       <span className="text-xs text-muted-foreground">Tools: </span>
-                      {msg.agentData.toolsUsed.map((tool) => (
+                      {msg.agentData.toolsUsed.map((tool, idx) => (
                         <span
-                          key={tool}
+                          key={`${tool}-${idx}`}
                           className="text-xs bg-muted text-muted-foreground rounded px-1.5 py-0.5"
                         >
                           {tool}
