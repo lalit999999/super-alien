@@ -1,2 +1,28 @@
 @import 'tailwindcss';
 @import '@clerk/ui/themes/shadcn.css';
+
+@theme {
+  --color-ps-bg: #FFFDF8;
+  --color-ps-surface: #F8F2EA;
+  --color-ps-surface-2: #EFE5D5;
+  --color-ps-border: #E7D8C8;
+  --color-ps-text: #332216;
+  --color-ps-secondary: #544823;
+  --color-ps-muted: #8C4C1F;
+  --color-ps-accent: #BE5103;
+  --color-ps-accent-dark: #8C4C1F;
+  --color-ps-accent-light: #FEF0E7;
+}
+
+@layer base {
+  body {
+    background-color: #FFFDF8;
+    color: #332216;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    border-color: #E7D8C8;
+  }
+}
