@@ -1,5 +1,5 @@
 import type { PrismaClient } from "@/config/generated/prisma/client";
-import type { DbEmail, GmailUpsertInput } from "./gmail.types";
+import type { DbEmail, GmailUpsertInput, DbEmailSearchOptions } from "./gmail.types";
 
 export class GmailRepository {
   constructor(private readonly db: PrismaClient) {}
@@ -124,6 +124,40 @@ export class GmailRepository {
     await this.db.email.updateMany({
       where: { corsairEmailId, user: { clerkUserId } },
       data: { isRead },
+    });
+  }
+
+  async searchEmailsInDb(
+    clerkUserId: string,
+    options: DbEmailSearchOptions
+  ): Promise<DbEmail[]> {
+    const { q, sender, category, from, to, limit = 20 } = options;
+
+    return this.db.email.findMany({
+      where: {
+        user: { clerkUserId },
+        ...(q
+          ? {
+              OR: [
+                { subject: { contains: q, mode: "insensitive" } },
+                { snippet: { contains: q, mode: "insensitive" } },
+                { sender: { contains: q, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+        ...(sender ? { sender: { contains: sender, mode: "insensitive" } } : {}),
+        ...(category ? { classification: { category } } : {}),
+        ...((from ?? to)
+          ? {
+              receivedAt: {
+                ...(from ? { gte: from } : {}),
+                ...(to ? { lte: to } : {}),
+              },
+            }
+          : {}),
+      },
+      orderBy: { receivedAt: "desc" },
+      take: limit,
     });
   }
 }

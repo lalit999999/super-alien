@@ -132,6 +132,14 @@ export class CalendarService {
     await this.repo.deleteEvent(corsairEventId, dbUserId);
   }
 
+  async getEventsByDateRange(
+    dbUserId: string,
+    startTime: Date,
+    endTime: Date
+  ): Promise<DbCalendarEvent[]> {
+    return this.repo.getEventsByDateRange(dbUserId, startTime, endTime);
+  }
+
   async storeRawCalendarEvent(
     raw: RawEvent,
     dbUserId: string

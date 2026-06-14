@@ -1,7 +1,8 @@
 import type { ExecutionStatus } from "@/config/generated/prisma/enums";
+import type { AGENT_INTENTS } from "./agent.constants";
 
 export type AgentChatInput = {
-  userId: string;
+  userId: string;  // Clerk user ID
   prompt: string;
 };
 
@@ -32,3 +33,5 @@ export type AgentExecutionRecord = {
   result: unknown;
   createdAt: Date;
 };
+
+export type AgentIntent = (typeof AGENT_INTENTS)[keyof typeof AGENT_INTENTS];

@@ -1,5 +1,5 @@
 import { type NextRequest } from "next/server";
-import { handleListEmails } from "@/modules/gmail";
+import { handleListEmails } from "@/modules/gmail/index";
 import { fail } from "@/lib/response";
 
 export async function GET(req: NextRequest) {

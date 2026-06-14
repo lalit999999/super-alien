@@ -19,4 +19,5 @@ export type {
   GmailListOptions,
   GmailPagination,
   SendEmailInput,
+  DbEmailSearchOptions,
 } from "./gmail.types";

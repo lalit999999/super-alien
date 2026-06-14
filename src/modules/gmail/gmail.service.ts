@@ -2,7 +2,7 @@ import { getEmails, getEmailById, sendEmail as corsairSendEmail, searchEmails as
 import type { CorsairMessagePart, SendEmailOutput, GetEmailsOutput } from "@/modules/corsair";
 import type { AiService } from "@/modules/ai";
 import type { GmailRepository } from "./gmail.repository";
-import type { DbEmail, GmailSyncResult, GmailListOptions, GmailUpsertInput, ParsedMessage, SendEmailInput } from "./gmail.types";
+import type { DbEmail, GmailSyncResult, GmailListOptions, GmailUpsertInput, ParsedMessage, SendEmailInput, DbEmailSearchOptions } from "./gmail.types";
 import { GMAIL_SYNC_MAX_RESULTS } from "./gmail.constants";
 
 export class GmailService {
@@ -95,6 +95,13 @@ export class GmailService {
     maxResults?: number
   ): Promise<GetEmailsOutput> {
     return corsairSearchEmails(clerkUserId, query, maxResults);
+  }
+
+  async searchEmailsInDb(
+    clerkUserId: string,
+    options: DbEmailSearchOptions
+  ): Promise<DbEmail[]> {
+    return this.repo.searchEmailsInDb(clerkUserId, options);
   }
 
   async storeRawMessage(

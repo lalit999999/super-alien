@@ -44,3 +44,12 @@ export type GmailPagination = {
 };
 
 export type SendEmailInput = CorsairSendEmailInput;
+
+export type DbEmailSearchOptions = {
+  q?: string;
+  sender?: string;
+  category?: string;
+  from?: Date;
+  to?: Date;
+  limit?: number;
+};
