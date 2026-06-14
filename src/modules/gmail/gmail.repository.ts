@@ -9,12 +9,13 @@ export class GmailRepository {
       where: { corsairEmailId: input.corsairEmailId },
       create: {
         corsairEmailId: input.corsairEmailId,
-        userId: input.userId,
+        user: { connect: { clerkUserId: input.clerkUserId } },
         threadId: input.threadId ?? null,
         subject: input.subject,
         sender: input.sender,
         snippet: input.snippet ?? null,
         body: input.body ?? null,
+        isRead: input.isRead ?? false,
         receivedAt: input.receivedAt,
         syncedAt: new Date(),
       },
@@ -24,6 +25,7 @@ export class GmailRepository {
         sender: input.sender,
         snippet: input.snippet ?? null,
         body: input.body ?? null,
+        isRead: input.isRead ?? false,
         receivedAt: input.receivedAt,
         syncedAt: new Date(),
       },
@@ -39,12 +41,13 @@ export class GmailRepository {
         where: { corsairEmailId: input.corsairEmailId },
         create: {
           corsairEmailId: input.corsairEmailId,
-          userId: input.userId,
+          user: { connect: { clerkUserId: input.clerkUserId } },
           threadId: input.threadId ?? null,
           subject: input.subject,
           sender: input.sender,
           snippet: input.snippet ?? null,
           body: input.body ?? null,
+          isRead: input.isRead ?? false,
           receivedAt: input.receivedAt,
           syncedAt: now,
         },
@@ -53,6 +56,7 @@ export class GmailRepository {
           sender: input.sender,
           snippet: input.snippet ?? null,
           body: input.body ?? null,
+          isRead: input.isRead ?? false,
           receivedAt: input.receivedAt,
           syncedAt: now,
         },
@@ -64,31 +68,43 @@ export class GmailRepository {
   }
 
   async getEmailsByUser(
-    userId: string,
+    clerkUserId: string,
     limit: number,
     offset: number
   ): Promise<DbEmail[]> {
     return this.db.email.findMany({
-      where: { userId },
+      where: { user: { clerkUserId } },
       orderBy: { receivedAt: "desc" },
       take: limit,
       skip: offset,
     });
   }
 
-  async getEmailById(id: string, userId: string): Promise<DbEmail | null> {
+  async getEmailById(id: string, clerkUserId: string): Promise<DbEmail | null> {
     return this.db.email.findFirst({
-      where: { id, userId },
+      where: { id, user: { clerkUserId } },
     });
   }
 
-  async countEmailsByUser(userId: string): Promise<number> {
-    return this.db.email.count({ where: { userId } });
+  async countEmailsByUser(clerkUserId: string): Promise<number> {
+    return this.db.email.count({ where: { user: { clerkUserId } } });
   }
 
-  async getEmailsWithoutClassification(userId: string, limit: number): Promise<DbEmail[]> {
+  async markAsRead(id: string, clerkUserId: string): Promise<DbEmail | null> {
+    const email = await this.db.email.findFirst({
+      where: { id, user: { clerkUserId } },
+    });
+    if (!email) return null;
+
+    return this.db.email.update({
+      where: { id },
+      data: { isRead: true },
+    });
+  }
+
+  async getEmailsWithoutClassification(clerkUserId: string, limit: number): Promise<DbEmail[]> {
     return this.db.email.findMany({
-      where: { userId, classification: null },
+      where: { user: { clerkUserId }, classification: null },
       orderBy: { receivedAt: "desc" },
       take: limit,
     });

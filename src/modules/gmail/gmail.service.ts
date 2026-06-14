@@ -13,7 +13,6 @@ export class GmailService {
 
   async syncEmailsFromCorsair(
     clerkUserId: string,
-    dbUserId: string,
     maxResults = GMAIL_SYNC_MAX_RESULTS
   ): Promise<GmailSyncResult> {
     const listResult = await getEmails(clerkUserId, {
@@ -44,7 +43,7 @@ export class GmailService {
           continue;
         }
 
-        inputs.push({ ...parsed, userId: dbUserId });
+        inputs.push({ ...parsed, clerkUserId });
       } catch {
         skipped++;
       }
@@ -55,25 +54,32 @@ export class GmailService {
   }
 
   async getUserEmails(
-    dbUserId: string,
+    clerkUserId: string,
     options: GmailListOptions = {}
   ): Promise<{ emails: DbEmail[]; total: number }> {
     const limit = options.limit ?? 20;
     const offset = options.offset ?? 0;
 
     const [emails, total] = await Promise.all([
-      this.repo.getEmailsByUser(dbUserId, limit, offset),
-      this.repo.countEmailsByUser(dbUserId),
+      this.repo.getEmailsByUser(clerkUserId, limit, offset),
+      this.repo.countEmailsByUser(clerkUserId),
     ]);
 
     return { emails, total };
   }
 
   async getEmailDetails(
-    dbUserId: string,
+    clerkUserId: string,
     emailId: string
   ): Promise<DbEmail | null> {
-    return this.repo.getEmailById(emailId, dbUserId);
+    return this.repo.getEmailById(emailId, clerkUserId);
+  }
+
+  async markEmailAsRead(
+    clerkUserId: string,
+    emailId: string
+  ): Promise<DbEmail | null> {
+    return this.repo.markAsRead(emailId, clerkUserId);
   }
 
   async sendEmail(
@@ -92,12 +98,12 @@ export class GmailService {
   }
 
   async classifyEmailsForUser(
-    dbUserId: string,
+    clerkUserId: string,
     limit = 10
   ): Promise<{ classified: number; failed: number }> {
     if (!this.ai) throw new Error("AiService not injected");
 
-    const emails = await this.repo.getEmailsWithoutClassification(dbUserId, limit);
+    const emails = await this.repo.getEmailsWithoutClassification(clerkUserId, limit);
 
     let classified = 0;
     let failed = 0;
@@ -127,6 +133,7 @@ type RawMessage = {
   threadId?: string;
   snippet?: string;
   internalDate?: string | Date | null;
+  labelIds?: string[];
   payload?: CorsairMessagePart;
 };
 
@@ -138,6 +145,7 @@ function parseMessage(raw: RawMessage): ParsedMessage | null {
   const sender = findHeader(headers, "From") ?? "unknown";
   const receivedAt = parseInternalDate(raw.internalDate);
   const body = extractTextBody(raw.payload);
+  const isRead = !(raw.labelIds ?? []).includes("UNREAD");
 
   return {
     corsairEmailId: raw.id,
@@ -146,6 +154,7 @@ function parseMessage(raw: RawMessage): ParsedMessage | null {
     sender,
     snippet: raw.snippet,
     body: body ?? undefined,
+    isRead,
     receivedAt,
   };
 }
@@ -159,9 +168,7 @@ function findHeader(
   )?.value;
 }
 
-function parseInternalDate(
-  raw?: string | Date | null
-): Date {
+function parseInternalDate(raw?: string | Date | null): Date {
   if (!raw) return new Date();
   if (raw instanceof Date) return raw;
   const ms = parseInt(raw, 10);

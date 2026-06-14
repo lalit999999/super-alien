@@ -46,7 +46,7 @@ export async function handleGmailWebhook(req: NextRequest) {
   });
 
   const service = makeService();
-  const result = await service.processGmailWebhook(rawHeaders, body, tenantId, user!.id);
+  const result = await service.processGmailWebhook(rawHeaders, body, tenantId, tenantId);
 
   return ok({ processed: result.synced, action: result.action }, 200);
 }

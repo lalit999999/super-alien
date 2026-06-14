@@ -1,16 +1,21 @@
-import { requireAuth } from "@/lib/auth";
+import { auth } from "@clerk/nextjs/server";
 import { getEmails, sendEmail } from "@/modules/corsair";
 import { sendEmailBodySchema } from "@/modules/gmail/gmail.schema";
 
-// GET /api/test-auth/email — list inbox emails
-export async function GET() {
-  try {
-    const { userId } = await requireAuth();
+async function resolveUserId(req: Request): Promise<string | null> {
+  const { userId } = await auth();
+  if (userId) return userId;
+  // fallback for curl testing — pass ?userId=user_xxx
+  return new URL(req.url).searchParams.get("userId");
+}
 
-    const result = await getEmails(userId, {
-      labelIds: ["INBOX"],
-      maxResults: 5,
-    });
+// GET /api/test-auth/email?userId=user_xxx — list inbox emails
+export async function GET(req: Request) {
+  try {
+    const userId = await resolveUserId(req);
+    if (!userId) return Response.json({ ok: false, error: "userId required" }, { status: 401 });
+
+    const result = await getEmails(userId, { labelIds: ["INBOX"], maxResults: 5 });
 
     return Response.json({
       ok: true,
@@ -19,36 +24,27 @@ export async function GET() {
       messages: result.messages ?? [],
     });
   } catch (error) {
-    return Response.json(
-      { ok: false, error: String(error) },
-      { status: 500 }
-    );
+    return Response.json({ ok: false, error: String(error) }, { status: 500 });
   }
 }
 
-// POST /api/test-auth/email — send an email
+// POST /api/test-auth/email?userId=user_xxx
 // Body: { to, subject, body, threadId? }
 export async function POST(req: Request) {
   try {
-    const { userId } = await requireAuth();
+    const userId = await resolveUserId(req);
+    if (!userId) return Response.json({ ok: false, error: "userId required" }, { status: 401 });
 
     const json = await req.json();
     const parsed = sendEmailBodySchema.safeParse(json);
-
     if (!parsed.success) {
-      return Response.json(
-        { ok: false, error: parsed.error.issues },
-        { status: 400 }
-      );
+      return Response.json({ ok: false, error: parsed.error.issues }, { status: 400 });
     }
 
     const result = await sendEmail(userId, parsed.data);
 
     return Response.json({ ok: true, userId, result });
   } catch (error) {
-    return Response.json(
-      { ok: false, error: String(error) },
-      { status: 500 }
-    );
+    return Response.json({ ok: false, error: String(error) }, { status: 500 });
   }
 }

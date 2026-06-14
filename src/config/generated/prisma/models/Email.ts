@@ -33,6 +33,7 @@ export type EmailMinAggregateOutputType = {
   sender: string | null
   snippet: string | null
   body: string | null
+  isRead: boolean | null
   receivedAt: Date | null
   syncedAt: Date | null
   createdAt: Date | null
@@ -48,6 +49,7 @@ export type EmailMaxAggregateOutputType = {
   sender: string | null
   snippet: string | null
   body: string | null
+  isRead: boolean | null
   receivedAt: Date | null
   syncedAt: Date | null
   createdAt: Date | null
@@ -63,6 +65,7 @@ export type EmailCountAggregateOutputType = {
   sender: number
   snippet: number
   body: number
+  isRead: number
   receivedAt: number
   syncedAt: number
   createdAt: number
@@ -80,6 +83,7 @@ export type EmailMinAggregateInputType = {
   sender?: true
   snippet?: true
   body?: true
+  isRead?: true
   receivedAt?: true
   syncedAt?: true
   createdAt?: true
@@ -95,6 +99,7 @@ export type EmailMaxAggregateInputType = {
   sender?: true
   snippet?: true
   body?: true
+  isRead?: true
   receivedAt?: true
   syncedAt?: true
   createdAt?: true
@@ -110,6 +115,7 @@ export type EmailCountAggregateInputType = {
   sender?: true
   snippet?: true
   body?: true
+  isRead?: true
   receivedAt?: true
   syncedAt?: true
   createdAt?: true
@@ -198,6 +204,7 @@ export type EmailGroupByOutputType = {
   sender: string
   snippet: string | null
   body: string | null
+  isRead: boolean
   receivedAt: Date
   syncedAt: Date
   createdAt: Date
@@ -234,6 +241,7 @@ export type EmailWhereInput = {
   sender?: Prisma.StringFilter<"Email"> | string
   snippet?: Prisma.StringNullableFilter<"Email"> | string | null
   body?: Prisma.StringNullableFilter<"Email"> | string | null
+  isRead?: Prisma.BoolFilter<"Email"> | boolean
   receivedAt?: Prisma.DateTimeFilter<"Email"> | Date | string
   syncedAt?: Prisma.DateTimeFilter<"Email"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Email"> | Date | string
@@ -251,6 +259,7 @@ export type EmailOrderByWithRelationInput = {
   sender?: Prisma.SortOrder
   snippet?: Prisma.SortOrderInput | Prisma.SortOrder
   body?: Prisma.SortOrderInput | Prisma.SortOrder
+  isRead?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -271,6 +280,7 @@ export type EmailWhereUniqueInput = Prisma.AtLeast<{
   sender?: Prisma.StringFilter<"Email"> | string
   snippet?: Prisma.StringNullableFilter<"Email"> | string | null
   body?: Prisma.StringNullableFilter<"Email"> | string | null
+  isRead?: Prisma.BoolFilter<"Email"> | boolean
   receivedAt?: Prisma.DateTimeFilter<"Email"> | Date | string
   syncedAt?: Prisma.DateTimeFilter<"Email"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Email"> | Date | string
@@ -288,6 +298,7 @@ export type EmailOrderByWithAggregationInput = {
   sender?: Prisma.SortOrder
   snippet?: Prisma.SortOrderInput | Prisma.SortOrder
   body?: Prisma.SortOrderInput | Prisma.SortOrder
+  isRead?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -309,6 +320,7 @@ export type EmailScalarWhereWithAggregatesInput = {
   sender?: Prisma.StringWithAggregatesFilter<"Email"> | string
   snippet?: Prisma.StringNullableWithAggregatesFilter<"Email"> | string | null
   body?: Prisma.StringNullableWithAggregatesFilter<"Email"> | string | null
+  isRead?: Prisma.BoolWithAggregatesFilter<"Email"> | boolean
   receivedAt?: Prisma.DateTimeWithAggregatesFilter<"Email"> | Date | string
   syncedAt?: Prisma.DateTimeWithAggregatesFilter<"Email"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Email"> | Date | string
@@ -323,6 +335,7 @@ export type EmailCreateInput = {
   sender: string
   snippet?: string | null
   body?: string | null
+  isRead?: boolean
   receivedAt: Date | string
   syncedAt?: Date | string
   createdAt?: Date | string
@@ -340,6 +353,7 @@ export type EmailUncheckedCreateInput = {
   sender: string
   snippet?: string | null
   body?: string | null
+  isRead?: boolean
   receivedAt: Date | string
   syncedAt?: Date | string
   createdAt?: Date | string
@@ -355,6 +369,7 @@ export type EmailUpdateInput = {
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   snippet?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   body?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -372,6 +387,7 @@ export type EmailUncheckedUpdateInput = {
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   snippet?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   body?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -388,6 +404,7 @@ export type EmailCreateManyInput = {
   sender: string
   snippet?: string | null
   body?: string | null
+  isRead?: boolean
   receivedAt: Date | string
   syncedAt?: Date | string
   createdAt?: Date | string
@@ -402,6 +419,7 @@ export type EmailUpdateManyMutationInput = {
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   snippet?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   body?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -417,6 +435,7 @@ export type EmailUncheckedUpdateManyInput = {
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   snippet?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   body?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -442,6 +461,7 @@ export type EmailCountOrderByAggregateInput = {
   sender?: Prisma.SortOrder
   snippet?: Prisma.SortOrder
   body?: Prisma.SortOrder
+  isRead?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -457,6 +477,7 @@ export type EmailMaxOrderByAggregateInput = {
   sender?: Prisma.SortOrder
   snippet?: Prisma.SortOrder
   body?: Prisma.SortOrder
+  isRead?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -472,6 +493,7 @@ export type EmailMinOrderByAggregateInput = {
   sender?: Prisma.SortOrder
   snippet?: Prisma.SortOrder
   body?: Prisma.SortOrder
+  isRead?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -529,6 +551,10 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 export type EmailCreateNestedOneWithoutClassificationInput = {
   create?: Prisma.XOR<Prisma.EmailCreateWithoutClassificationInput, Prisma.EmailUncheckedCreateWithoutClassificationInput>
   connectOrCreate?: Prisma.EmailCreateOrConnectWithoutClassificationInput
@@ -551,6 +577,7 @@ export type EmailCreateWithoutUserInput = {
   sender: string
   snippet?: string | null
   body?: string | null
+  isRead?: boolean
   receivedAt: Date | string
   syncedAt?: Date | string
   createdAt?: Date | string
@@ -566,6 +593,7 @@ export type EmailUncheckedCreateWithoutUserInput = {
   sender: string
   snippet?: string | null
   body?: string | null
+  isRead?: boolean
   receivedAt: Date | string
   syncedAt?: Date | string
   createdAt?: Date | string
@@ -611,6 +639,7 @@ export type EmailScalarWhereInput = {
   sender?: Prisma.StringFilter<"Email"> | string
   snippet?: Prisma.StringNullableFilter<"Email"> | string | null
   body?: Prisma.StringNullableFilter<"Email"> | string | null
+  isRead?: Prisma.BoolFilter<"Email"> | boolean
   receivedAt?: Prisma.DateTimeFilter<"Email"> | Date | string
   syncedAt?: Prisma.DateTimeFilter<"Email"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Email"> | Date | string
@@ -625,6 +654,7 @@ export type EmailCreateWithoutClassificationInput = {
   sender: string
   snippet?: string | null
   body?: string | null
+  isRead?: boolean
   receivedAt: Date | string
   syncedAt?: Date | string
   createdAt?: Date | string
@@ -641,6 +671,7 @@ export type EmailUncheckedCreateWithoutClassificationInput = {
   sender: string
   snippet?: string | null
   body?: string | null
+  isRead?: boolean
   receivedAt: Date | string
   syncedAt?: Date | string
   createdAt?: Date | string
@@ -671,6 +702,7 @@ export type EmailUpdateWithoutClassificationInput = {
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   snippet?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   body?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -687,6 +719,7 @@ export type EmailUncheckedUpdateWithoutClassificationInput = {
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   snippet?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   body?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -701,6 +734,7 @@ export type EmailCreateManyUserInput = {
   sender: string
   snippet?: string | null
   body?: string | null
+  isRead?: boolean
   receivedAt: Date | string
   syncedAt?: Date | string
   createdAt?: Date | string
@@ -715,6 +749,7 @@ export type EmailUpdateWithoutUserInput = {
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   snippet?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   body?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -730,6 +765,7 @@ export type EmailUncheckedUpdateWithoutUserInput = {
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   snippet?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   body?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -745,6 +781,7 @@ export type EmailUncheckedUpdateManyWithoutUserInput = {
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   snippet?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   body?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -762,6 +799,7 @@ export type EmailSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   sender?: boolean
   snippet?: boolean
   body?: boolean
+  isRead?: boolean
   receivedAt?: boolean
   syncedAt?: boolean
   createdAt?: boolean
@@ -779,6 +817,7 @@ export type EmailSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   sender?: boolean
   snippet?: boolean
   body?: boolean
+  isRead?: boolean
   receivedAt?: boolean
   syncedAt?: boolean
   createdAt?: boolean
@@ -795,6 +834,7 @@ export type EmailSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   sender?: boolean
   snippet?: boolean
   body?: boolean
+  isRead?: boolean
   receivedAt?: boolean
   syncedAt?: boolean
   createdAt?: boolean
@@ -811,13 +851,14 @@ export type EmailSelectScalar = {
   sender?: boolean
   snippet?: boolean
   body?: boolean
+  isRead?: boolean
   receivedAt?: boolean
   syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type EmailOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "corsairEmailId" | "userId" | "threadId" | "subject" | "sender" | "snippet" | "body" | "receivedAt" | "syncedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["email"]>
+export type EmailOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "corsairEmailId" | "userId" | "threadId" | "subject" | "sender" | "snippet" | "body" | "isRead" | "receivedAt" | "syncedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["email"]>
 export type EmailInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   classification?: boolean | Prisma.Email$classificationArgs<ExtArgs>
@@ -844,6 +885,7 @@ export type $EmailPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     sender: string
     snippet: string | null
     body: string | null
+    isRead: boolean
     receivedAt: Date
     syncedAt: Date
     createdAt: Date
@@ -1281,6 +1323,7 @@ export interface EmailFieldRefs {
   readonly sender: Prisma.FieldRef<"Email", 'String'>
   readonly snippet: Prisma.FieldRef<"Email", 'String'>
   readonly body: Prisma.FieldRef<"Email", 'String'>
+  readonly isRead: Prisma.FieldRef<"Email", 'Boolean'>
   readonly receivedAt: Prisma.FieldRef<"Email", 'DateTime'>
   readonly syncedAt: Prisma.FieldRef<"Email", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Email", 'DateTime'>

@@ -56,7 +56,11 @@ export const ModelName = {
   CalendarEvent: 'CalendarEvent',
   EmailClassification: 'EmailClassification',
   AgentExecution: 'AgentExecution',
-  UserPreference: 'UserPreference'
+  UserPreference: 'UserPreference',
+  CorsairIntegration: 'CorsairIntegration',
+  CorsairAccount: 'CorsairAccount',
+  CorsairEntity: 'CorsairEntity',
+  CorsairEvent: 'CorsairEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -95,6 +99,7 @@ export const EmailScalarFieldEnum = {
   sender: 'sender',
   snippet: 'snippet',
   body: 'body',
+  isRead: 'isRead',
   receivedAt: 'receivedAt',
   syncedAt: 'syncedAt',
   createdAt: 'createdAt',
@@ -156,6 +161,58 @@ export const UserPreferenceScalarFieldEnum = {
 export type UserPreferenceScalarFieldEnum = (typeof UserPreferenceScalarFieldEnum)[keyof typeof UserPreferenceScalarFieldEnum]
 
 
+export const CorsairIntegrationScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  name: 'name',
+  config: 'config',
+  dek: 'dek'
+} as const
+
+export type CorsairIntegrationScalarFieldEnum = (typeof CorsairIntegrationScalarFieldEnum)[keyof typeof CorsairIntegrationScalarFieldEnum]
+
+
+export const CorsairAccountScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId',
+  integrationId: 'integrationId',
+  config: 'config',
+  dek: 'dek'
+} as const
+
+export type CorsairAccountScalarFieldEnum = (typeof CorsairAccountScalarFieldEnum)[keyof typeof CorsairAccountScalarFieldEnum]
+
+
+export const CorsairEntityScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  accountId: 'accountId',
+  entityId: 'entityId',
+  entityType: 'entityType',
+  version: 'version',
+  data: 'data'
+} as const
+
+export type CorsairEntityScalarFieldEnum = (typeof CorsairEntityScalarFieldEnum)[keyof typeof CorsairEntityScalarFieldEnum]
+
+
+export const CorsairEventScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  accountId: 'accountId',
+  eventType: 'eventType',
+  payload: 'payload',
+  status: 'status'
+} as const
+
+export type CorsairEventScalarFieldEnum = (typeof CorsairEventScalarFieldEnum)[keyof typeof CorsairEventScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -170,6 +227,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

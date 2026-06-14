@@ -4,6 +4,7 @@ export {
   handleSync,
   handleListEmails,
   handleGetEmail,
+  handleMarkAsRead,
   handleClassifyEmails,
   handleSendEmail,
   handleSearchEmails,
@@ -16,5 +17,6 @@ export type {
   ParsedMessage,
   GmailSyncResult,
   GmailListOptions,
+  GmailPagination,
   SendEmailInput,
 } from "./gmail.types";

@@ -47,3 +47,23 @@ export type AgentExecution = Prisma.AgentExecutionModel
  * 
  */
 export type UserPreference = Prisma.UserPreferenceModel
+/**
+ * Model CorsairIntegration
+ * 
+ */
+export type CorsairIntegration = Prisma.CorsairIntegrationModel
+/**
+ * Model CorsairAccount
+ * 
+ */
+export type CorsairAccount = Prisma.CorsairAccountModel
+/**
+ * Model CorsairEntity
+ * 
+ */
+export type CorsairEntity = Prisma.CorsairEntityModel
+/**
+ * Model CorsairEvent
+ * 
+ */
+export type CorsairEvent = Prisma.CorsairEventModel

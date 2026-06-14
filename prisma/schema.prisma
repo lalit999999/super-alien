@@ -34,6 +34,7 @@ model Email {
   sender         String
   snippet        String?
   body           String?
+  isRead         Boolean  @default(false)
   receivedAt     DateTime
   syncedAt       DateTime @default(now())
 

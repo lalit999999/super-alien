@@ -12,7 +12,7 @@ export class WebhookService {
     headers: Record<string, string | string[] | undefined>,
     body: unknown,
     tenantId: string,
-    dbUserId: string
+    clerkUserId: string
   ): Promise<WebhookProcessResult> {
     const result = await processWebhook(corsairInstance, headers, body as string, {
       tenantId,
@@ -30,7 +30,7 @@ export class WebhookService {
       return { synced: false, action: result.action };
     }
 
-    const parsed = parseGmailMessage(event.message, dbUserId);
+    const parsed = parseGmailMessage(event.message, clerkUserId);
     if (!parsed) {
       console.warn("[webhook/gmail] Failed to parse message, skipping");
       return { synced: false, action: result.action };
@@ -83,7 +83,7 @@ type RawMessage = {
   payload?: MessagePart;
 };
 
-function parseGmailMessage(message: RawMessage, userId: string) {
+function parseGmailMessage(message: RawMessage, clerkUserId: string) {
   if (!message.id) return null;
 
   const headers = message.payload?.headers ?? [];
@@ -96,7 +96,7 @@ function parseGmailMessage(message: RawMessage, userId: string) {
 
   return {
     corsairEmailId: message.id,
-    userId,
+    clerkUserId,
     threadId: message.threadId ?? null,
     subject,
     sender,
