@@ -1,21 +1,30 @@
 export { AgentService } from "./agent.service";
 export { AgentRepository } from "./agent.repository";
+export { AgentWorkflow } from "./agent.workflow";
 export { handleAgentChat } from "./agent.controller";
 export { agentTools } from "./agent.tools";
-export { executeToolCall } from "./agent.workflow";
 export {
   agentChatRequestSchema,
+  searchEmailsArgsSchema,
+  getEmailArgsSchema,
+  summarizeEmailArgsSchema,
+  classifyEmailArgsSchema,
+  generateDraftArgsSchema,
   sendEmailArgsSchema,
-  createEventArgsSchema,
   getEventsArgsSchema,
+  createEventArgsSchema,
+  updateEventArgsSchema,
+  deleteEventArgsSchema,
+  scheduleMeetingAndInviteArgsSchema,
 } from "./agent.schema";
 export {
   AGENT_MODEL,
   AGENT_MAX_TOKENS,
   AGENT_MAX_TOOL_ITERATIONS,
-  AGENT_SYSTEM_PROMPT,
+  buildAgentSystemPrompt,
   AGENT_ERRORS,
   AGENT_TOOL_NAMES,
+  AGENT_INTENTS,
 } from "./agent.constants";
 export type {
   AgentChatInput,
@@ -23,4 +32,5 @@ export type {
   ToolCall,
   ToolResult,
   AgentExecutionRecord,
+  AgentIntent,
 } from "./agent.types";

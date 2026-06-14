@@ -1,30 +1,42 @@
 import type OpenAI from "openai";
 import { agentTools } from "./agent.tools";
-import { executeToolCall } from "./agent.workflow";
+import { AgentWorkflow } from "./agent.workflow";
 import type { AgentRepository } from "./agent.repository";
 import type { AgentChatInput, AgentChatOutput, ToolResult } from "./agent.types";
 import {
   AGENT_MODEL,
   AGENT_MAX_TOKENS,
   AGENT_MAX_TOOL_ITERATIONS,
-  AGENT_SYSTEM_PROMPT,
+  buildAgentSystemPrompt,
   AGENT_ERRORS,
 } from "./agent.constants";
 
 export class AgentService {
   constructor(
     private readonly openai: OpenAI,
-    private readonly repo: AgentRepository
+    private readonly repo: AgentRepository,
+    private readonly workflow: AgentWorkflow
   ) {}
 
   async chat(input: AgentChatInput): Promise<AgentChatOutput> {
-    const execution = await this.repo.create(input.userId, input.prompt);
+    // Resolve the DB primary-key userId (FK on AgentExecution) from the Clerk userId
+    const dbUserId = await this.repo.findDbUserIdByClerkId(input.userId);
+    if (!dbUserId) {
+      return {
+        executionId: "",
+        response: AGENT_ERRORS.USER_NOT_FOUND,
+        toolsUsed: [],
+        status: "FAILED",
+      };
+    }
+
+    const execution = await this.repo.create(dbUserId, input.prompt);
     const toolsUsed: string[] = [];
     const toolResults: ToolResult[] = [];
 
     try {
       const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-        { role: "system", content: AGENT_SYSTEM_PROMPT },
+        { role: "system", content: buildAgentSystemPrompt() },
         { role: "user", content: input.prompt },
       ];
 
@@ -43,7 +55,6 @@ export class AgentService {
         });
 
         const choice = response.choices[0];
-
         if (!choice) throw new Error(AGENT_ERRORS.NO_RESPONSE);
 
         const assistantMessage = choice.message;
@@ -56,6 +67,7 @@ export class AgentService {
 
         for (const toolCall of assistantMessage.tool_calls) {
           if (toolCall.type !== "function") continue;
+
           const toolName = toolCall.function.name;
           let parsedArgs: unknown;
           try {
@@ -64,7 +76,12 @@ export class AgentService {
             parsedArgs = {};
           }
 
-          const result = await executeToolCall(input.userId, toolName, parsedArgs);
+          const result = await this.workflow.executeToolCall(
+            input.userId,
+            dbUserId,
+            toolName,
+            parsedArgs
+          );
           toolsUsed.push(toolName);
           toolResults.push(result);
 
@@ -82,12 +99,7 @@ export class AgentService {
         finalResponse = "Actions completed successfully.";
       }
 
-      const resultPayload = {
-        response: finalResponse,
-        toolsUsed,
-        toolResults,
-      };
-
+      const resultPayload = { response: finalResponse, toolsUsed, toolResults };
       await this.repo.updateSuccess(execution.id, resultPayload);
 
       return {

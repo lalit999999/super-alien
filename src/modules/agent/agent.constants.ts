@@ -1,4 +1,4 @@
-export const AGENT_MODEL = "gpt-4o-mini" as const;
+export const AGENT_MODEL = "google/gemma-4-31b-it:free" as const;
 export const AGENT_MAX_TOKENS = 2048;
 export const AGENT_MAX_TOOL_ITERATIONS = 8;
 
@@ -39,7 +39,8 @@ export const AGENT_ERRORS = {
   NO_RESPONSE: "Agent returned no response",
   TOOL_FAILED: "Tool execution failed",
   EXECUTION_FAILED: "Agent execution failed",
-  USER_NOT_FOUND: "User account not found — please ensure your account is set up",
+  USER_NOT_FOUND:
+    "User account not found — please ensure your account is set up",
 } as const;
 
 export const AGENT_TOOL_NAMES = {

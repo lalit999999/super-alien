@@ -3,6 +3,14 @@ import type { ExecutionStatus } from "@/config/generated/prisma/enums";
 import type { AgentExecutionRecord } from "./agent.types";
 
 export class AgentRepository {
+  async findDbUserIdByClerkId(clerkUserId: string): Promise<string | null> {
+    const user = await prisma.user.findUnique({
+      where: { clerkUserId },
+      select: { id: true },
+    });
+    return user?.id ?? null;
+  }
+
   async create(userId: string, prompt: string): Promise<AgentExecutionRecord> {
     return prisma.agentExecution.create({
       data: {
