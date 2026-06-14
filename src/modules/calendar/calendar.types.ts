@@ -7,9 +7,13 @@ export type CalendarEventUpsertInput = {
   userId: string;
   title: string;
   description?: string | null;
+  location?: string | null;
   startTime: Date;
   endTime: Date;
   meetingLink?: string | null;
+  status?: string | null;
+  organizer?: string | null;
+  attendees?: unknown;
 };
 
 export type CalendarListOptions = {

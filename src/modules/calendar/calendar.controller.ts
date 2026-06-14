@@ -35,21 +35,16 @@ export async function handleSync(req: NextRequest) {
 
   const dbUser = await makeAuthRepo().findByClerkUserId(clerkUserId);
   if (!dbUser) {
-    return fail(
-      "User not found in database",
-      CALENDAR_ERRORS.USER_NOT_FOUND,
-      404,
-    );
+    return fail("User not found in database", CALENDAR_ERRORS.USER_NOT_FOUND, 404);
   }
 
-  const service = makeService();
-  const result = await service.syncEventsFromCorsair(clerkUserId, dbUser.id, {
+  const result = await makeService().syncEventsFromCorsair(clerkUserId, dbUser.id, {
     maxResults: parsed.data.maxResults ?? CALENDAR_SYNC_MAX_RESULTS,
     timeMin: parsed.data.timeMin,
     timeMax: parsed.data.timeMax,
   });
 
-  return ok(result);
+  return ok({ success: true, ...result });
 }
 
 export async function handleListEvents(req: NextRequest) {
@@ -57,35 +52,27 @@ export async function handleListEvents(req: NextRequest) {
 
   const { searchParams } = new URL(req.url);
   const queryParsed = calendarListQuerySchema.safeParse({
-    limit: searchParams.get("limit"),
-    offset: searchParams.get("offset"),
+    page: searchParams.get("page") ?? undefined,
+    limit: searchParams.get("limit") ?? undefined,
   });
 
   if (!queryParsed.success) {
+    console.error("[calendar] list query parse error:", JSON.stringify(queryParsed.error.issues));
     return fail("Invalid query parameters", "VALIDATION_ERROR");
   }
 
+  const { page, limit } = queryParsed.data;
+  const offset = (page - 1) * limit;
+
   const dbUser = await makeAuthRepo().findByClerkUserId(clerkUserId);
   if (!dbUser) {
-    return fail(
-      "User not found in database",
-      CALENDAR_ERRORS.USER_NOT_FOUND,
-      404,
-    );
+    return fail("User not found in database", CALENDAR_ERRORS.USER_NOT_FOUND, 404);
   }
 
-  const service = makeService();
-  const { events, total } = await service.getUserEvents(dbUser.id, {
-    limit: queryParsed.data.limit,
-    offset: queryParsed.data.offset,
-  });
+  const { events, total } = await makeService().getUserEvents(dbUser.id, { limit, offset });
+  const totalPages = Math.ceil(total / limit);
 
-  return ok({
-    events,
-    total,
-    limit: queryParsed.data.limit,
-    offset: queryParsed.data.offset,
-  });
+  return ok({ events, pagination: { page, limit, total, totalPages } });
 }
 
 export async function handleCreateEvent(req: NextRequest) {
@@ -96,108 +83,96 @@ export async function handleCreateEvent(req: NextRequest) {
   if (!parsed.success) {
     return fail(
       parsed.error.issues.map((i) => i.message).join(", "),
-      "VALIDATION_ERROR",
+      "VALIDATION_ERROR"
     );
   }
 
   const dbUser = await makeAuthRepo().findByClerkUserId(clerkUserId);
   if (!dbUser) {
-    return fail(
-      "User not found in database",
-      CALENDAR_ERRORS.USER_NOT_FOUND,
-      404,
-    );
+    return fail("User not found in database", CALENDAR_ERRORS.USER_NOT_FOUND, 404);
   }
 
-  const service = makeService();
-  const event = await service.createCalendarEvent(
-    clerkUserId,
-    dbUser.id,
-    parsed.data,
-  );
+  const event = await makeService().createCalendarEvent(clerkUserId, dbUser.id, parsed.data);
 
-  return ok(event, 201);
+  return ok({ success: true, event }, 201);
 }
 
 export async function handleGetEvent(
   _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId: clerkUserId } = await requireAuth();
   const { id } = await params;
 
   const dbUser = await makeAuthRepo().findByClerkUserId(clerkUserId);
   if (!dbUser) {
-    return fail(
-      "User not found in database",
-      CALENDAR_ERRORS.USER_NOT_FOUND,
-      404,
-    );
+    return fail("User not found in database", CALENDAR_ERRORS.USER_NOT_FOUND, 404);
   }
 
-  const service = makeService();
-  const event = await service.getEventDetails(dbUser.id, id);
+  const event = await makeService().getEventDetails(dbUser.id, id);
   if (!event) {
     return fail("Event not found", CALENDAR_ERRORS.EVENT_NOT_FOUND, 404);
   }
 
-  return ok(event);
+  return ok({ event });
 }
 
 export async function handleUpdateEvent(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId: clerkUserId } = await requireAuth();
-  const { id: corsairEventId } = await params;
+  const { id } = await params;
 
   const body = await req.json().catch(() => ({}));
   const parsed = updateCalendarEventSchema.safeParse(body);
   if (!parsed.success) {
     return fail(
       parsed.error.issues.map((i) => i.message).join(", "),
-      "VALIDATION_ERROR",
+      "VALIDATION_ERROR"
     );
   }
 
   const dbUser = await makeAuthRepo().findByClerkUserId(clerkUserId);
   if (!dbUser) {
-    return fail(
-      "User not found in database",
-      CALENDAR_ERRORS.USER_NOT_FOUND,
-      404,
-    );
+    return fail("User not found in database", CALENDAR_ERRORS.USER_NOT_FOUND, 404);
   }
 
-  const service = makeService();
-  const event = await service.updateCalendarEvent(
+  // Resolve DB record first to get the Corsair event ID
+  const existing = await makeService().getEventDetails(dbUser.id, id);
+  if (!existing) {
+    return fail("Event not found", CALENDAR_ERRORS.EVENT_NOT_FOUND, 404);
+  }
+
+  const event = await makeService().updateCalendarEvent(
     clerkUserId,
     dbUser.id,
-    corsairEventId,
-    parsed.data,
+    existing.corsairEventId,
+    parsed.data
   );
 
-  return ok(event);
+  return ok({ success: true, event });
 }
 
 export async function handleDeleteEvent(
   _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId: clerkUserId } = await requireAuth();
-  const { id: corsairEventId } = await params;
+  const { id } = await params;
 
   const dbUser = await makeAuthRepo().findByClerkUserId(clerkUserId);
   if (!dbUser) {
-    return fail(
-      "User not found in database",
-      CALENDAR_ERRORS.USER_NOT_FOUND,
-      404,
-    );
+    return fail("User not found in database", CALENDAR_ERRORS.USER_NOT_FOUND, 404);
   }
 
-  const service = makeService();
-  await service.deleteCalendarEvent(clerkUserId, dbUser.id, corsairEventId);
+  // Resolve DB record first to get the Corsair event ID
+  const existing = await makeService().getEventDetails(dbUser.id, id);
+  if (!existing) {
+    return fail("Event not found", CALENDAR_ERRORS.EVENT_NOT_FOUND, 404);
+  }
 
-  return ok({ deleted: true });
+  await makeService().deleteCalendarEvent(clerkUserId, dbUser.id, existing.corsairEventId);
+
+  return ok({ success: true });
 }

@@ -1,14 +1,15 @@
 import { z } from "zod";
 import { CALENDAR_DEFAULT_LIST_LIMIT, CALENDAR_MAX_LIST_LIMIT } from "./calendar.constants";
 
+// Page-based pagination (matches Gmail pattern)
 export const calendarListQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
   limit: z.coerce
     .number()
     .int()
     .positive()
     .max(CALENDAR_MAX_LIST_LIMIT)
     .default(CALENDAR_DEFAULT_LIST_LIMIT),
-  offset: z.coerce.number().int().nonnegative().default(0),
 });
 
 export type CalendarListQuery = z.infer<typeof calendarListQuerySchema>;
@@ -31,6 +32,7 @@ const attendeeSchema = z.object({
   email: z.string().email(),
   displayName: z.string().optional(),
   optional: z.boolean().optional(),
+  responseStatus: z.enum(["needsAction", "declined", "tentative", "accepted"]).optional(),
 });
 
 export const createCalendarEventSchema = z.object({

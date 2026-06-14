@@ -123,23 +123,6 @@ export type BoolWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedBoolFilter<$PrismaModel>
 }
 
-export type EnumEmailPriorityFilter<$PrismaModel = never> = {
-  equals?: $Enums.EmailPriority | Prisma.EnumEmailPriorityFieldRefInput<$PrismaModel>
-  in?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
-  notIn?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumEmailPriorityFilter<$PrismaModel> | $Enums.EmailPriority
-}
-
-export type EnumEmailPriorityWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.EmailPriority | Prisma.EnumEmailPriorityFieldRefInput<$PrismaModel>
-  in?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
-  notIn?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumEmailPriorityWithAggregatesFilter<$PrismaModel> | $Enums.EmailPriority
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumEmailPriorityFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumEmailPriorityFilter<$PrismaModel>
-}
-
 export type JsonNullableFilter<$PrismaModel = never> =
 | Prisma.PatchUndefined<
     Prisma.Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -162,13 +145,6 @@ export type JsonNullableFilterBase<$PrismaModel = never> = {
   gt?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   gte?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
-}
-
-export type EnumExecutionStatusFilter<$PrismaModel = never> = {
-  equals?: $Enums.ExecutionStatus | Prisma.EnumExecutionStatusFieldRefInput<$PrismaModel>
-  in?: $Enums.ExecutionStatus[] | Prisma.ListEnumExecutionStatusFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ExecutionStatus[] | Prisma.ListEnumExecutionStatusFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumExecutionStatusFilter<$PrismaModel> | $Enums.ExecutionStatus
 }
 
 export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
@@ -196,6 +172,30 @@ export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedJsonNullableFilter<$PrismaModel>
   _max?: Prisma.NestedJsonNullableFilter<$PrismaModel>
+}
+
+export type EnumEmailPriorityFilter<$PrismaModel = never> = {
+  equals?: $Enums.EmailPriority | Prisma.EnumEmailPriorityFieldRefInput<$PrismaModel>
+  in?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEmailPriorityFilter<$PrismaModel> | $Enums.EmailPriority
+}
+
+export type EnumEmailPriorityWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.EmailPriority | Prisma.EnumEmailPriorityFieldRefInput<$PrismaModel>
+  in?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEmailPriorityWithAggregatesFilter<$PrismaModel> | $Enums.EmailPriority
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumEmailPriorityFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumEmailPriorityFilter<$PrismaModel>
+}
+
+export type EnumExecutionStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ExecutionStatus | Prisma.EnumExecutionStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ExecutionStatus[] | Prisma.ListEnumExecutionStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ExecutionStatus[] | Prisma.ListEnumExecutionStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumExecutionStatusFilter<$PrismaModel> | $Enums.ExecutionStatus
 }
 
 export type EnumExecutionStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -381,30 +381,6 @@ export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedBoolFilter<$PrismaModel>
 }
 
-export type NestedEnumEmailPriorityFilter<$PrismaModel = never> = {
-  equals?: $Enums.EmailPriority | Prisma.EnumEmailPriorityFieldRefInput<$PrismaModel>
-  in?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
-  notIn?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumEmailPriorityFilter<$PrismaModel> | $Enums.EmailPriority
-}
-
-export type NestedEnumEmailPriorityWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.EmailPriority | Prisma.EnumEmailPriorityFieldRefInput<$PrismaModel>
-  in?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
-  notIn?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumEmailPriorityWithAggregatesFilter<$PrismaModel> | $Enums.EmailPriority
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumEmailPriorityFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumEmailPriorityFilter<$PrismaModel>
-}
-
-export type NestedEnumExecutionStatusFilter<$PrismaModel = never> = {
-  equals?: $Enums.ExecutionStatus | Prisma.EnumExecutionStatusFieldRefInput<$PrismaModel>
-  in?: $Enums.ExecutionStatus[] | Prisma.ListEnumExecutionStatusFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ExecutionStatus[] | Prisma.ListEnumExecutionStatusFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumExecutionStatusFilter<$PrismaModel> | $Enums.ExecutionStatus
-}
-
 export type NestedJsonNullableFilter<$PrismaModel = never> =
 | Prisma.PatchUndefined<
     Prisma.Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -427,6 +403,30 @@ export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
   gt?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   gte?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
+}
+
+export type NestedEnumEmailPriorityFilter<$PrismaModel = never> = {
+  equals?: $Enums.EmailPriority | Prisma.EnumEmailPriorityFieldRefInput<$PrismaModel>
+  in?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEmailPriorityFilter<$PrismaModel> | $Enums.EmailPriority
+}
+
+export type NestedEnumEmailPriorityWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.EmailPriority | Prisma.EnumEmailPriorityFieldRefInput<$PrismaModel>
+  in?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EmailPriority[] | Prisma.ListEnumEmailPriorityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEmailPriorityWithAggregatesFilter<$PrismaModel> | $Enums.EmailPriority
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumEmailPriorityFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumEmailPriorityFilter<$PrismaModel>
+}
+
+export type NestedEnumExecutionStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ExecutionStatus | Prisma.EnumExecutionStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ExecutionStatus[] | Prisma.ListEnumExecutionStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ExecutionStatus[] | Prisma.ListEnumExecutionStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumExecutionStatusFilter<$PrismaModel> | $Enums.ExecutionStatus
 }
 
 export type NestedEnumExecutionStatusWithAggregatesFilter<$PrismaModel = never> = {

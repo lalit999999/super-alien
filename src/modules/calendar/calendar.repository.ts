@@ -1,4 +1,5 @@
 import type { PrismaClient } from "@/config/generated/prisma/client";
+import { Prisma } from "@/config/generated/prisma/client";
 import type { DbCalendarEvent, CalendarEventUpsertInput } from "./calendar.types";
 
 export class CalendarRepository {
@@ -12,17 +13,25 @@ export class CalendarRepository {
         userId: input.userId,
         title: input.title,
         description: input.description ?? null,
+        location: input.location ?? null,
         startTime: input.startTime,
         endTime: input.endTime,
         meetingLink: input.meetingLink ?? null,
+        status: input.status ?? null,
+        organizer: input.organizer ?? null,
+        attendees: input.attendees ?? Prisma.DbNull,
         syncedAt: new Date(),
       },
       update: {
         title: input.title,
         description: input.description ?? null,
+        location: input.location ?? null,
         startTime: input.startTime,
         endTime: input.endTime,
         meetingLink: input.meetingLink ?? null,
+        status: input.status ?? null,
+        organizer: input.organizer ?? null,
+        attendees: input.attendees ?? Prisma.DbNull,
         syncedAt: new Date(),
       },
     });
@@ -40,17 +49,25 @@ export class CalendarRepository {
           userId: input.userId,
           title: input.title,
           description: input.description ?? null,
+          location: input.location ?? null,
           startTime: input.startTime,
           endTime: input.endTime,
           meetingLink: input.meetingLink ?? null,
+          status: input.status ?? null,
+          organizer: input.organizer ?? null,
+          attendees: input.attendees ?? Prisma.DbNull,
           syncedAt: now,
         },
         update: {
           title: input.title,
           description: input.description ?? null,
+          location: input.location ?? null,
           startTime: input.startTime,
           endTime: input.endTime,
           meetingLink: input.meetingLink ?? null,
+          status: input.status ?? null,
+          organizer: input.organizer ?? null,
+          attendees: input.attendees ?? Prisma.DbNull,
           syncedAt: now,
         },
       });
@@ -79,6 +96,15 @@ export class CalendarRepository {
     });
   }
 
+  async findByCorsairEventId(
+    corsairEventId: string,
+    userId: string
+  ): Promise<DbCalendarEvent | null> {
+    return this.db.calendarEvent.findFirst({
+      where: { corsairEventId, userId },
+    });
+  }
+
   async countEventsByUser(userId: string): Promise<number> {
     return this.db.calendarEvent.count({ where: { userId } });
   }
@@ -86,6 +112,35 @@ export class CalendarRepository {
   async deleteEvent(corsairEventId: string, userId: string): Promise<void> {
     await this.db.calendarEvent.deleteMany({
       where: { corsairEventId, userId },
+    });
+  }
+
+  async deleteEventById(id: string, userId: string): Promise<void> {
+    await this.db.calendarEvent.deleteMany({
+      where: { id, userId },
+    });
+  }
+
+  async getUpcomingEvents(userId: string, limit = 10): Promise<DbCalendarEvent[]> {
+    return this.db.calendarEvent.findMany({
+      where: { userId, startTime: { gte: new Date() } },
+      orderBy: { startTime: "asc" },
+      take: limit,
+    });
+  }
+
+  async getEventsByDateRange(
+    userId: string,
+    startTime: Date,
+    endTime: Date
+  ): Promise<DbCalendarEvent[]> {
+    return this.db.calendarEvent.findMany({
+      where: {
+        userId,
+        startTime: { gte: startTime },
+        endTime: { lte: endTime },
+      },
+      orderBy: { startTime: "asc" },
     });
   }
 }

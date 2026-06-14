@@ -115,9 +115,13 @@ export const CalendarEventScalarFieldEnum = {
   userId: 'userId',
   title: 'title',
   description: 'description',
+  location: 'location',
   startTime: 'startTime',
   endTime: 'endTime',
   meetingLink: 'meetingLink',
+  status: 'status',
+  organizer: 'organizer',
+  attendees: 'attendees',
   syncedAt: 'syncedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

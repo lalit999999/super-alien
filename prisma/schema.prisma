@@ -51,9 +51,13 @@ model CalendarEvent {
   userId         String
   title          String
   description    String?
+  location       String?
   startTime      DateTime
   endTime        DateTime
   meetingLink    String?
+  status         String?
+  organizer      String?
+  attendees      Json?
   syncedAt       DateTime @default(now())
 
   user           User     @relation(fields: [userId], references: [id])

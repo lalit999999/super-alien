@@ -1228,9 +1228,13 @@ export const CalendarEventScalarFieldEnum = {
   userId: 'userId',
   title: 'title',
   description: 'description',
+  location: 'location',
   startTime: 'startTime',
   endTime: 'endTime',
   meetingLink: 'meetingLink',
+  status: 'status',
+  organizer: 'organizer',
+  attendees: 'attendees',
   syncedAt: 'syncedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1416,20 +1420,6 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'EmailPriority'
- */
-export type EnumEmailPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailPriority'>
-    
-
-
-/**
- * Reference to a field of type 'EmailPriority[]'
- */
-export type ListEnumEmailPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailPriority[]'>
-    
-
-
-/**
  * Reference to a field of type 'Json'
  */
 export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -1440,6 +1430,20 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'EmailPriority'
+ */
+export type EnumEmailPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailPriority'>
+    
+
+
+/**
+ * Reference to a field of type 'EmailPriority[]'
+ */
+export type ListEnumEmailPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailPriority[]'>
     
 
 

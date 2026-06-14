@@ -66,6 +66,10 @@ export class CalendarService {
     return this.repo.getEventById(eventId, dbUserId);
   }
 
+  async getUpcomingEvents(dbUserId: string, limit = 10): Promise<DbCalendarEvent[]> {
+    return this.repo.getUpcomingEvents(dbUserId, limit);
+  }
+
   async createCalendarEvent(
     clerkUserId: string,
     dbUserId: string,
@@ -131,10 +135,21 @@ export class CalendarService {
 
 // ─── Parser helpers ───────────────────────────────────────────────────────────
 
+type RawAttendee = {
+  email?: string;
+  displayName?: string;
+  responseStatus?: string;
+  optional?: boolean;
+};
+
 type RawEvent = {
   id?: string;
   summary?: string;
   description?: string;
+  location?: string;
+  status?: string;
+  organizer?: { email?: string; displayName?: string };
+  attendees?: RawAttendee[];
   start?: { dateTime?: string; date?: string; timeZone?: string };
   end?: { dateTime?: string; date?: string; timeZone?: string };
   hangoutLink?: string;
@@ -151,14 +166,29 @@ function parseEvent(
 
   if (!startTime || !endTime) return null;
 
+  const organizer = raw.organizer?.displayName ?? raw.organizer?.email ?? null;
+
+  const attendees =
+    raw.attendees && raw.attendees.length > 0
+      ? raw.attendees.map((a) => ({
+          email: a.email,
+          displayName: a.displayName,
+          responseStatus: a.responseStatus,
+        }))
+      : null;
+
   return {
     corsairEventId: raw.id,
     userId: dbUserId,
     title: raw.summary,
     description: raw.description ?? null,
+    location: raw.location ?? null,
     startTime,
     endTime,
     meetingLink: raw.hangoutLink ?? null,
+    status: raw.status ?? null,
+    organizer,
+    attendees,
   };
 }
 
