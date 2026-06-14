@@ -22,3 +22,30 @@ Classify this email.`;
     { role: "user" as const, content: userContent },
   ];
 }
+
+export function buildCategoryEmailMessages(input: ClassifyEmailInput) {
+  const systemContent = `You are an email categorization assistant. Analyze the email and return JSON with exactly these fields:
+- category: one of "IMPORTANT", "PROMOTION", "SOCIAL", "NEWSLETTER", "ORDER", "FINANCE", "MEETING", "OTHER"
+- confidence: float between 0 and 1 (e.g. 0.92)
+- reasoning: one sentence explaining the category choice
+
+Category guide:
+IMPORTANT — requires personal attention or action (job offers, legal, personal, urgent requests)
+PROMOTION — discounts, sales, marketing emails, special offers
+SOCIAL — social network notifications, friend requests, comments, mentions
+NEWSLETTER — subscriptions, digests, curated content newsletters
+ORDER — e-commerce order confirmations, shipping updates, delivery notifications
+FINANCE — invoices, bank statements, payments, receipts, tax documents
+MEETING — meeting invites, calendar events, scheduling requests, conference details
+OTHER — anything that does not clearly fit the above categories`;
+
+  const userContent = `From: ${input.sender}
+Subject: ${input.subject}${input.snippet ? `\nSnippet: ${input.snippet}` : ""}${input.body ? `\n\nBody:\n${input.body.slice(0, 1500)}` : ""}
+
+Categorize this email.`;
+
+  return [
+    { role: "system" as const, content: systemContent },
+    { role: "user" as const, content: userContent },
+  ];
+}

@@ -40,6 +40,8 @@ model Email {
 
   user           User                 @relation(fields: [userId], references: [id])
   classification EmailClassification?
+  summary        EmailSummary?
+  drafts         EmailDraft[]
 
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
@@ -67,16 +69,40 @@ model CalendarEvent {
 }
 
 model EmailClassification {
-  id        String        @id @default(cuid())
-  emailId   String        @unique
-  priority  EmailPriority
-  reason    String?
-  summary   String?
-  
-  // FIXED: Collapsed onto a single line
-  email     Email         @relation(fields: [emailId], references: [id])
+  id         String        @id @default(cuid())
+  emailId    String        @unique
+  priority   EmailPriority
+  reason     String?
+  summary    String?
+  category   String?
+  confidence Float?
 
-  createdAt DateTime      @default(now())
+  email      Email         @relation(fields: [emailId], references: [id])
+
+  createdAt  DateTime      @default(now())
+}
+
+model EmailSummary {
+  id            String   @id @default(cuid())
+  emailId       String   @unique
+  shortSummary  String
+  mediumSummary String
+  bulletSummary Json
+  createdAt     DateTime @default(now())
+
+  email         Email    @relation(fields: [emailId], references: [id])
+}
+
+model EmailDraft {
+  id        String   @id @default(cuid())
+  emailId   String
+  content   String
+  tone      String
+  createdAt DateTime @default(now())
+
+  email     Email    @relation(fields: [emailId], references: [id])
+
+  @@index([emailId])
 }
 
 enum EmailPriority {

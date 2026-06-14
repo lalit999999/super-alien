@@ -20,8 +20,18 @@ export type EmailClassificationModel = runtime.Types.Result.DefaultSelection<Pri
 
 export type AggregateEmailClassification = {
   _count: EmailClassificationCountAggregateOutputType | null
+  _avg: EmailClassificationAvgAggregateOutputType | null
+  _sum: EmailClassificationSumAggregateOutputType | null
   _min: EmailClassificationMinAggregateOutputType | null
   _max: EmailClassificationMaxAggregateOutputType | null
+}
+
+export type EmailClassificationAvgAggregateOutputType = {
+  confidence: number | null
+}
+
+export type EmailClassificationSumAggregateOutputType = {
+  confidence: number | null
 }
 
 export type EmailClassificationMinAggregateOutputType = {
@@ -30,6 +40,8 @@ export type EmailClassificationMinAggregateOutputType = {
   priority: $Enums.EmailPriority | null
   reason: string | null
   summary: string | null
+  category: string | null
+  confidence: number | null
   createdAt: Date | null
 }
 
@@ -39,6 +51,8 @@ export type EmailClassificationMaxAggregateOutputType = {
   priority: $Enums.EmailPriority | null
   reason: string | null
   summary: string | null
+  category: string | null
+  confidence: number | null
   createdAt: Date | null
 }
 
@@ -48,10 +62,20 @@ export type EmailClassificationCountAggregateOutputType = {
   priority: number
   reason: number
   summary: number
+  category: number
+  confidence: number
   createdAt: number
   _all: number
 }
 
+
+export type EmailClassificationAvgAggregateInputType = {
+  confidence?: true
+}
+
+export type EmailClassificationSumAggregateInputType = {
+  confidence?: true
+}
 
 export type EmailClassificationMinAggregateInputType = {
   id?: true
@@ -59,6 +83,8 @@ export type EmailClassificationMinAggregateInputType = {
   priority?: true
   reason?: true
   summary?: true
+  category?: true
+  confidence?: true
   createdAt?: true
 }
 
@@ -68,6 +94,8 @@ export type EmailClassificationMaxAggregateInputType = {
   priority?: true
   reason?: true
   summary?: true
+  category?: true
+  confidence?: true
   createdAt?: true
 }
 
@@ -77,6 +105,8 @@ export type EmailClassificationCountAggregateInputType = {
   priority?: true
   reason?: true
   summary?: true
+  category?: true
+  confidence?: true
   createdAt?: true
   _all?: true
 }
@@ -119,6 +149,18 @@ export type EmailClassificationAggregateArgs<ExtArgs extends runtime.Types.Exten
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: EmailClassificationAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: EmailClassificationSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: EmailClassificationMinAggregateInputType
@@ -149,6 +191,8 @@ export type EmailClassificationGroupByArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   _count?: EmailClassificationCountAggregateInputType | true
+  _avg?: EmailClassificationAvgAggregateInputType
+  _sum?: EmailClassificationSumAggregateInputType
   _min?: EmailClassificationMinAggregateInputType
   _max?: EmailClassificationMaxAggregateInputType
 }
@@ -159,8 +203,12 @@ export type EmailClassificationGroupByOutputType = {
   priority: $Enums.EmailPriority
   reason: string | null
   summary: string | null
+  category: string | null
+  confidence: number | null
   createdAt: Date
   _count: EmailClassificationCountAggregateOutputType | null
+  _avg: EmailClassificationAvgAggregateOutputType | null
+  _sum: EmailClassificationSumAggregateOutputType | null
   _min: EmailClassificationMinAggregateOutputType | null
   _max: EmailClassificationMaxAggregateOutputType | null
 }
@@ -189,6 +237,8 @@ export type EmailClassificationWhereInput = {
   priority?: Prisma.EnumEmailPriorityFilter<"EmailClassification"> | $Enums.EmailPriority
   reason?: Prisma.StringNullableFilter<"EmailClassification"> | string | null
   summary?: Prisma.StringNullableFilter<"EmailClassification"> | string | null
+  category?: Prisma.StringNullableFilter<"EmailClassification"> | string | null
+  confidence?: Prisma.FloatNullableFilter<"EmailClassification"> | number | null
   createdAt?: Prisma.DateTimeFilter<"EmailClassification"> | Date | string
   email?: Prisma.XOR<Prisma.EmailScalarRelationFilter, Prisma.EmailWhereInput>
 }
@@ -199,6 +249,8 @@ export type EmailClassificationOrderByWithRelationInput = {
   priority?: Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   summary?: Prisma.SortOrderInput | Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
+  confidence?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   email?: Prisma.EmailOrderByWithRelationInput
 }
@@ -212,6 +264,8 @@ export type EmailClassificationWhereUniqueInput = Prisma.AtLeast<{
   priority?: Prisma.EnumEmailPriorityFilter<"EmailClassification"> | $Enums.EmailPriority
   reason?: Prisma.StringNullableFilter<"EmailClassification"> | string | null
   summary?: Prisma.StringNullableFilter<"EmailClassification"> | string | null
+  category?: Prisma.StringNullableFilter<"EmailClassification"> | string | null
+  confidence?: Prisma.FloatNullableFilter<"EmailClassification"> | number | null
   createdAt?: Prisma.DateTimeFilter<"EmailClassification"> | Date | string
   email?: Prisma.XOR<Prisma.EmailScalarRelationFilter, Prisma.EmailWhereInput>
 }, "id" | "emailId">
@@ -222,10 +276,14 @@ export type EmailClassificationOrderByWithAggregationInput = {
   priority?: Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   summary?: Prisma.SortOrderInput | Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
+  confidence?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.EmailClassificationCountOrderByAggregateInput
+  _avg?: Prisma.EmailClassificationAvgOrderByAggregateInput
   _max?: Prisma.EmailClassificationMaxOrderByAggregateInput
   _min?: Prisma.EmailClassificationMinOrderByAggregateInput
+  _sum?: Prisma.EmailClassificationSumOrderByAggregateInput
 }
 
 export type EmailClassificationScalarWhereWithAggregatesInput = {
@@ -237,6 +295,8 @@ export type EmailClassificationScalarWhereWithAggregatesInput = {
   priority?: Prisma.EnumEmailPriorityWithAggregatesFilter<"EmailClassification"> | $Enums.EmailPriority
   reason?: Prisma.StringNullableWithAggregatesFilter<"EmailClassification"> | string | null
   summary?: Prisma.StringNullableWithAggregatesFilter<"EmailClassification"> | string | null
+  category?: Prisma.StringNullableWithAggregatesFilter<"EmailClassification"> | string | null
+  confidence?: Prisma.FloatNullableWithAggregatesFilter<"EmailClassification"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"EmailClassification"> | Date | string
 }
 
@@ -245,6 +305,8 @@ export type EmailClassificationCreateInput = {
   priority: $Enums.EmailPriority
   reason?: string | null
   summary?: string | null
+  category?: string | null
+  confidence?: number | null
   createdAt?: Date | string
   email: Prisma.EmailCreateNestedOneWithoutClassificationInput
 }
@@ -255,6 +317,8 @@ export type EmailClassificationUncheckedCreateInput = {
   priority: $Enums.EmailPriority
   reason?: string | null
   summary?: string | null
+  category?: string | null
+  confidence?: number | null
   createdAt?: Date | string
 }
 
@@ -263,6 +327,8 @@ export type EmailClassificationUpdateInput = {
   priority?: Prisma.EnumEmailPriorityFieldUpdateOperationsInput | $Enums.EmailPriority
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   email?: Prisma.EmailUpdateOneRequiredWithoutClassificationNestedInput
 }
@@ -273,6 +339,8 @@ export type EmailClassificationUncheckedUpdateInput = {
   priority?: Prisma.EnumEmailPriorityFieldUpdateOperationsInput | $Enums.EmailPriority
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -282,6 +350,8 @@ export type EmailClassificationCreateManyInput = {
   priority: $Enums.EmailPriority
   reason?: string | null
   summary?: string | null
+  category?: string | null
+  confidence?: number | null
   createdAt?: Date | string
 }
 
@@ -290,6 +360,8 @@ export type EmailClassificationUpdateManyMutationInput = {
   priority?: Prisma.EnumEmailPriorityFieldUpdateOperationsInput | $Enums.EmailPriority
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -299,6 +371,8 @@ export type EmailClassificationUncheckedUpdateManyInput = {
   priority?: Prisma.EnumEmailPriorityFieldUpdateOperationsInput | $Enums.EmailPriority
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -313,7 +387,13 @@ export type EmailClassificationCountOrderByAggregateInput = {
   priority?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   summary?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  confidence?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type EmailClassificationAvgOrderByAggregateInput = {
+  confidence?: Prisma.SortOrder
 }
 
 export type EmailClassificationMaxOrderByAggregateInput = {
@@ -322,6 +402,8 @@ export type EmailClassificationMaxOrderByAggregateInput = {
   priority?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   summary?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  confidence?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -331,7 +413,13 @@ export type EmailClassificationMinOrderByAggregateInput = {
   priority?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   summary?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  confidence?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type EmailClassificationSumOrderByAggregateInput = {
+  confidence?: Prisma.SortOrder
 }
 
 export type EmailClassificationCreateNestedOneWithoutEmailInput = {
@@ -370,11 +458,21 @@ export type EnumEmailPriorityFieldUpdateOperationsInput = {
   set?: $Enums.EmailPriority
 }
 
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type EmailClassificationCreateWithoutEmailInput = {
   id?: string
   priority: $Enums.EmailPriority
   reason?: string | null
   summary?: string | null
+  category?: string | null
+  confidence?: number | null
   createdAt?: Date | string
 }
 
@@ -383,6 +481,8 @@ export type EmailClassificationUncheckedCreateWithoutEmailInput = {
   priority: $Enums.EmailPriority
   reason?: string | null
   summary?: string | null
+  category?: string | null
+  confidence?: number | null
   createdAt?: Date | string
 }
 
@@ -407,6 +507,8 @@ export type EmailClassificationUpdateWithoutEmailInput = {
   priority?: Prisma.EnumEmailPriorityFieldUpdateOperationsInput | $Enums.EmailPriority
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -415,6 +517,8 @@ export type EmailClassificationUncheckedUpdateWithoutEmailInput = {
   priority?: Prisma.EnumEmailPriorityFieldUpdateOperationsInput | $Enums.EmailPriority
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -426,6 +530,8 @@ export type EmailClassificationSelect<ExtArgs extends runtime.Types.Extensions.I
   priority?: boolean
   reason?: boolean
   summary?: boolean
+  category?: boolean
+  confidence?: boolean
   createdAt?: boolean
   email?: boolean | Prisma.EmailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["emailClassification"]>
@@ -436,6 +542,8 @@ export type EmailClassificationSelectCreateManyAndReturn<ExtArgs extends runtime
   priority?: boolean
   reason?: boolean
   summary?: boolean
+  category?: boolean
+  confidence?: boolean
   createdAt?: boolean
   email?: boolean | Prisma.EmailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["emailClassification"]>
@@ -446,6 +554,8 @@ export type EmailClassificationSelectUpdateManyAndReturn<ExtArgs extends runtime
   priority?: boolean
   reason?: boolean
   summary?: boolean
+  category?: boolean
+  confidence?: boolean
   createdAt?: boolean
   email?: boolean | Prisma.EmailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["emailClassification"]>
@@ -456,10 +566,12 @@ export type EmailClassificationSelectScalar = {
   priority?: boolean
   reason?: boolean
   summary?: boolean
+  category?: boolean
+  confidence?: boolean
   createdAt?: boolean
 }
 
-export type EmailClassificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "emailId" | "priority" | "reason" | "summary" | "createdAt", ExtArgs["result"]["emailClassification"]>
+export type EmailClassificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "emailId" | "priority" | "reason" | "summary" | "category" | "confidence" | "createdAt", ExtArgs["result"]["emailClassification"]>
 export type EmailClassificationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   email?: boolean | Prisma.EmailDefaultArgs<ExtArgs>
 }
@@ -481,6 +593,8 @@ export type $EmailClassificationPayload<ExtArgs extends runtime.Types.Extensions
     priority: $Enums.EmailPriority
     reason: string | null
     summary: string | null
+    category: string | null
+    confidence: number | null
     createdAt: Date
   }, ExtArgs["result"]["emailClassification"]>
   composites: {}
@@ -911,6 +1025,8 @@ export interface EmailClassificationFieldRefs {
   readonly priority: Prisma.FieldRef<"EmailClassification", 'EmailPriority'>
   readonly reason: Prisma.FieldRef<"EmailClassification", 'String'>
   readonly summary: Prisma.FieldRef<"EmailClassification", 'String'>
+  readonly category: Prisma.FieldRef<"EmailClassification", 'String'>
+  readonly confidence: Prisma.FieldRef<"EmailClassification", 'Float'>
   readonly createdAt: Prisma.FieldRef<"EmailClassification", 'DateTime'>
 }
     

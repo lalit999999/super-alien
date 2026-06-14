@@ -55,6 +55,8 @@ export const ModelName = {
   Email: 'Email',
   CalendarEvent: 'CalendarEvent',
   EmailClassification: 'EmailClassification',
+  EmailSummary: 'EmailSummary',
+  EmailDraft: 'EmailDraft',
   AgentExecution: 'AgentExecution',
   UserPreference: 'UserPreference',
   CorsairIntegration: 'CorsairIntegration',
@@ -137,10 +139,35 @@ export const EmailClassificationScalarFieldEnum = {
   priority: 'priority',
   reason: 'reason',
   summary: 'summary',
+  category: 'category',
+  confidence: 'confidence',
   createdAt: 'createdAt'
 } as const
 
 export type EmailClassificationScalarFieldEnum = (typeof EmailClassificationScalarFieldEnum)[keyof typeof EmailClassificationScalarFieldEnum]
+
+
+export const EmailSummaryScalarFieldEnum = {
+  id: 'id',
+  emailId: 'emailId',
+  shortSummary: 'shortSummary',
+  mediumSummary: 'mediumSummary',
+  bulletSummary: 'bulletSummary',
+  createdAt: 'createdAt'
+} as const
+
+export type EmailSummaryScalarFieldEnum = (typeof EmailSummaryScalarFieldEnum)[keyof typeof EmailSummaryScalarFieldEnum]
+
+
+export const EmailDraftScalarFieldEnum = {
+  id: 'id',
+  emailId: 'emailId',
+  content: 'content',
+  tone: 'tone',
+  createdAt: 'createdAt'
+} as const
+
+export type EmailDraftScalarFieldEnum = (typeof EmailDraftScalarFieldEnum)[keyof typeof EmailDraftScalarFieldEnum]
 
 
 export const AgentExecutionScalarFieldEnum = {

@@ -38,6 +38,16 @@ export type CalendarEvent = Prisma.CalendarEventModel
  */
 export type EmailClassification = Prisma.EmailClassificationModel
 /**
+ * Model EmailSummary
+ * 
+ */
+export type EmailSummary = Prisma.EmailSummaryModel
+/**
+ * Model EmailDraft
+ * 
+ */
+export type EmailDraft = Prisma.EmailDraftModel
+/**
  * Model AgentExecution
  * 
  */

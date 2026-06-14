@@ -5,7 +5,14 @@ import { prisma } from "@/lib/prisma";
 import { AiRepository } from "./ai.repository";
 import { AiService } from "./ai.service";
 import { openai } from "./ai.provider";
-import { generateDraftRequestSchema } from "./ai.schema";
+import {
+  generateDraftRequestSchema,
+  classifyEmailRequestSchema,
+  summarizeEmailRequestSchema,
+  draftFromEmailRequestSchema,
+  batchClassifyRequestSchema,
+} from "./ai.schema";
+import { AI_ERRORS } from "./ai.constants";
 
 function makeService(): AiService {
   return new AiService(openai, new AiRepository(prisma));
@@ -24,4 +31,93 @@ export async function handleGenerateDraft(req: NextRequest) {
   const draft = await service.generateDraft(parsed.data);
 
   return ok(draft);
+}
+
+export async function handleClassify(req: NextRequest) {
+  const { userId } = await requireAuth();
+
+  const body = await req.json().catch(() => ({}));
+  const parsed = classifyEmailRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return fail("Invalid request body", "VALIDATION_ERROR");
+  }
+
+  const service = makeService();
+
+  try {
+    const result = await service.classifyEmail(parsed.data.emailId, userId);
+    return ok({ category: result.category, confidence: result.confidence, reasoning: result.reasoning });
+  } catch (err) {
+    if (err instanceof Error && err.message === AI_ERRORS.EMAIL_NOT_FOUND) {
+      return fail("Email not found", "NOT_FOUND", 404);
+    }
+    return fail("Classification failed", "AI_ERROR", 500);
+  }
+}
+
+export async function handleSummarize(req: NextRequest) {
+  const { userId } = await requireAuth();
+
+  const body = await req.json().catch(() => ({}));
+  const parsed = summarizeEmailRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return fail("Invalid request body", "VALIDATION_ERROR");
+  }
+
+  const service = makeService();
+
+  try {
+    const result = await service.summarizeEmailById(parsed.data.emailId, userId);
+    return ok({
+      shortSummary: result.shortSummary,
+      mediumSummary: result.mediumSummary,
+      bulletSummary: result.bulletSummary,
+    });
+  } catch (err) {
+    if (err instanceof Error && err.message === AI_ERRORS.EMAIL_NOT_FOUND) {
+      return fail("Email not found", "NOT_FOUND", 404);
+    }
+    return fail("Summarization failed", "AI_ERROR", 500);
+  }
+}
+
+export async function handleDraftFromEmail(req: NextRequest) {
+  const { userId } = await requireAuth();
+
+  const body = await req.json().catch(() => ({}));
+  const parsed = draftFromEmailRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return fail("Invalid request body", "VALIDATION_ERROR");
+  }
+
+  const service = makeService();
+
+  try {
+    const result = await service.generateDraftFromEmail(
+      parsed.data.emailId,
+      parsed.data.tone,
+      userId
+    );
+    return ok({ draft: result.draft });
+  } catch (err) {
+    if (err instanceof Error && err.message === AI_ERRORS.EMAIL_NOT_FOUND) {
+      return fail("Email not found", "NOT_FOUND", 404);
+    }
+    return fail("Draft generation failed", "AI_ERROR", 500);
+  }
+}
+
+export async function handleBatchClassify(req: NextRequest) {
+  const { userId } = await requireAuth();
+
+  const body = await req.json().catch(() => ({}));
+  const parsed = batchClassifyRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return fail("Invalid request body — emailIds array required (max 50)", "VALIDATION_ERROR");
+  }
+
+  const service = makeService();
+  const results = await service.batchClassify(parsed.data.emailIds, userId);
+
+  return ok({ results, total: results.length });
 }
