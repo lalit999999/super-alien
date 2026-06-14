@@ -109,4 +109,21 @@ export class GmailRepository {
       take: limit,
     });
   }
+
+  async deleteEmailByCorsairId(corsairEmailId: string, clerkUserId: string): Promise<void> {
+    await this.db.email.deleteMany({
+      where: { corsairEmailId, user: { clerkUserId } },
+    });
+  }
+
+  async updateReadStatusByCorsairId(
+    corsairEmailId: string,
+    clerkUserId: string,
+    isRead: boolean
+  ): Promise<void> {
+    await this.db.email.updateMany({
+      where: { corsairEmailId, user: { clerkUserId } },
+      data: { isRead },
+    });
+  }
 }

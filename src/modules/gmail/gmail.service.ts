@@ -97,6 +97,26 @@ export class GmailService {
     return corsairSearchEmails(clerkUserId, query, maxResults);
   }
 
+  async storeRawMessage(
+    message: {
+      id?: string;
+      threadId?: string;
+      snippet?: string;
+      internalDate?: string | Date | null;
+      labelIds?: string[];
+      payload?: CorsairMessagePart;
+    },
+    clerkUserId: string
+  ): Promise<DbEmail | null> {
+    const parsed = parseMessage(message);
+    if (!parsed) return null;
+    return this.repo.upsertEmail({ ...parsed, clerkUserId });
+  }
+
+  async deleteEmailByCorsairId(corsairEmailId: string, clerkUserId: string): Promise<void> {
+    return this.repo.deleteEmailByCorsairId(corsairEmailId, clerkUserId);
+  }
+
   async classifyEmailsForUser(
     clerkUserId: string,
     limit = 10

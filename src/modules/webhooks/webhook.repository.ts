@@ -1,6 +1,5 @@
 import type { PrismaClient } from "@/config/generated/prisma/client";
-import type { GmailUpsertInput, DbEmail } from "@/modules/gmail";
-import type { CalendarEventUpsertInput, DbCalendarEvent } from "@/modules/calendar";
+import type { WebhookLogEntry } from "./webhook.types";
 
 export class WebhookRepository {
   constructor(private readonly db: PrismaClient) {}
@@ -9,59 +8,28 @@ export class WebhookRepository {
     return this.db.user.findUnique({ where: { clerkUserId } });
   }
 
-  async upsertEmail(input: GmailUpsertInput): Promise<DbEmail> {
-    const now = new Date();
-    return this.db.email.upsert({
-      where: { corsairEmailId: input.corsairEmailId },
-      create: {
-        corsairEmailId: input.corsairEmailId,
-        user: { connect: { clerkUserId: input.clerkUserId } },
-        threadId: input.threadId ?? null,
-        subject: input.subject,
-        sender: input.sender,
-        snippet: input.snippet ?? null,
-        body: input.body ?? null,
-        isRead: input.isRead ?? false,
-        receivedAt: input.receivedAt,
-        syncedAt: now,
-      },
-      update: {
-        threadId: input.threadId ?? null,
-        subject: input.subject,
-        sender: input.sender,
-        snippet: input.snippet ?? null,
-        body: input.body ?? null,
-        isRead: input.isRead ?? false,
-        receivedAt: input.receivedAt,
-        syncedAt: now,
-      },
-    });
+  async createLog(entry: WebhookLogEntry): Promise<void> {
+    try {
+      await this.db.webhookLog.create({
+        data: {
+          provider: entry.provider,
+          eventType: entry.eventType,
+          entityId: entry.entityId ?? null,
+          tenantId: entry.tenantId,
+          status: entry.status,
+          error: entry.error ?? null,
+        },
+      });
+    } catch (err) {
+      console.error("[webhook/log] Failed to write log:", err);
+    }
   }
 
-  async upsertCalendarEvent(
-    input: CalendarEventUpsertInput
-  ): Promise<DbCalendarEvent> {
-    const now = new Date();
-    return this.db.calendarEvent.upsert({
-      where: { corsairEventId: input.corsairEventId },
-      create: {
-        corsairEventId: input.corsairEventId,
-        userId: input.userId,
-        title: input.title,
-        description: input.description ?? null,
-        startTime: input.startTime,
-        endTime: input.endTime,
-        meetingLink: input.meetingLink ?? null,
-        syncedAt: now,
-      },
-      update: {
-        title: input.title,
-        description: input.description ?? null,
-        startTime: input.startTime,
-        endTime: input.endTime,
-        meetingLink: input.meetingLink ?? null,
-        syncedAt: now,
-      },
+  async getRecentLogs(tenantId: string, limit = 20) {
+    return this.db.webhookLog.findMany({
+      where: { tenantId },
+      orderBy: { processedAt: "desc" },
+      take: limit,
     });
   }
 }

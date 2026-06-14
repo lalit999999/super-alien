@@ -131,6 +131,19 @@ export class CalendarService {
     await corsairDeleteEvent(clerkUserId, { id: corsairEventId });
     await this.repo.deleteEvent(corsairEventId, dbUserId);
   }
+
+  async storeRawCalendarEvent(
+    raw: RawEvent,
+    dbUserId: string
+  ): Promise<DbCalendarEvent | null> {
+    const parsed = parseEvent(raw, dbUserId);
+    if (!parsed) return null;
+    return this.repo.upsertEvent(parsed);
+  }
+
+  async deleteCalendarEventFromDB(corsairEventId: string, dbUserId: string): Promise<void> {
+    await this.repo.deleteEvent(corsairEventId, dbUserId);
+  }
 }
 
 // ─── Parser helpers ───────────────────────────────────────────────────────────

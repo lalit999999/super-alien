@@ -5,7 +5,7 @@
  *
  * IMPORTANT: This route bypasses Corsair's processWebhook() signature verification
  * because test environments do not have valid Corsair webhook signatures.
- * It directly exercises WebhookRepository.upsertEmail() to verify the DB layer.
+ * It directly exercises GmailRepository.upsertEmail() to verify the DB layer.
  * To test real Corsair webhook delivery, register your tunnel URL in the Corsair dashboard.
  *
  * Body (optional — defaults to mock data):
@@ -39,6 +39,7 @@ import { type NextRequest } from "next/server";
 import { ok, fail } from "@/lib/response";
 import { prisma } from "@/lib/prisma";
 import { WebhookRepository } from "@/modules/webhooks/webhook.repository";
+import { GmailRepository } from "@/modules/gmail";
 import { z } from "zod";
 
 const querySchema = z.object({
@@ -62,8 +63,8 @@ export async function POST(req: NextRequest) {
       return fail("tenantId query param required", "TENANT_MISSING", 400);
     }
 
-    const repo = new WebhookRepository(prisma);
-    const user = await repo.findUserByClerkId(queryParsed.data.tenantId);
+    const webhookRepo = new WebhookRepository(prisma);
+    const user = await webhookRepo.findUserByClerkId(queryParsed.data.tenantId);
     if (!user) {
       return fail("User not found for tenantId", "USER_NOT_FOUND", 404);
     }
@@ -74,7 +75,8 @@ export async function POST(req: NextRequest) {
       return fail(parsed.error.issues.map((i) => i.message).join(", "), "VALIDATION_ERROR", 400);
     }
 
-    const saved = await repo.upsertEmail({
+    const gmailRepo = new GmailRepository(prisma);
+    const saved = await gmailRepo.upsertEmail({
       corsairEmailId: parsed.data.corsairEmailId,
       clerkUserId: queryParsed.data.tenantId,
       threadId: parsed.data.threadId ?? null,

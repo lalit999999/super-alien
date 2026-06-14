@@ -67,3 +67,8 @@ export type CorsairEntity = Prisma.CorsairEntityModel
  * 
  */
 export type CorsairEvent = Prisma.CorsairEventModel
+/**
+ * Model WebhookLog
+ * 
+ */
+export type WebhookLog = Prisma.WebhookLogModel

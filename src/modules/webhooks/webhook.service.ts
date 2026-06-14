@@ -1,12 +1,22 @@
 import { processWebhook } from "corsair";
 import { corsairInstance } from "@/modules/corsair";
-import type { MessagePart } from "@corsair-dev/gmail";
+import type { GmailService } from "@/modules/gmail";
+import type { CalendarService } from "@/modules/calendar";
 import type { WebhookRepository } from "./webhook.repository";
 import type { GmailWebhookEvent, CalendarWebhookEvent, WebhookProcessResult } from "./webhook.types";
-import { WEBHOOK_PLUGINS } from "./webhook.constants";
+import {
+  WEBHOOK_PLUGINS,
+  GMAIL_EVENT_TYPES,
+  CALENDAR_EVENT_TYPES,
+  WEBHOOK_STATUS,
+} from "./webhook.constants";
 
 export class WebhookService {
-  constructor(private readonly repo: WebhookRepository) {}
+  constructor(
+    private readonly repo: WebhookRepository,
+    private readonly gmailService: GmailService,
+    private readonly calendarService: CalendarService
+  ) {}
 
   async processGmailWebhook(
     headers: Record<string, string | string[] | undefined>,
@@ -14,30 +24,49 @@ export class WebhookService {
     tenantId: string,
     clerkUserId: string
   ): Promise<WebhookProcessResult> {
-    const result = await processWebhook(corsairInstance, headers, body as string, {
-      tenantId,
-    });
+    const result = await processWebhook(corsairInstance, headers, body as string, { tenantId });
 
     if (result.plugin !== WEBHOOK_PLUGINS.GMAIL || !result.response?.data) {
-      console.log("[webhook/gmail] No matching handler, skipping");
+      console.log("[webhook/gmail] No matching handler, skipping", { action: result.action });
       return { synced: false, action: result.action };
     }
 
     const event = result.response.data as GmailWebhookEvent;
-    console.log(`[webhook/gmail] Processing action=${result.action} type=${event.type}`);
+    const gmailEventType = event.type;
+    console.log(JSON.stringify({ provider: "gmail", eventType: gmailEventType, status: "received" }));
 
-    if (event.type === "messageDeleted") {
+    try {
+      if (
+        event.type === GMAIL_EVENT_TYPES.MESSAGE_RECEIVED ||
+        event.type === GMAIL_EVENT_TYPES.MESSAGE_LABEL_CHANGED
+      ) {
+        const email = await this.gmailService.storeRawMessage(event.message, clerkUserId);
+        if (!email) {
+          await this.repo.createLog({ provider: "gmail", eventType: gmailEventType, tenantId, status: WEBHOOK_STATUS.SKIPPED });
+          return { synced: false, action: result.action };
+        }
+        await this.repo.createLog({ provider: "gmail", eventType: gmailEventType, entityId: email.id, tenantId, status: WEBHOOK_STATUS.PROCESSED });
+        console.log(JSON.stringify({ provider: "gmail", eventType: gmailEventType, status: "processed", entityId: email.id }));
+        return { synced: true, action: result.action, entityId: email.id };
+      }
+
+      if (event.type === GMAIL_EVENT_TYPES.MESSAGE_DELETED) {
+        if (event.message.id) {
+          await this.gmailService.deleteEmailByCorsairId(event.message.id, clerkUserId);
+        }
+        await this.repo.createLog({ provider: "gmail", eventType: gmailEventType, tenantId, status: WEBHOOK_STATUS.PROCESSED });
+        console.log(JSON.stringify({ provider: "gmail", eventType: gmailEventType, status: "processed" }));
+        return { synced: true, action: result.action };
+      }
+
+      await this.repo.createLog({ provider: "gmail", eventType: gmailEventType, tenantId, status: WEBHOOK_STATUS.SKIPPED });
       return { synced: false, action: result.action };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      console.error("[webhook/gmail] Processing error:", err);
+      await this.repo.createLog({ provider: "gmail", eventType: gmailEventType, tenantId, status: WEBHOOK_STATUS.FAILED, error });
+      throw err;
     }
-
-    const parsed = parseGmailMessage(event.message, clerkUserId);
-    if (!parsed) {
-      console.warn("[webhook/gmail] Failed to parse message, skipping");
-      return { synced: false, action: result.action };
-    }
-
-    const saved = await this.repo.upsertEmail(parsed);
-    return { synced: true, action: result.action, entityId: saved.id };
   }
 
   async processCalendarWebhook(
@@ -46,125 +75,46 @@ export class WebhookService {
     tenantId: string,
     dbUserId: string
   ): Promise<WebhookProcessResult> {
-    const result = await processWebhook(corsairInstance, headers, body as string, {
-      tenantId,
-    });
+    const result = await processWebhook(corsairInstance, headers, body as string, { tenantId });
 
     if (result.plugin !== WEBHOOK_PLUGINS.GOOGLE_CALENDAR || !result.response?.data) {
-      console.log("[webhook/calendar] No matching handler, skipping");
+      console.log("[webhook/calendar] No matching handler, skipping", { action: result.action });
       return { synced: false, action: result.action };
     }
 
     const event = result.response.data as CalendarWebhookEvent;
-    console.log(`[webhook/calendar] Processing action=${result.action} type=${event.type}`);
+    const calEventType = event.type;
+    console.log(JSON.stringify({ provider: "googlecalendar", eventType: calEventType, status: "received" }));
 
-    if (event.type === "eventDeleted") {
+    try {
+      if (
+        event.type === CALENDAR_EVENT_TYPES.EVENT_CREATED ||
+        event.type === CALENDAR_EVENT_TYPES.EVENT_UPDATED
+      ) {
+        const calEvent = await this.calendarService.storeRawCalendarEvent(event.event, dbUserId);
+        if (!calEvent) {
+          await this.repo.createLog({ provider: "googlecalendar", eventType: calEventType, tenantId, status: WEBHOOK_STATUS.SKIPPED });
+          return { synced: false, action: result.action };
+        }
+        await this.repo.createLog({ provider: "googlecalendar", eventType: calEventType, entityId: calEvent.id, tenantId, status: WEBHOOK_STATUS.PROCESSED });
+        console.log(JSON.stringify({ provider: "googlecalendar", eventType: calEventType, status: "processed", entityId: calEvent.id }));
+        return { synced: true, action: result.action, entityId: calEvent.id };
+      }
+
+      if (event.type === CALENDAR_EVENT_TYPES.EVENT_DELETED) {
+        await this.calendarService.deleteCalendarEventFromDB(event.eventId, dbUserId);
+        await this.repo.createLog({ provider: "googlecalendar", eventType: calEventType, tenantId, status: WEBHOOK_STATUS.PROCESSED });
+        console.log(JSON.stringify({ provider: "googlecalendar", eventType: calEventType, status: "processed" }));
+        return { synced: true, action: result.action };
+      }
+
+      await this.repo.createLog({ provider: "googlecalendar", eventType: calEventType, tenantId, status: WEBHOOK_STATUS.SKIPPED });
       return { synced: false, action: result.action };
-    }
-
-    const parsed = parseCalendarEvent(event, dbUserId);
-    if (!parsed) {
-      console.warn("[webhook/calendar] Failed to parse event, skipping");
-      return { synced: false, action: result.action };
-    }
-
-    const saved = await this.repo.upsertCalendarEvent(parsed);
-    return { synced: true, action: result.action, entityId: saved.id };
-  }
-}
-
-// ─── Parsers ─────────────────────────────────────────────────────────────────
-
-type RawMessage = {
-  id?: string;
-  threadId?: string;
-  snippet?: string;
-  internalDate?: string;
-  payload?: MessagePart;
-};
-
-function parseGmailMessage(message: RawMessage, clerkUserId: string) {
-  if (!message.id) return null;
-
-  const headers = message.payload?.headers ?? [];
-  const subject = findHeader(headers, "Subject") ?? "(no subject)";
-  const sender = findHeader(headers, "From") ?? "unknown";
-  const receivedAt = message.internalDate
-    ? new Date(parseInt(message.internalDate, 10))
-    : new Date();
-  const body = extractTextBody(message.payload) ?? undefined;
-
-  return {
-    corsairEmailId: message.id,
-    clerkUserId,
-    threadId: message.threadId ?? null,
-    subject,
-    sender,
-    snippet: message.snippet ?? null,
-    body,
-    receivedAt,
-  };
-}
-
-function findHeader(
-  headers: Array<{ name?: string; value?: string }>,
-  name: string
-): string | undefined {
-  return headers.find((h) => h.name?.toLowerCase() === name.toLowerCase())?.value;
-}
-
-function extractTextBody(part?: MessagePart): string | null {
-  if (!part) return null;
-  if (part.mimeType === "text/plain" && part.body?.data) {
-    return Buffer.from(part.body.data, "base64url").toString("utf-8");
-  }
-  if (part.parts) {
-    for (const child of part.parts) {
-      const found = extractTextBody(child);
-      if (found) return found;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      console.error("[webhook/calendar] Processing error:", err);
+      await this.repo.createLog({ provider: "googlecalendar", eventType: calEventType, tenantId, status: WEBHOOK_STATUS.FAILED, error });
+      throw err;
     }
   }
-  return null;
-}
-
-type RawEvent = {
-  type: "eventCreated" | "eventUpdated";
-  calendarId: string;
-  event: {
-    id?: string;
-    summary?: string;
-    description?: string;
-    start?: { dateTime?: string; date?: string };
-    end?: { dateTime?: string; date?: string };
-    hangoutLink?: string;
-  };
-};
-
-function parseCalendarEvent(event: RawEvent, userId: string) {
-  const { event: raw } = event;
-  if (!raw.id || !raw.summary) return null;
-
-  const startTime = parseDateTimeField(raw.start);
-  const endTime = parseDateTimeField(raw.end);
-  if (!startTime || !endTime) return null;
-
-  return {
-    corsairEventId: raw.id,
-    userId,
-    title: raw.summary,
-    description: raw.description ?? null,
-    startTime,
-    endTime,
-    meetingLink: raw.hangoutLink ?? null,
-  };
-}
-
-function parseDateTimeField(
-  dt?: { dateTime?: string; date?: string }
-): Date | null {
-  if (!dt) return null;
-  const raw = dt.dateTime ?? dt.date;
-  if (!raw) return null;
-  const d = new Date(raw);
-  return isNaN(d.getTime()) ? null : d;
 }

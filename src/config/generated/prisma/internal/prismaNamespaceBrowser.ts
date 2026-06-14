@@ -60,7 +60,8 @@ export const ModelName = {
   CorsairIntegration: 'CorsairIntegration',
   CorsairAccount: 'CorsairAccount',
   CorsairEntity: 'CorsairEntity',
-  CorsairEvent: 'CorsairEvent'
+  CorsairEvent: 'CorsairEvent',
+  WebhookLog: 'WebhookLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -215,6 +216,20 @@ export const CorsairEventScalarFieldEnum = {
 } as const
 
 export type CorsairEventScalarFieldEnum = (typeof CorsairEventScalarFieldEnum)[keyof typeof CorsairEventScalarFieldEnum]
+
+
+export const WebhookLogScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  eventType: 'eventType',
+  entityId: 'entityId',
+  tenantId: 'tenantId',
+  status: 'status',
+  error: 'error',
+  processedAt: 'processedAt'
+} as const
+
+export type WebhookLogScalarFieldEnum = (typeof WebhookLogScalarFieldEnum)[keyof typeof WebhookLogScalarFieldEnum]
 
 
 export const SortOrder = {

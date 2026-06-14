@@ -24,3 +24,12 @@ export type WebhookProcessResult = {
   action: string | null;
   entityId?: string;
 };
+
+export type WebhookLogEntry = {
+  provider: string;
+  eventType: string;
+  entityId?: string | null;
+  tenantId: string;
+  status: string;
+  error?: string | null;
+};

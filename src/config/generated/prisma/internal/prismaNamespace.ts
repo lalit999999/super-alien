@@ -393,7 +393,8 @@ export const ModelName = {
   CorsairIntegration: 'CorsairIntegration',
   CorsairAccount: 'CorsairAccount',
   CorsairEntity: 'CorsairEntity',
-  CorsairEvent: 'CorsairEvent'
+  CorsairEvent: 'CorsairEvent',
+  WebhookLog: 'WebhookLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -409,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "email" | "calendarEvent" | "emailClassification" | "agentExecution" | "userPreference" | "corsairIntegration" | "corsairAccount" | "corsairEntity" | "corsairEvent"
+    modelProps: "user" | "email" | "calendarEvent" | "emailClassification" | "agentExecution" | "userPreference" | "corsairIntegration" | "corsairAccount" | "corsairEntity" | "corsairEvent" | "webhookLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1153,6 +1154,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    WebhookLog: {
+      payload: Prisma.$WebhookLogPayload<ExtArgs>
+      fields: Prisma.WebhookLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WebhookLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WebhookLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookLogPayload>
+        }
+        findFirst: {
+          args: Prisma.WebhookLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WebhookLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookLogPayload>
+        }
+        findMany: {
+          args: Prisma.WebhookLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookLogPayload>[]
+        }
+        create: {
+          args: Prisma.WebhookLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookLogPayload>
+        }
+        createMany: {
+          args: Prisma.WebhookLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WebhookLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookLogPayload>[]
+        }
+        delete: {
+          args: Prisma.WebhookLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookLogPayload>
+        }
+        update: {
+          args: Prisma.WebhookLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.WebhookLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WebhookLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WebhookLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.WebhookLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookLogPayload>
+        }
+        aggregate: {
+          args: Prisma.WebhookLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWebhookLog>
+        }
+        groupBy: {
+          args: Prisma.WebhookLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WebhookLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WebhookLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WebhookLogCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1328,6 +1403,20 @@ export const CorsairEventScalarFieldEnum = {
 } as const
 
 export type CorsairEventScalarFieldEnum = (typeof CorsairEventScalarFieldEnum)[keyof typeof CorsairEventScalarFieldEnum]
+
+
+export const WebhookLogScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  eventType: 'eventType',
+  entityId: 'entityId',
+  tenantId: 'tenantId',
+  status: 'status',
+  error: 'error',
+  processedAt: 'processedAt'
+} as const
+
+export type WebhookLogScalarFieldEnum = (typeof WebhookLogScalarFieldEnum)[keyof typeof WebhookLogScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1594,6 +1683,7 @@ export type GlobalOmitConfig = {
   corsairAccount?: Prisma.CorsairAccountOmit
   corsairEntity?: Prisma.CorsairEntityOmit
   corsairEvent?: Prisma.CorsairEventOmit
+  webhookLog?: Prisma.WebhookLogOmit
 }
 
 /* Types for Logging */

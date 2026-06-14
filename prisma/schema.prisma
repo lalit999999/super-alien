@@ -171,3 +171,17 @@ model CorsairEvent {
 
   @@map("corsair_events")
 }
+
+model WebhookLog {
+  id          String   @id @default(cuid())
+  provider    String
+  eventType   String
+  entityId    String?
+  tenantId    String
+  status      String
+  error       String?
+  processedAt DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([processedAt])
+}
