@@ -1,7 +1,7 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
 import { Search, Bell } from "lucide-react";
+import { UserMenu } from "@/components/layout/user-menu";
 
 export function Topbar() {
   return (
@@ -24,13 +24,7 @@ export function Topbar() {
         <button className="relative flex h-8 w-8 items-center justify-center rounded-lg text-[#544823] transition-colors hover:bg-[#EFE5D5]">
           <Bell className="h-4 w-4" />
         </button>
-        <UserButton
-          appearance={{
-            elements: {
-              avatarBox: "h-8 w-8",
-            },
-          }}
-        />
+        <UserMenu />
       </div>
     </header>
   );

@@ -1,6 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { UserButton } from "@clerk/nextjs";
 import {
   User,
   Mail,
@@ -86,8 +85,7 @@ export default async function SettingsPage() {
     user?.username ||
     "Your Account";
 
-  const primaryEmail =
-    user?.emailAddresses?.[0]?.emailAddress ?? "No email";
+  const primaryEmail = user?.emailAddresses?.[0]?.emailAddress ?? "No email";
 
   return (
     <div className="min-h-full bg-[#FFFDF8] px-6 py-8">
@@ -105,17 +103,20 @@ export default async function SettingsPage() {
           title="Account"
           description="Your profile and authentication"
         >
-          <SettingsRow
-            label="Profile"
-            description={primaryEmail}
-          >
+          <SettingsRow label="Profile" description={primaryEmail}>
             <div className="flex items-center gap-3">
               <span className="text-sm text-[#544823]">{displayName}</span>
-              <UserButton
-                appearance={{
-                  elements: { avatarBox: "h-8 w-8" },
-                }}
-              />
+              {user?.imageUrl ? (
+                <img
+                  src={user.imageUrl}
+                  alt={displayName}
+                  className="h-8 w-8 rounded-full ring-2 ring-ps-accent ring-offset-1 object-cover"
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-ps-accent ring-2 ring-ps-accent ring-offset-1 text-xs font-semibold text-white">
+                  {displayName[0]?.toUpperCase() ?? "?"}
+                </div>
+              )}
             </div>
           </SettingsRow>
 
