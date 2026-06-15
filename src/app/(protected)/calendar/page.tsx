@@ -5,6 +5,12 @@ import { RefreshCw, CalendarDays, Clock, Users, Plus, ChevronLeft, ChevronRight 
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
+type Attendee = {
+  email?: string;
+  displayName?: string;
+  responseStatus?: string;
+};
+
 type CalendarEvent = {
   id: string;
   title: string;
@@ -12,7 +18,7 @@ type CalendarEvent = {
   endTime: string;
   description: string | null;
   location: string | null;
-  attendees: string[];
+  attendees: Attendee[] | null;
 };
 
 type ApiResponse =
@@ -94,10 +100,10 @@ function EventCard({ event }: { event: CalendarEvent }) {
                 {event.location}
               </span>
             )}
-            {event.attendees.length > 0 && (
+            {(event.attendees?.length ?? 0) > 0 && (
               <span className="flex items-center gap-1">
                 <Users className="h-3.5 w-3.5" />
-                {event.attendees.length} attendee{event.attendees.length !== 1 ? "s" : ""}
+                {event.attendees!.length} attendee{event.attendees!.length !== 1 ? "s" : ""}
               </span>
             )}
           </div>
@@ -113,19 +119,22 @@ function EventCard({ event }: { event: CalendarEvent }) {
           </span>
         )}
       </div>
-      {event.attendees.length > 0 && (
+      {(event.attendees?.length ?? 0) > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {event.attendees.slice(0, 5).map((a, i) => (
-            <span
-              key={i}
-              className="rounded-full border border-[#E7D8C8] bg-[#F8F2EA] px-2 py-0.5 text-[11px] text-[#544823]"
-            >
-              {a.includes("@") ? a.split("@")[0] : a}
-            </span>
-          ))}
-          {event.attendees.length > 5 && (
+          {event.attendees!.slice(0, 5).map((a, i) => {
+            const label = a.displayName ?? (a.email?.includes("@") ? a.email.split("@")[0] : a.email) ?? "?";
+            return (
+              <span
+                key={i}
+                className="rounded-full border border-[#E7D8C8] bg-[#F8F2EA] px-2 py-0.5 text-[11px] text-[#544823]"
+              >
+                {label}
+              </span>
+            );
+          })}
+          {event.attendees!.length > 5 && (
             <span className="rounded-full border border-[#E7D8C8] bg-[#F8F2EA] px-2 py-0.5 text-[11px] text-[#8C4C1F]">
-              +{event.attendees.length - 5} more
+              +{event.attendees!.length - 5} more
             </span>
           )}
         </div>
