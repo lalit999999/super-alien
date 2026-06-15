@@ -27,7 +27,7 @@ export default async function ProtectedLayout({
     const repo = new OnboardingRepository(prisma);
     const status = await repo.findStatusByClerkUserId(userId);
 
-    if (status && !status.onboardingCompleted) {
+    if (!status || !status.onboardingCompleted) {
       redirect("/onboarding");
     }
   }

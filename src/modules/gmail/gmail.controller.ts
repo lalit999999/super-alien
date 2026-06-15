@@ -72,7 +72,7 @@ export async function handleGetEmail(
     return fail("Email not found", GMAIL_ERRORS.EMAIL_NOT_FOUND, 404);
   }
 
-  return ok(email);
+  return ok({ email });
 }
 
 export async function handleMarkAsRead(

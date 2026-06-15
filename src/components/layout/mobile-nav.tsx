@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import {
   Sheet,
   SheetContent,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 
@@ -46,6 +47,7 @@ export function MobileNav() {
         showCloseButton={false}
         className="w-[260px] border-r border-ps-border bg-ps-surface p-0 sm:max-w-[260px]"
       >
+        <SheetTitle className="sr-only">Navigation menu</SheetTitle>
         {/* Logo */}
         <div className="flex h-[57px] items-center gap-2.5 border-b border-ps-border px-5">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-ps-accent">

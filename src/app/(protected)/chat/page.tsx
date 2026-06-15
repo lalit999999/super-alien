@@ -238,8 +238,8 @@ export default function ChatPage() {
           <Bot className="h-4 w-4 text-ps-accent" />
         </div>
         <div>
-          <h1 className="text-sm font-semibold text-ps-text">AI Agent</h1>
-          <p className="text-[11px] text-ps-muted">Powered by AI · Reads your Gmail & Calendar</p>
+          <h1 className="text-sm font-semibold text-ps-text">Super Alein</h1>
+          <p className="text-[11px] text-ps-muted">Powered by Super Alein · Reads your Gmail & Calendar</p>
         </div>
       </div>
 
