@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @import '@clerk/ui/themes/shadcn.css';
 
+/* ─── Light theme (Pumpkin Spice Season) ──────────────────────────────────── */
+
 @theme {
   --color-ps-bg: #FFFDF8;
   --color-ps-surface: #F8F2EA;
@@ -12,17 +14,64 @@
   --color-ps-accent: #BE5103;
   --color-ps-accent-dark: #8C4C1F;
   --color-ps-accent-light: #FEF0E7;
+  --color-ps-card: #FFFFFF;
+  --color-ps-card-hover: #FDFAF6;
 }
+
+/* ─── Dark theme overrides ────────────────────────────────────────────────── */
+/* next-themes adds class="dark" to <html> */
+
+.dark {
+  --color-ps-bg: #111111;
+  --color-ps-surface: #181818;
+  --color-ps-surface-2: #222222;
+  --color-ps-border: #2A2A2A;
+  --color-ps-text: #F5F5F5;
+  --color-ps-secondary: #C4A882;
+  --color-ps-muted: #A1A1AA;
+  --color-ps-accent: #D97706;
+  --color-ps-accent-dark: #EA580C;
+  --color-ps-accent-light: #1C1007;
+  --color-ps-card: #1E1E1E;
+  --color-ps-card-hover: #252525;
+}
+
+/* ─── Base layer ──────────────────────────────────────────────────────────── */
 
 @layer base {
   body {
-    background-color: #FFFDF8;
-    color: #332216;
+    background-color: var(--color-ps-bg);
+    color: var(--color-ps-text);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   * {
-    border-color: #E7D8C8;
+    border-color: var(--color-ps-border);
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-ps-border);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ps-muted);
+  }
+
+  /* Hide scrollbar utility */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
