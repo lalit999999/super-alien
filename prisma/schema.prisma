@@ -16,6 +16,15 @@ model User {
   id          String   @id @default(cuid())
   clerkUserId String   @unique
   email       String   @unique
+
+  gmailConnected       Boolean   @default(false)
+  calendarConnected    Boolean   @default(false)
+  gmailConnectedAt     DateTime?
+  calendarConnectedAt  DateTime?
+  lastGmailSync        DateTime?
+  lastCalendarSync     DateTime?
+  onboardingCompleted  Boolean   @default(false)
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

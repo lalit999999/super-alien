@@ -23,6 +23,13 @@ export type DbUser = {
   id: string;
   clerkUserId: string;
   email: string;
+  gmailConnected: boolean;
+  calendarConnected: boolean;
+  gmailConnectedAt: Date | null;
+  calendarConnectedAt: Date | null;
+  lastGmailSync: Date | null;
+  lastCalendarSync: Date | null;
+  onboardingCompleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
