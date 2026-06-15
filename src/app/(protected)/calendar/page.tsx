@@ -236,7 +236,7 @@ export default function CalendarPage() {
   if (calendarConnected === false) {
     return (
       <OnboardingEmptyState
-        icon={<CalendarDays className="h-7 w-7 text-[#BE5103]" />}
+        icon={<CalendarDays className="h-7 w-7 text-ps-accent" />}
         title="Google Calendar not connected"
         description="SuperAlien requires Calendar access to show your events. Connect Calendar to continue."
         action={{ label: "Connect Calendar", href: "/onboarding" }}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import {
   RefreshCw,
   Shield,
@@ -12,6 +13,9 @@ import {
   Mail,
   CalendarDays,
   User,
+  Sun,
+  Moon,
+  Monitor,
 } from "lucide-react";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -36,14 +40,14 @@ function SettingsSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-[#E7D8C8] bg-white overflow-hidden">
-      <div className="border-b border-[#E7D8C8] px-6 py-4">
-        <h2 className="text-sm font-semibold text-[#332216]">{title}</h2>
+    <div className="rounded-2xl border border-ps-border bg-ps-card overflow-hidden">
+      <div className="border-b border-ps-border px-6 py-4">
+        <h2 className="text-sm font-semibold text-ps-text">{title}</h2>
         {description && (
-          <p className="mt-0.5 text-xs text-[#8C4C1F]">{description}</p>
+          <p className="mt-0.5 text-xs text-ps-muted">{description}</p>
         )}
       </div>
-      <div className="divide-y divide-[#E7D8C8]">{children}</div>
+      <div className="divide-y divide-ps-border">{children}</div>
     </div>
   );
 }
@@ -58,11 +62,11 @@ function SettingsRow({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 px-6 py-4">
+    <div className="flex flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <div>
-        <p className="text-sm font-medium text-[#332216]">{label}</p>
+        <p className="text-sm font-medium text-ps-text">{label}</p>
         {description && (
-          <p className="mt-0.5 text-xs text-[#8C4C1F]">{description}</p>
+          <p className="mt-0.5 text-xs text-ps-muted">{description}</p>
         )}
       </div>
       {children && <div className="shrink-0">{children}</div>}
@@ -75,8 +79,8 @@ function StatusBadge({ connected }: { connected: boolean }) {
     <span
       className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border ${
         connected
-          ? "bg-emerald-50 text-emerald-600 border-emerald-200"
-          : "bg-[#F8F2EA] text-[#8C4C1F] border-[#E7D8C8]"
+          ? "bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800"
+          : "bg-ps-surface text-ps-muted border-ps-border"
       }`}
     >
       {connected ? (
@@ -86,6 +90,52 @@ function StatusBadge({ connected }: { connected: boolean }) {
       )}
       {connected ? "Connected" : "Not connected"}
     </span>
+  );
+}
+
+// ─── Appearance section ────────────────────────────────────────────────────────
+
+function AppearanceSection() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  const options = [
+    { value: "light", label: "Light", icon: Sun },
+    { value: "dark", label: "Dark", icon: Moon },
+    { value: "system", label: "System", icon: Monitor },
+  ] as const;
+
+  return (
+    <SettingsSection title="Appearance" description="Choose your preferred color theme">
+      <div className="px-6 py-5">
+        <div className="grid grid-cols-3 gap-3">
+          {options.map(({ value, label, icon: Icon }) => {
+            const active = mounted && theme === value;
+            return (
+              <button
+                key={value}
+                onClick={() => setTheme(value)}
+                className={`flex flex-col items-center gap-2 rounded-xl border p-4 text-sm font-medium transition-colors ${
+                  active
+                    ? "border-ps-accent bg-ps-accent-light text-ps-accent"
+                    : "border-ps-border bg-ps-bg text-ps-secondary hover:border-ps-accent/40 hover:bg-ps-surface"
+                }`}
+              >
+                <Icon className="h-5 w-5" />
+                {label}
+              </button>
+            );
+          })}
+        </div>
+        {mounted && (
+          <p className="mt-3 text-xs text-ps-muted">
+            Current theme: <span className="font-medium capitalize">{theme}</span>
+          </p>
+        )}
+      </div>
+    </SettingsSection>
   );
 }
 
@@ -125,19 +175,19 @@ function DisconnectDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-[#E7D8C8] bg-white p-6 shadow-xl">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 border border-red-200">
+      <div className="w-full max-w-sm rounded-2xl border border-ps-border bg-ps-card p-6 shadow-xl">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800">
           <Trash2 className="h-5 w-5 text-red-500" />
         </div>
-        <h3 className="text-sm font-semibold text-[#332216]">Disconnect {label}?</h3>
-        <p className="mt-2 text-xs text-[#544823]">
+        <h3 className="text-sm font-semibold text-ps-text">Disconnect {label}?</h3>
+        <p className="mt-2 text-xs text-ps-secondary">
           This will remove all synced data and disconnect the integration. You will need to reconnect and sync again.
         </p>
         <div className="mt-5 flex gap-3">
           <button
             onClick={onCancel}
             disabled={loading}
-            className="flex-1 rounded-xl border border-[#E7D8C8] px-4 py-2 text-sm font-medium text-[#544823] transition-colors hover:bg-[#F8F2EA] disabled:opacity-50"
+            className="flex-1 rounded-xl border border-ps-border px-4 py-2 text-sm font-medium text-ps-secondary transition-colors hover:bg-ps-surface disabled:opacity-50"
           >
             Cancel
           </button>
@@ -243,10 +293,10 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-full bg-[#FFFDF8] px-6 py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-[#332216]">Settings</h1>
-        <p className="mt-1 text-sm text-[#544823]">
+    <div className="min-h-full bg-ps-bg px-4 py-6 sm:px-6 sm:py-8">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-xl font-semibold text-ps-text sm:text-2xl">Settings</h1>
+        <p className="mt-1 text-sm text-ps-secondary">
           Manage your account and integrations
         </p>
       </div>
@@ -256,8 +306,8 @@ export default function SettingsPage() {
         <div
           className={`mb-6 flex items-center gap-3 rounded-xl border px-4 py-3 text-sm ${
             toast.type === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-              : "border-red-200 bg-red-50 text-red-700"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400"
+              : "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400"
           }`}
         >
           {toast.type === "success" ? (
@@ -270,18 +320,21 @@ export default function SettingsPage() {
       )}
 
       <div className="mx-auto max-w-2xl space-y-6">
+        {/* Appearance */}
+        <AppearanceSection />
+
         {/* Account */}
         <SettingsSection title="Account" description="Your profile and authentication">
           <SettingsRow label="Profile" description="Managed via Clerk authentication">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FEF0E7] border border-[#E7D8C8]">
-              <User className="h-4 w-4 text-[#BE5103]" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-ps-accent-light border border-ps-border">
+              <User className="h-4 w-4 text-ps-accent" />
             </div>
           </SettingsRow>
           <SettingsRow
             label="Authentication"
             description="Managed by Clerk — secure and passwordless"
           >
-            <span className="flex items-center gap-1.5 rounded-full bg-[#FEF0E7] px-3 py-1 text-xs font-medium text-[#BE5103] border border-[#E7D8C8]">
+            <span className="flex items-center gap-1.5 rounded-full bg-ps-accent-light px-3 py-1 text-xs font-medium text-ps-accent border border-ps-border">
               <Shield className="h-3 w-3" />
               Clerk
             </span>
@@ -294,41 +347,41 @@ export default function SettingsPage() {
           description="Connected services and sync status"
         >
           {loadingStatus ? (
-            <div className="flex items-center justify-center gap-2 px-6 py-8 text-xs text-[#8C4C1F]">
+            <div className="flex items-center justify-center gap-2 px-6 py-8 text-xs text-ps-muted">
               <Loader2 className="h-4 w-4 animate-spin" />
               Loading integration status…
             </div>
           ) : (
             <>
               {/* Gmail row */}
-              <div className="px-6 py-4">
-                <div className="flex items-start justify-between gap-4">
+              <div className="px-4 py-4 sm:px-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F8F2EA] border border-[#E7D8C8]">
-                      <Mail className="h-4 w-4 text-[#BE5103]" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-ps-surface border border-ps-border">
+                      <Mail className="h-4 w-4 text-ps-accent" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-[#332216]">Gmail</p>
-                      <p className="text-xs text-[#8C4C1F]">
+                      <p className="text-sm font-medium text-ps-text">Gmail</p>
+                      <p className="text-xs text-ps-muted">
                         Last sync: {formatSync(status?.lastGmailSync ?? null)}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <StatusBadge connected={status?.gmailConnected ?? false} />
                     {status?.gmailConnected ? (
                       <>
                         <button
                           onClick={() => handleSync("gmail")}
                           disabled={syncingGmail}
-                          className="flex items-center gap-1.5 rounded-lg border border-[#E7D8C8] bg-[#F8F2EA] px-3 py-1.5 text-xs font-medium text-[#544823] transition-colors hover:bg-[#EFE5D5] disabled:opacity-50"
+                          className="flex items-center gap-1.5 rounded-lg border border-ps-border bg-ps-surface px-3 py-1.5 text-xs font-medium text-ps-secondary transition-colors hover:bg-ps-surface-2 disabled:opacity-50"
                         >
                           <RefreshCw className={`h-3 w-3 ${syncingGmail ? "animate-spin" : ""}`} />
                           {syncingGmail ? "Syncing…" : "Sync"}
                         </button>
                         <button
                           onClick={() => openDisconnect("gmail")}
-                          className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100"
+                          className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400"
                         >
                           Disconnect
                         </button>
@@ -336,7 +389,7 @@ export default function SettingsPage() {
                     ) : (
                       <a
                         href="/api/corsair/connect?plugin=gmail"
-                        className="rounded-lg bg-[#BE5103] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#8C4C1F]"
+                        className="rounded-lg bg-ps-accent px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-ps-accent-dark"
                       >
                         Connect
                       </a>
@@ -346,34 +399,34 @@ export default function SettingsPage() {
               </div>
 
               {/* Calendar row */}
-              <div className="px-6 py-4">
-                <div className="flex items-start justify-between gap-4">
+              <div className="px-4 py-4 sm:px-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F8F2EA] border border-[#E7D8C8]">
-                      <CalendarDays className="h-4 w-4 text-[#BE5103]" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-ps-surface border border-ps-border">
+                      <CalendarDays className="h-4 w-4 text-ps-accent" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-[#332216]">Google Calendar</p>
-                      <p className="text-xs text-[#8C4C1F]">
+                      <p className="text-sm font-medium text-ps-text">Google Calendar</p>
+                      <p className="text-xs text-ps-muted">
                         Last sync: {formatSync(status?.lastCalendarSync ?? null)}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <StatusBadge connected={status?.calendarConnected ?? false} />
                     {status?.calendarConnected ? (
                       <>
                         <button
                           onClick={() => handleSync("calendar")}
                           disabled={syncingCalendar}
-                          className="flex items-center gap-1.5 rounded-lg border border-[#E7D8C8] bg-[#F8F2EA] px-3 py-1.5 text-xs font-medium text-[#544823] transition-colors hover:bg-[#EFE5D5] disabled:opacity-50"
+                          className="flex items-center gap-1.5 rounded-lg border border-ps-border bg-ps-surface px-3 py-1.5 text-xs font-medium text-ps-secondary transition-colors hover:bg-ps-surface-2 disabled:opacity-50"
                         >
                           <RefreshCw className={`h-3 w-3 ${syncingCalendar ? "animate-spin" : ""}`} />
                           {syncingCalendar ? "Syncing…" : "Sync"}
                         </button>
                         <button
                           onClick={() => openDisconnect("calendar")}
-                          className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100"
+                          className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400"
                         >
                           Disconnect
                         </button>
@@ -381,7 +434,7 @@ export default function SettingsPage() {
                     ) : (
                       <a
                         href="/api/corsair/connect?plugin=googlecalendar"
-                        className="rounded-lg bg-[#BE5103] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#8C4C1F]"
+                        className="rounded-lg bg-ps-accent px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-ps-accent-dark"
                       >
                         Connect
                       </a>
@@ -404,7 +457,7 @@ export default function SettingsPage() {
           >
             <label className="relative inline-flex cursor-pointer items-center">
               <input type="checkbox" className="peer sr-only" defaultChecked />
-              <div className="h-5 w-9 rounded-full border border-[#E7D8C8] bg-[#EFE5D5] peer-checked:bg-[#BE5103] peer-checked:border-[#BE5103] transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4" />
+              <div className="h-5 w-9 rounded-full border border-ps-border bg-ps-surface-2 peer-checked:bg-ps-accent peer-checked:border-ps-accent transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4" />
             </label>
           </SettingsRow>
           <SettingsRow
@@ -413,7 +466,7 @@ export default function SettingsPage() {
           >
             <label className="relative inline-flex cursor-pointer items-center">
               <input type="checkbox" className="peer sr-only" defaultChecked />
-              <div className="h-5 w-9 rounded-full border border-[#E7D8C8] bg-[#EFE5D5] peer-checked:bg-[#BE5103] peer-checked:border-[#BE5103] transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4" />
+              <div className="h-5 w-9 rounded-full border border-ps-border bg-ps-surface-2 peer-checked:bg-ps-accent peer-checked:border-ps-accent transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4" />
             </label>
           </SettingsRow>
           <SettingsRow
@@ -422,7 +475,7 @@ export default function SettingsPage() {
           >
             <label className="relative inline-flex cursor-pointer items-center">
               <input type="checkbox" className="peer sr-only" />
-              <div className="h-5 w-9 rounded-full border border-[#E7D8C8] bg-[#EFE5D5] peer-checked:bg-[#BE5103] peer-checked:border-[#BE5103] transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4" />
+              <div className="h-5 w-9 rounded-full border border-ps-border bg-ps-surface-2 peer-checked:bg-ps-accent peer-checked:border-ps-accent transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4" />
             </label>
           </SettingsRow>
         </SettingsSection>
@@ -445,7 +498,7 @@ export default function SettingsPage() {
             label="AI data usage"
             description="Your data is used only to generate responses for you"
           >
-            <span className="text-xs text-[#8C4C1F]">Never shared</span>
+            <span className="text-xs text-ps-muted">Never shared</span>
           </SettingsRow>
         </SettingsSection>
 
@@ -457,7 +510,7 @@ export default function SettingsPage() {
           >
             <button
               onClick={() => openDisconnect("all")}
-              className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100"
+              className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
             >
               Disconnect all
             </button>
