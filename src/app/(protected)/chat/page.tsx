@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Loader2, Zap, AlertCircle, Wrench } from "lucide-react";
+import { Send, Bot, User, Loader2, Zap, AlertCircle, Wrench, Mail } from "lucide-react";
+import { OnboardingEmptyState } from "@/components/onboarding/empty-state";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -149,6 +150,7 @@ function EmptyState({ onPrompt }: { onPrompt: (p: string) => void }) {
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function ChatPage() {
+  const [gmailConnected, setGmailConnected] = useState<boolean | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -157,8 +159,26 @@ export default function ChatPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
+    fetch("/api/integrations")
+      .then((r) => r.json())
+      .then((j) => { if (j.success) setGmailConnected(j.data.gmailConnected); })
+      .catch(() => setGmailConnected(true));
+  }, []);
+
+  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  if (gmailConnected === false) {
+    return (
+      <OnboardingEmptyState
+        icon={<Mail className="h-7 w-7 text-[#BE5103]" />}
+        title="Gmail access required"
+        description="SuperAlien's AI agent requires Gmail access before workflows can run. Connect Gmail to continue."
+        action={{ label: "Connect Gmail", href: "/onboarding" }}
+      />
+    );
+  }
 
   async function sendMessage(text?: string) {
     const content = (text ?? input).trim();

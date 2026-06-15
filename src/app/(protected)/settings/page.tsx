@@ -1,15 +1,30 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
-  User,
-  Mail,
-  CalendarDays,
   RefreshCw,
   Shield,
-  Bell,
   CheckCircle,
   AlertCircle,
+  Loader2,
+  Trash2,
+  Mail,
+  CalendarDays,
+  User,
 } from "lucide-react";
+
+// ─── Types ─────────────────────────────────────────────────────────────────────
+
+type IntegrationStatus = {
+  gmailConnected: boolean;
+  calendarConnected: boolean;
+  lastGmailSync: string | null;
+  lastCalendarSync: string | null;
+  onboardingCompleted: boolean;
+};
+
+// ─── Shared UI primitives ──────────────────────────────────────────────────────
 
 function SettingsSection({
   title,
@@ -74,22 +89,161 @@ function StatusBadge({ connected }: { connected: boolean }) {
   );
 }
 
-export default async function SettingsPage() {
-  const { userId } = await auth();
-  if (!userId) redirect("/sign-in");
+function formatSync(iso: string | null) {
+  if (!iso) return "Never";
+  return new Date(iso).toLocaleString([], {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
-  const user = await currentUser();
+// ─── Disconnect confirmation dialog ────────────────────────────────────────────
 
-  const displayName =
-    [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
-    user?.username ||
-    "Your Account";
+function DisconnectDialog({
+  open,
+  plugin,
+  onConfirm,
+  onCancel,
+  loading,
+}: {
+  open: boolean;
+  plugin: "gmail" | "calendar" | "all";
+  onConfirm: () => void;
+  onCancel: () => void;
+  loading: boolean;
+}) {
+  if (!open) return null;
 
-  const primaryEmail = user?.emailAddresses?.[0]?.emailAddress ?? "No email";
+  const label =
+    plugin === "gmail"
+      ? "Gmail"
+      : plugin === "calendar"
+      ? "Google Calendar"
+      : "all integrations";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+      <div className="w-full max-w-sm rounded-2xl border border-[#E7D8C8] bg-white p-6 shadow-xl">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 border border-red-200">
+          <Trash2 className="h-5 w-5 text-red-500" />
+        </div>
+        <h3 className="text-sm font-semibold text-[#332216]">Disconnect {label}?</h3>
+        <p className="mt-2 text-xs text-[#544823]">
+          This will remove all synced data and disconnect the integration. You will need to reconnect and sync again.
+        </p>
+        <div className="mt-5 flex gap-3">
+          <button
+            onClick={onCancel}
+            disabled={loading}
+            className="flex-1 rounded-xl border border-[#E7D8C8] px-4 py-2 text-sm font-medium text-[#544823] transition-colors hover:bg-[#F8F2EA] disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={loading}
+            className="flex-1 rounded-xl bg-red-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-600 disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            Disconnect
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Page ──────────────────────────────────────────────────────────────────────
+
+export default function SettingsPage() {
+  const router = useRouter();
+  const [status, setStatus] = useState<IntegrationStatus | null>(null);
+  const [loadingStatus, setLoadingStatus] = useState(true);
+  const [syncingGmail, setSyncingGmail] = useState(false);
+  const [syncingCalendar, setSyncingCalendar] = useState(false);
+  const [disconnectDialog, setDisconnectDialog] = useState<{
+    open: boolean;
+    plugin: "gmail" | "calendar" | "all";
+    loading: boolean;
+  }>({ open: false, plugin: "all", loading: false });
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
+  useEffect(() => {
+    loadStatus();
+  }, []);
+
+  async function loadStatus() {
+    setLoadingStatus(true);
+    try {
+      const res = await fetch("/api/integrations");
+      const json = await res.json();
+      if (json.success) setStatus(json.data);
+    } finally {
+      setLoadingStatus(false);
+    }
+  }
+
+  function showToast(message: string, type: "success" | "error") {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3500);
+  }
+
+  async function handleSync(plugin: "gmail" | "calendar") {
+    const setter = plugin === "gmail" ? setSyncingGmail : setSyncingCalendar;
+    setter(true);
+    try {
+      const endpoint = plugin === "gmail" ? "/api/gmail/sync" : "/api/calendar/sync";
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast(`${plugin === "gmail" ? "Gmail" : "Calendar"} synced successfully.`, "success");
+        await loadStatus();
+      } else {
+        showToast(json.error ?? "Sync failed.", "error");
+      }
+    } catch {
+      showToast("Sync failed. Please try again.", "error");
+    } finally {
+      setter(false);
+    }
+  }
+
+  function openDisconnect(plugin: "gmail" | "calendar" | "all") {
+    setDisconnectDialog({ open: true, plugin, loading: false });
+  }
+
+  async function confirmDisconnect() {
+    setDisconnectDialog((d) => ({ ...d, loading: true }));
+    try {
+      const res = await fetch("/api/integrations/disconnect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plugin: disconnectDialog.plugin }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setDisconnectDialog({ open: false, plugin: "all", loading: false });
+        showToast("Integration disconnected. Redirecting to onboarding…", "success");
+        await loadStatus();
+        setTimeout(() => router.push("/onboarding"), 1500);
+      } else {
+        showToast(json.error ?? "Disconnect failed.", "error");
+        setDisconnectDialog((d) => ({ ...d, loading: false }));
+      }
+    } catch {
+      showToast("Disconnect failed. Please try again.", "error");
+      setDisconnectDialog((d) => ({ ...d, loading: false }));
+    }
+  }
 
   return (
     <div className="min-h-full bg-[#FFFDF8] px-6 py-8">
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-[#332216]">Settings</h1>
         <p className="mt-1 text-sm text-[#544823]">
@@ -97,29 +251,32 @@ export default async function SettingsPage() {
         </p>
       </div>
 
+      {/* Toast */}
+      {toast && (
+        <div
+          className={`mb-6 flex items-center gap-3 rounded-xl border px-4 py-3 text-sm ${
+            toast.type === "success"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+              : "border-red-200 bg-red-50 text-red-700"
+          }`}
+        >
+          {toast.type === "success" ? (
+            <CheckCircle className="h-4 w-4 shrink-0" />
+          ) : (
+            <AlertCircle className="h-4 w-4 shrink-0" />
+          )}
+          {toast.message}
+        </div>
+      )}
+
       <div className="mx-auto max-w-2xl space-y-6">
         {/* Account */}
-        <SettingsSection
-          title="Account"
-          description="Your profile and authentication"
-        >
-          <SettingsRow label="Profile" description={primaryEmail}>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-[#544823]">{displayName}</span>
-              {user?.imageUrl ? (
-                <img
-                  src={user.imageUrl}
-                  alt={displayName}
-                  className="h-8 w-8 rounded-full ring-2 ring-ps-accent ring-offset-1 object-cover"
-                />
-              ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-ps-accent ring-2 ring-ps-accent ring-offset-1 text-xs font-semibold text-white">
-                  {displayName[0]?.toUpperCase() ?? "?"}
-                </div>
-              )}
+        <SettingsSection title="Account" description="Your profile and authentication">
+          <SettingsRow label="Profile" description="Managed via Clerk authentication">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FEF0E7] border border-[#E7D8C8]">
+              <User className="h-4 w-4 text-[#BE5103]" />
             </div>
           </SettingsRow>
-
           <SettingsRow
             label="Authentication"
             description="Managed by Clerk — secure and passwordless"
@@ -136,31 +293,104 @@ export default async function SettingsPage() {
           title="Integrations"
           description="Connected services and sync status"
         >
-          <SettingsRow
-            label="Gmail"
-            description="Read and manage your emails via Google"
-          >
-            <div className="flex items-center gap-2">
-              <StatusBadge connected={true} />
-              <button className="flex items-center gap-1.5 rounded-lg border border-[#E7D8C8] bg-[#F8F2EA] px-3 py-1.5 text-xs font-medium text-[#544823] transition-colors hover:bg-[#EFE5D5]">
-                <RefreshCw className="h-3 w-3" />
-                Sync
-              </button>
+          {loadingStatus ? (
+            <div className="flex items-center justify-center gap-2 px-6 py-8 text-xs text-[#8C4C1F]">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Loading integration status…
             </div>
-          </SettingsRow>
+          ) : (
+            <>
+              {/* Gmail row */}
+              <div className="px-6 py-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F8F2EA] border border-[#E7D8C8]">
+                      <Mail className="h-4 w-4 text-[#BE5103]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-[#332216]">Gmail</p>
+                      <p className="text-xs text-[#8C4C1F]">
+                        Last sync: {formatSync(status?.lastGmailSync ?? null)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <StatusBadge connected={status?.gmailConnected ?? false} />
+                    {status?.gmailConnected ? (
+                      <>
+                        <button
+                          onClick={() => handleSync("gmail")}
+                          disabled={syncingGmail}
+                          className="flex items-center gap-1.5 rounded-lg border border-[#E7D8C8] bg-[#F8F2EA] px-3 py-1.5 text-xs font-medium text-[#544823] transition-colors hover:bg-[#EFE5D5] disabled:opacity-50"
+                        >
+                          <RefreshCw className={`h-3 w-3 ${syncingGmail ? "animate-spin" : ""}`} />
+                          {syncingGmail ? "Syncing…" : "Sync"}
+                        </button>
+                        <button
+                          onClick={() => openDisconnect("gmail")}
+                          className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100"
+                        >
+                          Disconnect
+                        </button>
+                      </>
+                    ) : (
+                      <a
+                        href="/api/corsair/connect?plugin=gmail"
+                        className="rounded-lg bg-[#BE5103] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#8C4C1F]"
+                      >
+                        Connect
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
 
-          <SettingsRow
-            label="Google Calendar"
-            description="Sync your events and meetings"
-          >
-            <div className="flex items-center gap-2">
-              <StatusBadge connected={true} />
-              <button className="flex items-center gap-1.5 rounded-lg border border-[#E7D8C8] bg-[#F8F2EA] px-3 py-1.5 text-xs font-medium text-[#544823] transition-colors hover:bg-[#EFE5D5]">
-                <RefreshCw className="h-3 w-3" />
-                Sync
-              </button>
-            </div>
-          </SettingsRow>
+              {/* Calendar row */}
+              <div className="px-6 py-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F8F2EA] border border-[#E7D8C8]">
+                      <CalendarDays className="h-4 w-4 text-[#BE5103]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-[#332216]">Google Calendar</p>
+                      <p className="text-xs text-[#8C4C1F]">
+                        Last sync: {formatSync(status?.lastCalendarSync ?? null)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <StatusBadge connected={status?.calendarConnected ?? false} />
+                    {status?.calendarConnected ? (
+                      <>
+                        <button
+                          onClick={() => handleSync("calendar")}
+                          disabled={syncingCalendar}
+                          className="flex items-center gap-1.5 rounded-lg border border-[#E7D8C8] bg-[#F8F2EA] px-3 py-1.5 text-xs font-medium text-[#544823] transition-colors hover:bg-[#EFE5D5] disabled:opacity-50"
+                        >
+                          <RefreshCw className={`h-3 w-3 ${syncingCalendar ? "animate-spin" : ""}`} />
+                          {syncingCalendar ? "Syncing…" : "Sync"}
+                        </button>
+                        <button
+                          onClick={() => openDisconnect("calendar")}
+                          className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100"
+                        >
+                          Disconnect
+                        </button>
+                      </>
+                    ) : (
+                      <a
+                        href="/api/corsair/connect?plugin=googlecalendar"
+                        className="rounded-lg bg-[#BE5103] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#8C4C1F]"
+                      >
+                        Connect
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </SettingsSection>
 
         {/* Notifications */}
@@ -177,7 +407,6 @@ export default async function SettingsPage() {
               <div className="h-5 w-9 rounded-full border border-[#E7D8C8] bg-[#EFE5D5] peer-checked:bg-[#BE5103] peer-checked:border-[#BE5103] transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4" />
             </label>
           </SettingsRow>
-
           <SettingsRow
             label="Meeting reminders"
             description="Get reminded before calendar events"
@@ -187,7 +416,6 @@ export default async function SettingsPage() {
               <div className="h-5 w-9 rounded-full border border-[#E7D8C8] bg-[#EFE5D5] peer-checked:bg-[#BE5103] peer-checked:border-[#BE5103] transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4" />
             </label>
           </SettingsRow>
-
           <SettingsRow
             label="Agent notifications"
             description="Notify when the AI agent completes an action"
@@ -213,7 +441,6 @@ export default async function SettingsPage() {
               Encrypted
             </span>
           </SettingsRow>
-
           <SettingsRow
             label="AI data usage"
             description="Your data is used only to generate responses for you"
@@ -222,18 +449,30 @@ export default async function SettingsPage() {
           </SettingsRow>
         </SettingsSection>
 
-        {/* Danger zone */}
+        {/* Danger Zone */}
         <SettingsSection title="Danger Zone">
           <SettingsRow
-            label="Disconnect integrations"
-            description="Removes all synced data and API connections"
+            label="Disconnect all integrations"
+            description="Removes all synced data and disconnects Gmail and Calendar"
           >
-            <button className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100">
-              Disconnect
+            <button
+              onClick={() => openDisconnect("all")}
+              className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100"
+            >
+              Disconnect all
             </button>
           </SettingsRow>
         </SettingsSection>
       </div>
+
+      {/* Disconnect confirmation dialog */}
+      <DisconnectDialog
+        open={disconnectDialog.open}
+        plugin={disconnectDialog.plugin}
+        onConfirm={confirmDisconnect}
+        onCancel={() => setDisconnectDialog((d) => ({ ...d, open: false }))}
+        loading={disconnectDialog.loading}
+      />
     </div>
   );
 }

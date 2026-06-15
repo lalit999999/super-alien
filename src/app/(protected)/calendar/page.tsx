@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { RefreshCw, CalendarDays, Clock, Users, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { RefreshCw, CalendarDays, Clock, Users, Plus } from "lucide-react";
+import { OnboardingEmptyState } from "@/components/onboarding/empty-state";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -85,11 +86,11 @@ function groupEventsByDay(events: CalendarEvent[]): Map<string, CalendarEvent[]>
 function EventCard({ event }: { event: CalendarEvent }) {
   const today = isToday(event.startTime);
   return (
-    <div className={`rounded-2xl border p-5 transition-shadow hover:shadow-sm ${today ? "border-[#BE5103]/30 bg-[#FEF0E7]" : "border-[#E7D8C8] bg-white"}`}>
+    <div className={`rounded-2xl border p-4 transition-shadow hover:shadow-sm sm:p-5 ${today ? "border-ps-accent/30 bg-ps-accent-light" : "border-ps-border bg-ps-card"}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <h3 className="font-medium text-[#332216]">{event.title}</h3>
-          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-[#8C4C1F]">
+          <h3 className="font-medium text-ps-text">{event.title}</h3>
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-ps-muted sm:gap-3">
             <span className="flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
               {formatEventTime(event.startTime, event.endTime)}
@@ -97,7 +98,7 @@ function EventCard({ event }: { event: CalendarEvent }) {
             {event.location && (
               <span className="flex items-center gap-1">
                 <CalendarDays className="h-3.5 w-3.5" />
-                {event.location}
+                <span className="truncate max-w-37.5">{event.location}</span>
               </span>
             )}
             {(event.attendees?.length ?? 0) > 0 && (
@@ -108,13 +109,13 @@ function EventCard({ event }: { event: CalendarEvent }) {
             )}
           </div>
           {event.description && (
-            <p className="mt-2 text-xs leading-relaxed text-[#544823] line-clamp-2">
+            <p className="mt-2 text-xs leading-relaxed text-ps-secondary line-clamp-2">
               {event.description}
             </p>
           )}
         </div>
         {today && (
-          <span className="shrink-0 rounded-full bg-[#BE5103] px-2.5 py-0.5 text-[11px] font-semibold text-white">
+          <span className="shrink-0 rounded-full bg-ps-accent px-2.5 py-0.5 text-[11px] font-semibold text-white">
             Today
           </span>
         )}
@@ -126,14 +127,14 @@ function EventCard({ event }: { event: CalendarEvent }) {
             return (
               <span
                 key={i}
-                className="rounded-full border border-[#E7D8C8] bg-[#F8F2EA] px-2 py-0.5 text-[11px] text-[#544823]"
+                className="rounded-full border border-ps-border bg-ps-surface px-2 py-0.5 text-[11px] text-ps-secondary"
               >
                 {label}
               </span>
             );
           })}
           {event.attendees!.length > 5 && (
-            <span className="rounded-full border border-[#E7D8C8] bg-[#F8F2EA] px-2 py-0.5 text-[11px] text-[#8C4C1F]">
+            <span className="rounded-full border border-ps-border bg-ps-surface px-2 py-0.5 text-[11px] text-ps-muted">
               +{event.attendees!.length - 5} more
             </span>
           )}
@@ -150,14 +151,14 @@ function LoadingSkeleton() {
     <div className="space-y-6">
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i}>
-          <div className="mb-3 h-4 w-24 animate-pulse rounded bg-[#E7D8C8]" />
+          <div className="mb-3 h-4 w-24 animate-pulse rounded bg-ps-border" />
           <div className="space-y-3">
             {Array.from({ length: 2 }).map((_, j) => (
-              <div key={j} className="rounded-2xl border border-[#E7D8C8] bg-white p-5">
-                <div className="h-4 w-48 animate-pulse rounded bg-[#E7D8C8]" />
+              <div key={j} className="rounded-2xl border border-ps-border bg-ps-card p-5">
+                <div className="h-4 w-48 animate-pulse rounded bg-ps-border" />
                 <div className="mt-3 flex gap-3">
-                  <div className="h-3 w-28 animate-pulse rounded bg-[#EFE5D5]" />
-                  <div className="h-3 w-20 animate-pulse rounded bg-[#EFE5D5]" />
+                  <div className="h-3 w-28 animate-pulse rounded bg-ps-surface-2" />
+                  <div className="h-3 w-20 animate-pulse rounded bg-ps-surface-2" />
                 </div>
               </div>
             ))}
@@ -174,11 +175,19 @@ const VIEWS = ["Today", "Tomorrow", "This Week", "Upcoming"] as const;
 type View = (typeof VIEWS)[number];
 
 export default function CalendarPage() {
+  const [calendarConnected, setCalendarConnected] = useState<boolean | null>(null);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<View>("Today");
+
+  useEffect(() => {
+    fetch("/api/integrations")
+      .then((r) => r.json())
+      .then((j) => { if (j.success) setCalendarConnected(j.data.calendarConnected); })
+      .catch(() => setCalendarConnected(true));
+  }, []);
 
   const fetchEvents = useCallback(async () => {
     setLoading(true);
@@ -224,13 +233,24 @@ export default function CalendarPage() {
   const grouped = groupEventsByDay(filteredEvents);
   const todayCount = events.filter((e) => isToday(e.startTime)).length;
 
+  if (calendarConnected === false) {
+    return (
+      <OnboardingEmptyState
+        icon={<CalendarDays className="h-7 w-7 text-[#BE5103]" />}
+        title="Google Calendar not connected"
+        description="SuperAlien requires Calendar access to show your events. Connect Calendar to continue."
+        action={{ label: "Connect Calendar", href: "/onboarding" }}
+      />
+    );
+  }
+
   return (
-    <div className="min-h-full bg-[#FFFDF8] px-6 py-8">
+    <div className="min-h-full bg-ps-bg px-4 py-6 sm:px-6 sm:py-8">
       {/* Header */}
-      <div className="mb-8 flex items-start justify-between gap-4">
+      <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-[#332216]">Calendar</h1>
-          <p className="mt-1 text-sm text-[#544823]">
+          <h1 className="text-xl font-semibold text-ps-text sm:text-2xl">Calendar</h1>
+          <p className="mt-1 text-sm text-ps-secondary">
             {new Date().toLocaleDateString([], { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
           </p>
         </div>
@@ -238,12 +258,12 @@ export default function CalendarPage() {
           <button
             onClick={handleSync}
             disabled={syncing}
-            className="flex items-center gap-1.5 rounded-lg bg-[#BE5103] px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-[#8C4C1F] disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-lg bg-ps-accent px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-ps-accent-dark disabled:opacity-50"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${syncing ? "animate-spin" : ""}`} />
             {syncing ? "Syncing…" : "Sync"}
           </button>
-          <button className="flex items-center gap-1.5 rounded-lg border border-[#E7D8C8] bg-white px-3 py-2 text-xs font-medium text-[#544823] transition-colors hover:bg-[#F8F2EA]">
+          <button className="flex items-center gap-1.5 rounded-lg border border-ps-border bg-ps-card px-3 py-2 text-xs font-medium text-ps-secondary transition-colors hover:bg-ps-surface">
             <Plus className="h-3.5 w-3.5" />
             New event
           </button>
@@ -251,30 +271,30 @@ export default function CalendarPage() {
       </div>
 
       {/* Stats bar */}
-      <div className="mb-6 grid gap-4 sm:grid-cols-3">
+      <div className="mb-6 grid gap-3 grid-cols-3 sm:gap-4">
         {[
           { label: "Today", value: todayCount, sub: "meetings" },
           { label: "This week", value: events.filter((e) => { const d = new Date(e.startTime); const now = new Date(); const end = new Date(); end.setDate(now.getDate() + 7); return d >= now && d <= end; }).length, sub: "upcoming" },
           { label: "Total synced", value: events.length, sub: "events" },
         ].map(({ label, value, sub }) => (
-          <div key={label} className="rounded-2xl border border-[#E7D8C8] bg-white p-4">
-            <p className="text-xs text-[#8C4C1F]">{label}</p>
-            <p className="mt-1 text-2xl font-semibold text-[#332216]">{value}</p>
-            <p className="text-xs text-[#8C4C1F]">{sub}</p>
+          <div key={label} className="rounded-2xl border border-ps-border bg-ps-card p-3 sm:p-4">
+            <p className="text-[11px] text-ps-muted sm:text-xs">{label}</p>
+            <p className="mt-1 text-xl font-semibold text-ps-text sm:text-2xl">{value}</p>
+            <p className="text-[11px] text-ps-muted sm:text-xs">{sub}</p>
           </div>
         ))}
       </div>
 
-      {/* View tabs */}
-      <div className="mb-6 flex items-center gap-1 rounded-xl border border-[#E7D8C8] bg-[#F8F2EA] p-1 w-fit">
+      {/* View tabs — scrollable on mobile */}
+      <div className="mb-6 flex items-center gap-1 rounded-xl border border-ps-border bg-ps-surface p-1 overflow-x-auto scrollbar-hide">
         {VIEWS.map((view) => (
           <button
             key={view}
             onClick={() => setActiveView(view)}
-            className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ${
+            className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
               activeView === view
-                ? "bg-white text-[#332216] shadow-sm"
-                : "text-[#544823] hover:text-[#332216]"
+                ? "bg-ps-card text-ps-text shadow-sm"
+                : "text-ps-secondary hover:text-ps-text"
             }`}
           >
             {view}
@@ -284,7 +304,7 @@ export default function CalendarPage() {
 
       {/* Error */}
       {error && (
-        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400">
           {error}
         </div>
       )}
@@ -293,17 +313,17 @@ export default function CalendarPage() {
       {loading ? (
         <LoadingSkeleton />
       ) : filteredEvents.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F8F2EA]">
-            <CalendarDays className="h-6 w-6 text-[#BE5103]" />
+        <div className="flex flex-col items-center justify-center gap-3 py-16 text-center sm:py-20">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-ps-surface">
+            <CalendarDays className="h-6 w-6 text-ps-accent" />
           </div>
           <div>
-            <p className="text-sm font-medium text-[#332216]">No events for {activeView.toLowerCase()}</p>
-            <p className="mt-1 text-xs text-[#8C4C1F]">Sync your calendar to see upcoming meetings</p>
+            <p className="text-sm font-medium text-ps-text">No events for {activeView.toLowerCase()}</p>
+            <p className="mt-1 text-xs text-ps-muted">Sync your calendar to see upcoming meetings</p>
           </div>
           <button
             onClick={handleSync}
-            className="rounded-lg bg-[#BE5103] px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-[#8C4C1F]"
+            className="rounded-lg bg-ps-accent px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-ps-accent-dark"
           >
             Sync calendar
           </button>
@@ -313,10 +333,10 @@ export default function CalendarPage() {
           {Array.from(grouped.entries()).map(([day, dayEvents]) => (
             <div key={day}>
               <div className="mb-3 flex items-center gap-2">
-                <h2 className="text-sm font-semibold text-[#332216]">
+                <h2 className="text-sm font-semibold text-ps-text">
                   {getDayLabel(dayEvents[0].startTime)}
                 </h2>
-                <span className="rounded-full bg-[#F8F2EA] px-2 py-0.5 text-[11px] font-medium text-[#8C4C1F] border border-[#E7D8C8]">
+                <span className="rounded-full bg-ps-surface px-2 py-0.5 text-[11px] font-medium text-ps-muted border border-ps-border">
                   {dayEvents.length} event{dayEvents.length !== 1 ? "s" : ""}
                 </span>
               </div>

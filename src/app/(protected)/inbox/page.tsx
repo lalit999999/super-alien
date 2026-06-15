@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { RefreshCw, Search, Mail, Star, DollarSign, CalendarDays, Tag, Circle, ChevronRight, X, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { OnboardingEmptyState } from "@/components/onboarding/empty-state";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -58,10 +60,10 @@ function getInitials(sender: string): string {
 }
 
 const AVATAR_COLORS = [
-  "bg-[#BE5103]",
-  "bg-[#8C4C1F]",
-  "bg-[#544823]",
-  "bg-[#332216]",
+  "bg-ps-accent",
+  "bg-ps-accent-dark",
+  "bg-ps-secondary",
+  "bg-ps-text",
 ];
 
 function SenderAvatar({ sender }: { sender: string }) {
@@ -100,39 +102,39 @@ function EmailRow({
   return (
     <button
       onClick={onClick}
-      className={`group w-full text-left px-4 py-3 flex items-start gap-3 border-b border-[#E7D8C8] transition-colors ${
+      className={`group w-full text-left px-4 py-3 flex items-start gap-3 border-b border-ps-border transition-colors ${
         selected
-          ? "bg-[#FEF0E7] border-l-2 border-l-[#BE5103]"
-          : "hover:bg-[#F8F2EA]"
+          ? "bg-ps-accent-light border-l-2 border-l-ps-accent"
+          : "hover:bg-ps-surface"
       }`}
     >
       <div className="mt-0.5 flex flex-col items-center gap-1">
         <SenderAvatar sender={email.sender} />
         {!email.isRead && (
-          <span className="h-1.5 w-1.5 rounded-full bg-[#BE5103]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-ps-accent" />
         )}
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2">
-          <span className={`truncate text-sm ${!email.isRead ? "font-semibold text-[#332216]" : "font-medium text-[#544823]"}`}>
+          <span className={`truncate text-sm ${!email.isRead ? "font-semibold text-ps-text" : "font-medium text-ps-secondary"}`}>
             {name}
           </span>
-          <span className="shrink-0 text-[11px] text-[#8C4C1F]">
+          <span className="shrink-0 text-[11px] text-ps-muted">
             {formatTime(email.receivedAt)}
           </span>
         </div>
-        <p className={`truncate text-sm mt-0.5 ${!email.isRead ? "text-[#332216]" : "text-[#544823]"}`}>
+        <p className={`truncate text-sm mt-0.5 ${!email.isRead ? "text-ps-text" : "text-ps-secondary"}`}>
           {email.subject}
         </p>
         {email.snippet && (
-          <p className="truncate text-xs text-[#8C4C1F] mt-0.5">{email.snippet}</p>
+          <p className="truncate text-xs text-ps-muted mt-0.5">{email.snippet}</p>
         )}
       </div>
     </button>
   );
 }
 
-// ─── Email Preview Panel ────────────────────────────────────────────────────────
+// ─── Email Preview Panel (desktop only) ────────────────────────────────────────
 
 function EmailPreview({
   email,
@@ -143,18 +145,18 @@ function EmailPreview({
 }) {
   const name = extractName(email.sender);
   return (
-    <div className="flex flex-1 flex-col bg-white">
+    <div className="flex flex-1 flex-col bg-ps-card">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 border-b border-[#E7D8C8] px-6 py-4">
+      <div className="flex items-start justify-between gap-4 border-b border-ps-border px-6 py-4">
         <div className="min-w-0 flex-1">
-          <h2 className="text-base font-semibold text-[#332216] line-clamp-2">
+          <h2 className="text-base font-semibold text-ps-text line-clamp-2">
             {email.subject}
           </h2>
-          <div className="mt-1 flex items-center gap-2 text-sm text-[#544823]">
+          <div className="mt-1 flex items-center gap-2 text-sm text-ps-secondary">
             <SenderAvatar sender={email.sender} />
             <span>{name}</span>
-            <span className="text-[#E7D8C8]">·</span>
-            <span className="text-xs text-[#8C4C1F]">
+            <span className="text-ps-border">·</span>
+            <span className="text-xs text-ps-muted">
               {new Date(email.receivedAt).toLocaleString([], {
                 month: "short",
                 day: "numeric",
@@ -167,14 +169,14 @@ function EmailPreview({
         <div className="flex shrink-0 items-center gap-2">
           <Link
             href={`/inbox/${email.id}`}
-            className="flex items-center gap-1.5 rounded-lg bg-[#BE5103] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[#8C4C1F]"
+            className="flex items-center gap-1.5 rounded-lg bg-ps-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-ps-accent-dark"
           >
             <ExternalLink className="h-3 w-3" />
             Full view
           </Link>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-[#8C4C1F] transition-colors hover:bg-[#F8F2EA]"
+            className="rounded-lg p-1.5 text-ps-muted transition-colors hover:bg-ps-surface"
           >
             <X className="h-4 w-4" />
           </button>
@@ -184,22 +186,21 @@ function EmailPreview({
       {/* Body */}
       <div className="flex-1 overflow-y-auto px-6 py-5">
         {email.snippet ? (
-          <p className="text-sm leading-relaxed text-[#332216]">{email.snippet}</p>
+          <p className="text-sm leading-relaxed text-ps-text">{email.snippet}</p>
         ) : (
-          <p className="text-sm text-[#8C4C1F]">No preview available.</p>
+          <p className="text-sm text-ps-muted">No preview available.</p>
         )}
 
-        {/* AI summary placeholder */}
-        <div className="mt-6 rounded-xl border border-[#E7D8C8] bg-[#FEF0E7] p-4">
+        <div className="mt-6 rounded-xl border border-ps-border bg-ps-accent-light p-4">
           <div className="mb-2 flex items-center gap-1.5">
-            <span className="text-xs font-semibold text-[#BE5103]">AI Summary</span>
+            <span className="text-xs font-semibold text-ps-accent">AI Summary</span>
           </div>
-          <p className="text-xs text-[#544823]">
+          <p className="text-xs text-ps-secondary">
             Open the full email view to generate an AI summary, draft a reply, or classify this email.
           </p>
           <Link
             href={`/inbox/${email.id}`}
-            className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-[#BE5103] hover:underline"
+            className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-ps-accent hover:underline"
           >
             Open full view <ChevronRight className="h-3 w-3" />
           </Link>
@@ -213,13 +214,13 @@ function EmailPreview({
 
 function EmptyPreview() {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-3 bg-[#FFFDF8] text-center px-8">
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F8F2EA]">
-        <Mail className="h-6 w-6 text-[#BE5103]" />
+    <div className="flex flex-1 flex-col items-center justify-center gap-3 bg-ps-bg text-center px-8">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-ps-surface">
+        <Mail className="h-6 w-6 text-ps-accent" />
       </div>
       <div>
-        <p className="text-sm font-medium text-[#332216]">Select an email</p>
-        <p className="mt-1 text-xs text-[#8C4C1F]">Click any email to preview it here</p>
+        <p className="text-sm font-medium text-ps-text">Select an email</p>
+        <p className="mt-1 text-xs text-ps-muted">Click any email to preview it here</p>
       </div>
     </div>
   );
@@ -231,15 +232,15 @@ function LoadingSkeleton() {
   return (
     <div>
       {Array.from({ length: 10 }).map((_, i) => (
-        <div key={i} className="flex items-start gap-3 px-4 py-3 border-b border-[#E7D8C8]">
-          <div className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-[#E7D8C8]" />
+        <div key={i} className="flex items-start gap-3 px-4 py-3 border-b border-ps-border">
+          <div className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-ps-border" />
           <div className="flex-1 space-y-2 pt-0.5">
             <div className="flex justify-between gap-2">
-              <div className="h-3 w-28 animate-pulse rounded bg-[#E7D8C8]" />
-              <div className="h-3 w-10 animate-pulse rounded bg-[#E7D8C8]" />
+              <div className="h-3 w-28 animate-pulse rounded bg-ps-border" />
+              <div className="h-3 w-10 animate-pulse rounded bg-ps-border" />
             </div>
-            <div className="h-2.5 w-44 animate-pulse rounded bg-[#EFE5D5]" />
-            <div className="h-2 w-36 animate-pulse rounded bg-[#EFE5D5]" />
+            <div className="h-2.5 w-44 animate-pulse rounded bg-ps-surface-2" />
+            <div className="h-2 w-36 animate-pulse rounded bg-ps-surface-2" />
           </div>
         </div>
       ))}
@@ -250,6 +251,8 @@ function LoadingSkeleton() {
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function InboxPage() {
+  const router = useRouter();
+  const [gmailConnected, setGmailConnected] = useState<boolean | null>(null);
   const [emails, setEmails] = useState<Email[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [page, setPage] = useState(1);
@@ -260,6 +263,13 @@ export default function InboxPage() {
   const [activeFilter, setActiveFilter] = useState<FilterId>("all");
   const [search, setSearch] = useState("");
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
+
+  useEffect(() => {
+    fetch("/api/integrations")
+      .then((r) => r.json())
+      .then((j) => { if (j.success) setGmailConnected(j.data.gmailConnected); })
+      .catch(() => setGmailConnected(true));
+  }, []);
 
   const fetchEmails = useCallback(async (p: number) => {
     setLoading(true);
@@ -301,10 +311,15 @@ export default function InboxPage() {
   }
 
   async function handleEmailClick(email: Email) {
-    setSelectedEmail(email);
     if (!email.isRead) {
       await fetch(`/api/gmail/${email.id}`, { method: "PATCH" });
       setEmails((prev) => prev.map((e) => e.id === email.id ? { ...e, isRead: true } : e));
+    }
+    // On mobile navigate to detail page; on desktop show preview panel
+    if (window.innerWidth < 1024) {
+      router.push(`/inbox/${email.id}`);
+    } else {
+      setSelectedEmail(email);
     }
   }
 
@@ -323,30 +338,41 @@ export default function InboxPage() {
 
   const unreadCount = emails.filter((e) => !e.isRead).length;
 
+  if (gmailConnected === false) {
+    return (
+      <OnboardingEmptyState
+        icon={<Mail className="h-7 w-7 text-ps-accent" />}
+        title="Gmail not connected"
+        description="SuperAlien requires Gmail access to show your inbox. Connect Gmail to continue."
+        action={{ label: "Connect Gmail", href: "/onboarding" }}
+      />
+    );
+  }
+
   return (
-    <div className="flex h-[calc(100vh-57px)] bg-[#FFFDF8]">
-      {/* Left panel */}
-      <div className="flex w-[340px] shrink-0 flex-col border-r border-[#E7D8C8] bg-white">
+    <div className="flex h-[calc(100vh-57px)] bg-ps-bg">
+      {/* Email list panel — full width on mobile, fixed width on desktop */}
+      <div className="flex w-full shrink-0 flex-col border-r border-ps-border bg-ps-card lg:w-85">
         {/* Toolbar */}
-        <div className="flex items-center justify-between border-b border-[#E7D8C8] px-4 py-3">
+        <div className="flex items-center justify-between border-b border-ps-border px-4 py-3">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-[#332216]">Inbox</h2>
+            <h2 className="text-sm font-semibold text-ps-text">Inbox</h2>
             {!loading && unreadCount > 0 && (
-              <span className="rounded-full bg-[#FEF0E7] px-2 py-0.5 text-[11px] font-medium text-[#BE5103] border border-[#E7D8C8]">
+              <span className="rounded-full bg-ps-accent-light px-2 py-0.5 text-[11px] font-medium text-ps-accent border border-ps-border">
                 {unreadCount}
               </span>
             )}
           </div>
           <div className="flex items-center gap-1.5">
             {syncResult && (
-              <span className="text-[11px] text-[#8C4C1F]">
+              <span className="text-[11px] text-ps-muted">
                 {syncResult.synced} synced
               </span>
             )}
             <button
               onClick={handleSync}
               disabled={syncing}
-              className="flex items-center gap-1.5 rounded-lg bg-[#BE5103] px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[#8C4C1F] disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-lg bg-ps-accent px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-ps-accent-dark disabled:opacity-50"
             >
               <RefreshCw className={`h-3 w-3 ${syncing ? "animate-spin" : ""}`} />
               {syncing ? "Syncing…" : "Sync"}
@@ -355,28 +381,28 @@ export default function InboxPage() {
         </div>
 
         {/* Search */}
-        <div className="border-b border-[#E7D8C8] px-4 py-2">
-          <div className="flex items-center gap-2 rounded-lg bg-[#F8F2EA] px-3 py-1.5">
-            <Search className="h-3.5 w-3.5 shrink-0 text-[#8C4C1F]" />
+        <div className="border-b border-ps-border px-4 py-2">
+          <div className="flex items-center gap-2 rounded-lg bg-ps-surface px-3 py-1.5">
+            <Search className="h-3.5 w-3.5 shrink-0 text-ps-muted" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search emails..."
-              className="w-full bg-transparent text-xs text-[#332216] placeholder:text-[#8C4C1F] outline-none"
+              className="w-full bg-transparent text-xs text-ps-text placeholder:text-ps-muted outline-none"
             />
           </div>
         </div>
 
         {/* Filter tabs */}
-        <div className="flex gap-1 overflow-x-auto border-b border-[#E7D8C8] px-3 py-2 scrollbar-hide">
+        <div className="flex gap-1 overflow-x-auto border-b border-ps-border px-3 py-2 scrollbar-hide">
           {FILTERS.map(({ id, label }) => (
             <button
               key={id}
               onClick={() => setActiveFilter(id)}
               className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
                 activeFilter === id
-                  ? "bg-[#BE5103] text-white"
-                  : "text-[#544823] hover:bg-[#F8F2EA]"
+                  ? "bg-ps-accent text-white"
+                  : "text-ps-secondary hover:bg-ps-surface"
               }`}
             >
               {label}
@@ -386,7 +412,7 @@ export default function InboxPage() {
 
         {/* Error */}
         {error && (
-          <div className="mx-3 mt-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
+          <div className="mx-3 mt-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400">
             {error}
           </div>
         )}
@@ -397,21 +423,21 @@ export default function InboxPage() {
             <LoadingSkeleton />
           ) : filteredEmails.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F8F2EA]">
-                <Mail className="h-5 w-5 text-[#BE5103]" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ps-surface">
+                <Mail className="h-5 w-5 text-ps-accent" />
               </div>
               <div>
-                <p className="text-sm font-medium text-[#332216]">
+                <p className="text-sm font-medium text-ps-text">
                   {search ? "No results found" : "No emails yet"}
                 </p>
-                <p className="mt-0.5 text-xs text-[#8C4C1F]">
+                <p className="mt-0.5 text-xs text-ps-muted">
                   {search ? "Try a different search" : "Sync your inbox to get started"}
                 </p>
               </div>
               {!search && (
                 <button
                   onClick={handleSync}
-                  className="rounded-lg bg-[#BE5103] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[#8C4C1F]"
+                  className="rounded-lg bg-ps-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-ps-accent-dark"
                 >
                   Sync now
                 </button>
@@ -431,22 +457,22 @@ export default function InboxPage() {
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-[#E7D8C8] px-4 py-2.5">
-            <span className="text-[11px] text-[#8C4C1F]">
+          <div className="flex items-center justify-between border-t border-ps-border px-4 py-2.5">
+            <span className="text-[11px] text-ps-muted">
               {pagination.page} / {pagination.totalPages}
             </span>
             <div className="flex gap-1">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={pagination.page <= 1}
-                className="rounded px-2 py-1 text-xs font-medium text-[#BE5103] transition-colors hover:bg-[#FEF0E7] disabled:opacity-40"
+                className="rounded px-2 py-1 text-xs font-medium text-ps-accent transition-colors hover:bg-ps-accent-light disabled:opacity-40"
               >
                 ← Prev
               </button>
               <button
                 onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
                 disabled={pagination.page >= pagination.totalPages}
-                className="rounded px-2 py-1 text-xs font-medium text-[#BE5103] transition-colors hover:bg-[#FEF0E7] disabled:opacity-40"
+                className="rounded px-2 py-1 text-xs font-medium text-ps-accent transition-colors hover:bg-ps-accent-light disabled:opacity-40"
               >
                 Next →
               </button>
@@ -455,15 +481,17 @@ export default function InboxPage() {
         )}
       </div>
 
-      {/* Right panel — preview */}
-      {selectedEmail ? (
-        <EmailPreview
-          email={selectedEmail}
-          onClose={() => setSelectedEmail(null)}
-        />
-      ) : (
-        <EmptyPreview />
-      )}
+      {/* Preview panel — hidden on mobile, visible on desktop */}
+      <div className="hidden lg:flex lg:flex-1">
+        {selectedEmail ? (
+          <EmailPreview
+            email={selectedEmail}
+            onClose={() => setSelectedEmail(null)}
+          />
+        ) : (
+          <EmptyPreview />
+        )}
+      </div>
     </div>
   );
 }

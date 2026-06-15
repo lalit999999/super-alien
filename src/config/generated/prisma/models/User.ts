@@ -28,6 +28,13 @@ export type UserMinAggregateOutputType = {
   id: string | null
   clerkUserId: string | null
   email: string | null
+  gmailConnected: boolean | null
+  calendarConnected: boolean | null
+  gmailConnectedAt: Date | null
+  calendarConnectedAt: Date | null
+  lastGmailSync: Date | null
+  lastCalendarSync: Date | null
+  onboardingCompleted: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -36,6 +43,13 @@ export type UserMaxAggregateOutputType = {
   id: string | null
   clerkUserId: string | null
   email: string | null
+  gmailConnected: boolean | null
+  calendarConnected: boolean | null
+  gmailConnectedAt: Date | null
+  calendarConnectedAt: Date | null
+  lastGmailSync: Date | null
+  lastCalendarSync: Date | null
+  onboardingCompleted: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +58,13 @@ export type UserCountAggregateOutputType = {
   id: number
   clerkUserId: number
   email: number
+  gmailConnected: number
+  calendarConnected: number
+  gmailConnectedAt: number
+  calendarConnectedAt: number
+  lastGmailSync: number
+  lastCalendarSync: number
+  onboardingCompleted: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -54,6 +75,13 @@ export type UserMinAggregateInputType = {
   id?: true
   clerkUserId?: true
   email?: true
+  gmailConnected?: true
+  calendarConnected?: true
+  gmailConnectedAt?: true
+  calendarConnectedAt?: true
+  lastGmailSync?: true
+  lastCalendarSync?: true
+  onboardingCompleted?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -62,6 +90,13 @@ export type UserMaxAggregateInputType = {
   id?: true
   clerkUserId?: true
   email?: true
+  gmailConnected?: true
+  calendarConnected?: true
+  gmailConnectedAt?: true
+  calendarConnectedAt?: true
+  lastGmailSync?: true
+  lastCalendarSync?: true
+  onboardingCompleted?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -70,6 +105,13 @@ export type UserCountAggregateInputType = {
   id?: true
   clerkUserId?: true
   email?: true
+  gmailConnected?: true
+  calendarConnected?: true
+  gmailConnectedAt?: true
+  calendarConnectedAt?: true
+  lastGmailSync?: true
+  lastCalendarSync?: true
+  onboardingCompleted?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -151,6 +193,13 @@ export type UserGroupByOutputType = {
   id: string
   clerkUserId: string
   email: string
+  gmailConnected: boolean
+  calendarConnected: boolean
+  gmailConnectedAt: Date | null
+  calendarConnectedAt: Date | null
+  lastGmailSync: Date | null
+  lastCalendarSync: Date | null
+  onboardingCompleted: boolean
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -180,6 +229,13 @@ export type UserWhereInput = {
   id?: Prisma.StringFilter<"User"> | string
   clerkUserId?: Prisma.StringFilter<"User"> | string
   email?: Prisma.StringFilter<"User"> | string
+  gmailConnected?: Prisma.BoolFilter<"User"> | boolean
+  calendarConnected?: Prisma.BoolFilter<"User"> | boolean
+  gmailConnectedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  calendarConnectedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lastGmailSync?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lastCalendarSync?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  onboardingCompleted?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   preferences?: Prisma.XOR<Prisma.UserPreferenceNullableScalarRelationFilter, Prisma.UserPreferenceWhereInput> | null
@@ -192,6 +248,13 @@ export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   clerkUserId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  gmailConnected?: Prisma.SortOrder
+  calendarConnected?: Prisma.SortOrder
+  gmailConnectedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  calendarConnectedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastGmailSync?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastCalendarSync?: Prisma.SortOrderInput | Prisma.SortOrder
+  onboardingCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   preferences?: Prisma.UserPreferenceOrderByWithRelationInput
@@ -207,6 +270,13 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
+  gmailConnected?: Prisma.BoolFilter<"User"> | boolean
+  calendarConnected?: Prisma.BoolFilter<"User"> | boolean
+  gmailConnectedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  calendarConnectedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lastGmailSync?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lastCalendarSync?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  onboardingCompleted?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   preferences?: Prisma.XOR<Prisma.UserPreferenceNullableScalarRelationFilter, Prisma.UserPreferenceWhereInput> | null
@@ -219,6 +289,13 @@ export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   clerkUserId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  gmailConnected?: Prisma.SortOrder
+  calendarConnected?: Prisma.SortOrder
+  gmailConnectedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  calendarConnectedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastGmailSync?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastCalendarSync?: Prisma.SortOrderInput | Prisma.SortOrder
+  onboardingCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -233,6 +310,13 @@ export type UserScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"User"> | string
   clerkUserId?: Prisma.StringWithAggregatesFilter<"User"> | string
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
+  gmailConnected?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  calendarConnected?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  gmailConnectedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  calendarConnectedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  lastGmailSync?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  lastCalendarSync?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  onboardingCompleted?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -241,6 +325,13 @@ export type UserCreateInput = {
   id?: string
   clerkUserId: string
   email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
@@ -253,6 +344,13 @@ export type UserUncheckedCreateInput = {
   id?: string
   clerkUserId: string
   email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
@@ -265,6 +363,13 @@ export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
@@ -277,6 +382,13 @@ export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
@@ -289,6 +401,13 @@ export type UserCreateManyInput = {
   id?: string
   clerkUserId: string
   email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -297,6 +416,13 @@ export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -305,6 +431,13 @@ export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -313,6 +446,13 @@ export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   clerkUserId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  gmailConnected?: Prisma.SortOrder
+  calendarConnected?: Prisma.SortOrder
+  gmailConnectedAt?: Prisma.SortOrder
+  calendarConnectedAt?: Prisma.SortOrder
+  lastGmailSync?: Prisma.SortOrder
+  lastCalendarSync?: Prisma.SortOrder
+  onboardingCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -321,6 +461,13 @@ export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   clerkUserId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  gmailConnected?: Prisma.SortOrder
+  calendarConnected?: Prisma.SortOrder
+  gmailConnectedAt?: Prisma.SortOrder
+  calendarConnectedAt?: Prisma.SortOrder
+  lastGmailSync?: Prisma.SortOrder
+  lastCalendarSync?: Prisma.SortOrder
+  onboardingCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -329,6 +476,13 @@ export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   clerkUserId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  gmailConnected?: Prisma.SortOrder
+  calendarConnected?: Prisma.SortOrder
+  gmailConnectedAt?: Prisma.SortOrder
+  calendarConnectedAt?: Prisma.SortOrder
+  lastGmailSync?: Prisma.SortOrder
+  lastCalendarSync?: Prisma.SortOrder
+  onboardingCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -340,6 +494,14 @@ export type UserScalarRelationFilter = {
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -406,6 +568,13 @@ export type UserCreateWithoutEmailsInput = {
   id?: string
   clerkUserId: string
   email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
@@ -417,6 +586,13 @@ export type UserUncheckedCreateWithoutEmailsInput = {
   id?: string
   clerkUserId: string
   email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
@@ -444,6 +620,13 @@ export type UserUpdateWithoutEmailsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
@@ -455,6 +638,13 @@ export type UserUncheckedUpdateWithoutEmailsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
@@ -466,6 +656,13 @@ export type UserCreateWithoutEventsInput = {
   id?: string
   clerkUserId: string
   email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
@@ -477,6 +674,13 @@ export type UserUncheckedCreateWithoutEventsInput = {
   id?: string
   clerkUserId: string
   email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
@@ -504,6 +708,13 @@ export type UserUpdateWithoutEventsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
@@ -515,6 +726,13 @@ export type UserUncheckedUpdateWithoutEventsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
@@ -526,6 +744,13 @@ export type UserCreateWithoutAgentExecutionsInput = {
   id?: string
   clerkUserId: string
   email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
@@ -537,6 +762,13 @@ export type UserUncheckedCreateWithoutAgentExecutionsInput = {
   id?: string
   clerkUserId: string
   email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
@@ -564,6 +796,13 @@ export type UserUpdateWithoutAgentExecutionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
@@ -575,6 +814,13 @@ export type UserUncheckedUpdateWithoutAgentExecutionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
@@ -586,6 +832,13 @@ export type UserCreateWithoutPreferencesInput = {
   id?: string
   clerkUserId: string
   email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   emails?: Prisma.EmailCreateNestedManyWithoutUserInput
@@ -597,6 +850,13 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   id?: string
   clerkUserId: string
   email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   emails?: Prisma.EmailUncheckedCreateNestedManyWithoutUserInput
@@ -624,6 +884,13 @@ export type UserUpdateWithoutPreferencesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emails?: Prisma.EmailUpdateManyWithoutUserNestedInput
@@ -635,6 +902,13 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emails?: Prisma.EmailUncheckedUpdateManyWithoutUserNestedInput
@@ -695,6 +969,13 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   clerkUserId?: boolean
   email?: boolean
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: boolean
+  calendarConnectedAt?: boolean
+  lastGmailSync?: boolean
+  lastCalendarSync?: boolean
+  onboardingCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   preferences?: boolean | Prisma.User$preferencesArgs<ExtArgs>
@@ -708,6 +989,13 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   clerkUserId?: boolean
   email?: boolean
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: boolean
+  calendarConnectedAt?: boolean
+  lastGmailSync?: boolean
+  lastCalendarSync?: boolean
+  onboardingCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -716,6 +1004,13 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   clerkUserId?: boolean
   email?: boolean
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: boolean
+  calendarConnectedAt?: boolean
+  lastGmailSync?: boolean
+  lastCalendarSync?: boolean
+  onboardingCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -724,11 +1019,18 @@ export type UserSelectScalar = {
   id?: boolean
   clerkUserId?: boolean
   email?: boolean
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: boolean
+  calendarConnectedAt?: boolean
+  lastGmailSync?: boolean
+  lastCalendarSync?: boolean
+  onboardingCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "email" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "email" | "gmailConnected" | "calendarConnected" | "gmailConnectedAt" | "calendarConnectedAt" | "lastGmailSync" | "lastCalendarSync" | "onboardingCompleted" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   preferences?: boolean | Prisma.User$preferencesArgs<ExtArgs>
   emails?: boolean | Prisma.User$emailsArgs<ExtArgs>
@@ -751,6 +1053,13 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id: string
     clerkUserId: string
     email: string
+    gmailConnected: boolean
+    calendarConnected: boolean
+    gmailConnectedAt: Date | null
+    calendarConnectedAt: Date | null
+    lastGmailSync: Date | null
+    lastCalendarSync: Date | null
+    onboardingCompleted: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1183,6 +1492,13 @@ export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
   readonly clerkUserId: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
+  readonly gmailConnected: Prisma.FieldRef<"User", 'Boolean'>
+  readonly calendarConnected: Prisma.FieldRef<"User", 'Boolean'>
+  readonly gmailConnectedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly calendarConnectedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly lastGmailSync: Prisma.FieldRef<"User", 'DateTime'>
+  readonly lastCalendarSync: Prisma.FieldRef<"User", 'DateTime'>
+  readonly onboardingCompleted: Prisma.FieldRef<"User", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }

@@ -565,10 +565,6 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type EmailCreateNestedOneWithoutClassificationInput = {
   create?: Prisma.XOR<Prisma.EmailCreateWithoutClassificationInput, Prisma.EmailUncheckedCreateWithoutClassificationInput>
   connectOrCreate?: Prisma.EmailCreateOrConnectWithoutClassificationInput

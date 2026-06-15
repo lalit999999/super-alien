@@ -11,6 +11,8 @@ import {
   CheckCircle,
   AlertCircle,
   Tag,
+  Zap,
+  X,
 } from "lucide-react";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -60,7 +62,7 @@ function getInitials(sender: string): string {
   return name.slice(0, 2).toUpperCase();
 }
 
-const AVATAR_COLORS = ["bg-[#BE5103]", "bg-[#8C4C1F]", "bg-[#544823]", "bg-[#332216]"];
+const AVATAR_COLORS = ["bg-ps-accent", "bg-ps-accent-dark", "bg-ps-secondary", "bg-ps-text"];
 
 function SenderAvatar({ sender, size = "md" }: { sender: string; size?: "sm" | "md" }) {
   const initials = getInitials(sender);
@@ -75,7 +77,7 @@ function SenderAvatar({ sender, size = "md" }: { sender: string; size?: "sm" | "
 
 // ─── AI Panel ─────────────────────────────────────────────────────────────────
 
-function AIPanel({ emailId }: { emailId: string }) {
+function AIPanel({ emailId, onClose }: { emailId: string; onClose?: () => void }) {
   const [summary, setSummary] = useState<string | null>(null);
   const [draft, setDraft] = useState<string | null>(null);
   const [classification, setClassification] = useState<{ category: string; priority: string } | null>(null);
@@ -139,29 +141,45 @@ function AIPanel({ emailId }: { emailId: string }) {
   }
 
   const priorityColors: Record<string, string> = {
-    URGENT: "bg-red-50 text-red-600 border-red-200",
-    IMPORTANT: "bg-[#FEF0E7] text-[#BE5103] border-[#E7D8C8]",
-    NORMAL: "bg-[#F8F2EA] text-[#544823] border-[#E7D8C8]",
-    LOW: "bg-gray-50 text-gray-500 border-gray-200",
+    URGENT: "bg-red-50 text-red-600 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800",
+    IMPORTANT: "bg-ps-accent-light text-ps-accent border-ps-border",
+    NORMAL: "bg-ps-surface text-ps-secondary border-ps-border",
+    LOW: "bg-ps-surface-2 text-ps-muted border-ps-border",
   };
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Panel header with close button (mobile) */}
+      {onClose && (
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <Zap className="h-4 w-4 text-ps-accent" />
+            <span className="text-sm font-semibold text-ps-text">AI Tools</span>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-lg p-1.5 text-ps-muted transition-colors hover:bg-ps-surface-2"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
       {/* AI Actions */}
-      <div className="rounded-2xl border border-[#E7D8C8] bg-[#FFFDF8] p-5">
-        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#8C4C1F]">
+      <div className="rounded-2xl border border-ps-border bg-ps-bg p-5">
+        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-ps-muted">
           AI Actions
         </h3>
         <div className="flex flex-col gap-2">
           <button
             onClick={handleSummarize}
             disabled={loadingSummary}
-            className="flex items-center gap-2.5 rounded-xl border border-[#E7D8C8] bg-white px-4 py-3 text-left text-sm font-medium text-[#332216] transition-colors hover:border-[#BE5103]/30 hover:bg-[#FEF0E7] disabled:opacity-60"
+            className="flex items-center gap-2.5 rounded-xl border border-ps-border bg-ps-card px-4 py-3 text-left text-sm font-medium text-ps-text transition-colors hover:border-ps-accent/30 hover:bg-ps-accent-light disabled:opacity-60"
           >
             {loadingSummary ? (
-              <Loader2 className="h-4 w-4 animate-spin text-[#BE5103]" />
+              <Loader2 className="h-4 w-4 animate-spin text-ps-accent" />
             ) : (
-              <Sparkles className="h-4 w-4 text-[#BE5103]" />
+              <Sparkles className="h-4 w-4 text-ps-accent" />
             )}
             {loadingSummary ? "Summarizing…" : "Summarize email"}
           </button>
@@ -169,12 +187,12 @@ function AIPanel({ emailId }: { emailId: string }) {
           <button
             onClick={handleDraft}
             disabled={loadingDraft}
-            className="flex items-center gap-2.5 rounded-xl border border-[#E7D8C8] bg-white px-4 py-3 text-left text-sm font-medium text-[#332216] transition-colors hover:border-[#BE5103]/30 hover:bg-[#FEF0E7] disabled:opacity-60"
+            className="flex items-center gap-2.5 rounded-xl border border-ps-border bg-ps-card px-4 py-3 text-left text-sm font-medium text-ps-text transition-colors hover:border-ps-accent/30 hover:bg-ps-accent-light disabled:opacity-60"
           >
             {loadingDraft ? (
-              <Loader2 className="h-4 w-4 animate-spin text-[#BE5103]" />
+              <Loader2 className="h-4 w-4 animate-spin text-ps-accent" />
             ) : (
-              <FileText className="h-4 w-4 text-[#BE5103]" />
+              <FileText className="h-4 w-4 text-ps-accent" />
             )}
             {loadingDraft ? "Drafting…" : "Generate draft reply"}
           </button>
@@ -182,12 +200,12 @@ function AIPanel({ emailId }: { emailId: string }) {
           <button
             onClick={handleClassify}
             disabled={loadingClassify}
-            className="flex items-center gap-2.5 rounded-xl border border-[#E7D8C8] bg-white px-4 py-3 text-left text-sm font-medium text-[#332216] transition-colors hover:border-[#BE5103]/30 hover:bg-[#FEF0E7] disabled:opacity-60"
+            className="flex items-center gap-2.5 rounded-xl border border-ps-border bg-ps-card px-4 py-3 text-left text-sm font-medium text-ps-text transition-colors hover:border-ps-accent/30 hover:bg-ps-accent-light disabled:opacity-60"
           >
             {loadingClassify ? (
-              <Loader2 className="h-4 w-4 animate-spin text-[#BE5103]" />
+              <Loader2 className="h-4 w-4 animate-spin text-ps-accent" />
             ) : (
-              <Tag className="h-4 w-4 text-[#BE5103]" />
+              <Tag className="h-4 w-4 text-ps-accent" />
             )}
             {loadingClassify ? "Classifying…" : "Classify email"}
           </button>
@@ -196,18 +214,18 @@ function AIPanel({ emailId }: { emailId: string }) {
 
       {/* Classification result */}
       {classification && (
-        <div className="rounded-2xl border border-[#E7D8C8] bg-white p-5">
+        <div className="rounded-2xl border border-ps-border bg-ps-card p-5">
           <div className="mb-3 flex items-center gap-1.5">
-            <CheckCircle className="h-4 w-4 text-[#BE5103]" />
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#8C4C1F]">
+            <CheckCircle className="h-4 w-4 text-ps-accent" />
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-ps-muted">
               Classification
             </h3>
           </div>
           <div className="flex flex-wrap gap-2">
-            <span className="rounded-full border bg-[#FEF0E7] px-3 py-1 text-xs font-medium text-[#BE5103] border-[#E7D8C8]">
+            <span className="rounded-full border bg-ps-accent-light px-3 py-1 text-xs font-medium text-ps-accent border-ps-border">
               {classification.category}
             </span>
-            <span className={`rounded-full border px-3 py-1 text-xs font-medium ${priorityColors[classification.priority] ?? "bg-gray-50 text-gray-500 border-gray-200"}`}>
+            <span className={`rounded-full border px-3 py-1 text-xs font-medium ${priorityColors[classification.priority] ?? "bg-ps-surface text-ps-muted border-ps-border"}`}>
               {classification.priority}
             </span>
           </div>
@@ -216,42 +234,42 @@ function AIPanel({ emailId }: { emailId: string }) {
 
       {/* AI Summary */}
       {(summary || errorSummary) && (
-        <div className="rounded-2xl border border-[#E7D8C8] bg-[#FEF0E7] p-5">
+        <div className="rounded-2xl border border-ps-border bg-ps-accent-light p-5">
           <div className="mb-3 flex items-center gap-1.5">
-            <Sparkles className="h-4 w-4 text-[#BE5103]" />
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#BE5103]">
+            <Sparkles className="h-4 w-4 text-ps-accent" />
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-ps-accent">
               AI Summary
             </h3>
           </div>
           {errorSummary ? (
-            <div className="flex items-center gap-1.5 text-xs text-red-600">
+            <div className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
               <AlertCircle className="h-3.5 w-3.5" /> {errorSummary}
             </div>
           ) : (
-            <p className="text-sm leading-relaxed text-[#332216]">{summary}</p>
+            <p className="text-sm leading-relaxed text-ps-text">{summary}</p>
           )}
         </div>
       )}
 
       {/* Draft reply */}
       {(draft || errorDraft) && (
-        <div className="rounded-2xl border border-[#E7D8C8] bg-white p-5">
+        <div className="rounded-2xl border border-ps-border bg-ps-card p-5">
           <div className="mb-3 flex items-center gap-1.5">
-            <Reply className="h-4 w-4 text-[#BE5103]" />
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#8C4C1F]">
+            <Reply className="h-4 w-4 text-ps-accent" />
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-ps-muted">
               Generated Draft
             </h3>
           </div>
           {errorDraft ? (
-            <div className="flex items-center gap-1.5 text-xs text-red-600">
+            <div className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
               <AlertCircle className="h-3.5 w-3.5" /> {errorDraft}
             </div>
           ) : (
             <>
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-[#332216]">{draft}</p>
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-ps-text">{draft}</p>
               <button
                 onClick={() => navigator.clipboard?.writeText(draft ?? "")}
-                className="mt-3 rounded-lg border border-[#E7D8C8] px-3 py-1.5 text-xs font-medium text-[#544823] transition-colors hover:bg-[#F8F2EA]"
+                className="mt-3 rounded-lg border border-ps-border px-3 py-1.5 text-xs font-medium text-ps-secondary transition-colors hover:bg-ps-surface"
               >
                 Copy to clipboard
               </button>
@@ -267,24 +285,24 @@ function AIPanel({ emailId }: { emailId: string }) {
 
 function PageSkeleton() {
   return (
-    <div className="flex h-[calc(100vh-57px)] flex-col bg-[#FFFDF8]">
-      <div className="flex items-center gap-3 border-b border-[#E7D8C8] px-6 py-4">
-        <div className="h-4 w-4 rounded bg-[#E7D8C8]" />
-        <div className="h-4 w-24 animate-pulse rounded bg-[#E7D8C8]" />
+    <div className="flex h-[calc(100vh-57px)] flex-col bg-ps-bg">
+      <div className="flex items-center gap-3 border-b border-ps-border px-6 py-4">
+        <div className="h-4 w-4 rounded bg-ps-border" />
+        <div className="h-4 w-24 animate-pulse rounded bg-ps-border" />
       </div>
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 p-6 space-y-4">
-          <div className="h-6 w-2/3 animate-pulse rounded bg-[#E7D8C8]" />
-          <div className="h-4 w-1/3 animate-pulse rounded bg-[#EFE5D5]" />
+          <div className="h-6 w-2/3 animate-pulse rounded bg-ps-border" />
+          <div className="h-4 w-1/3 animate-pulse rounded bg-ps-surface-2" />
           <div className="mt-6 space-y-2">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className={`h-3 animate-pulse rounded bg-[#EFE5D5] ${i % 3 === 2 ? "w-2/3" : "w-full"}`} />
+              <div key={i} className={`h-3 animate-pulse rounded bg-ps-surface-2 ${i % 3 === 2 ? "w-2/3" : "w-full"}`} />
             ))}
           </div>
         </div>
-        <div className="w-[300px] shrink-0 border-l border-[#E7D8C8] p-6 space-y-3">
+        <div className="hidden lg:block w-80 shrink-0 border-l border-ps-border p-6 space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-12 animate-pulse rounded-xl bg-[#E7D8C8]" />
+            <div key={i} className="h-12 animate-pulse rounded-xl bg-ps-border" />
           ))}
         </div>
       </div>
@@ -303,6 +321,7 @@ export default function EmailDetailPage({
   const [email, setEmail] = useState<Email | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAIPanel, setShowAIPanel] = useState(false);
 
   useEffect(() => {
     async function fetchEmail() {
@@ -324,10 +343,10 @@ export default function EmailDetailPage({
 
   if (error || !email) {
     return (
-      <div className="flex h-[calc(100vh-57px)] flex-col items-center justify-center gap-3 bg-[#FFFDF8]">
+      <div className="flex h-[calc(100vh-57px)] flex-col items-center justify-center gap-3 bg-ps-bg">
         <AlertCircle className="h-8 w-8 text-red-400" />
-        <p className="text-sm font-medium text-[#332216]">{error ?? "Email not found"}</p>
-        <Link href="/inbox" className="text-sm text-[#BE5103] hover:underline">
+        <p className="text-sm font-medium text-ps-text">{error ?? "Email not found"}</p>
+        <Link href="/inbox" className="text-sm text-ps-accent hover:underline">
           ← Back to inbox
         </Link>
       </div>
@@ -338,34 +357,45 @@ export default function EmailDetailPage({
   const emailAddress = extractEmail(email.sender);
 
   return (
-    <div className="flex h-[calc(100vh-57px)] flex-col bg-[#FFFDF8]">
+    <div className="flex h-[calc(100vh-57px)] flex-col bg-ps-bg">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-3 border-b border-[#E7D8C8] bg-white px-6 py-3">
-        <Link
-          href="/inbox"
-          className="flex items-center gap-1.5 text-sm text-[#544823] transition-colors hover:text-[#BE5103]"
+      <div className="flex items-center justify-between gap-3 border-b border-ps-border bg-ps-card px-4 py-3 sm:px-6">
+        <div className="flex items-center gap-3 min-w-0">
+          <Link
+            href="/inbox"
+            className="flex shrink-0 items-center gap-1.5 text-sm text-ps-secondary transition-colors hover:text-ps-accent"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Inbox
+          </Link>
+          <span className="text-ps-border">/</span>
+          <span className="truncate text-sm text-ps-muted">{email.subject}</span>
+        </div>
+
+        {/* AI toggle — mobile only */}
+        <button
+          onClick={() => setShowAIPanel((v) => !v)}
+          className="flex shrink-0 items-center gap-1.5 rounded-lg border border-ps-border bg-ps-surface px-3 py-1.5 text-xs font-medium text-ps-secondary transition-colors hover:border-ps-accent/30 hover:bg-ps-accent-light hover:text-ps-accent lg:hidden"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Inbox
-        </Link>
-        <span className="text-[#E7D8C8]">/</span>
-        <span className="truncate text-sm text-[#8C4C1F]">{email.subject}</span>
+          <Zap className="h-3.5 w-3.5" />
+          AI Tools
+        </button>
       </div>
 
       <div className="flex flex-1 overflow-hidden">
         {/* Email content */}
-        <div className="flex flex-1 flex-col overflow-y-auto">
+        <div className={`flex flex-col overflow-y-auto ${showAIPanel ? "hidden lg:flex lg:flex-1" : "flex flex-1"}`}>
           {/* Email header */}
-          <div className="border-b border-[#E7D8C8] bg-white px-8 py-6">
-            <h1 className="text-xl font-semibold text-[#332216] leading-snug">
+          <div className="border-b border-ps-border bg-ps-card px-5 py-5 sm:px-8 sm:py-6">
+            <h1 className="text-lg font-semibold text-ps-text leading-snug sm:text-xl">
               {email.subject}
             </h1>
             <div className="mt-4 flex items-start gap-3">
               <SenderAvatar sender={email.sender} />
               <div>
-                <p className="text-sm font-medium text-[#332216]">{name}</p>
-                <p className="text-xs text-[#8C4C1F]">{emailAddress}</p>
-                <p className="mt-0.5 text-xs text-[#8C4C1F]">
+                <p className="text-sm font-medium text-ps-text">{name}</p>
+                <p className="text-xs text-ps-muted">{emailAddress}</p>
+                <p className="mt-0.5 text-xs text-ps-muted">
                   {new Date(email.receivedAt).toLocaleString([], {
                     weekday: "short",
                     month: "short",
@@ -380,23 +410,23 @@ export default function EmailDetailPage({
           </div>
 
           {/* Email body */}
-          <div className="flex-1 px-8 py-6">
+          <div className="flex-1 px-5 py-5 sm:px-8 sm:py-6">
             {email.body ? (
               <div
-                className="prose prose-sm max-w-none text-[#332216]"
+                className="prose prose-sm max-w-none text-ps-text"
                 dangerouslySetInnerHTML={{ __html: email.body }}
               />
             ) : email.snippet ? (
-              <p className="text-sm leading-relaxed text-[#332216]">{email.snippet}</p>
+              <p className="text-sm leading-relaxed text-ps-text">{email.snippet}</p>
             ) : (
-              <p className="text-sm text-[#8C4C1F]">No content available for this email.</p>
+              <p className="text-sm text-ps-muted">No content available for this email.</p>
             )}
           </div>
         </div>
 
-        {/* AI side panel */}
-        <div className="w-[320px] shrink-0 overflow-y-auto border-l border-[#E7D8C8] bg-[#F8F2EA] p-5">
-          <AIPanel emailId={id} />
+        {/* AI side panel — always visible on desktop, toggleable on mobile */}
+        <div className={`overflow-y-auto border-l border-ps-border bg-ps-surface p-5 ${showAIPanel ? "flex flex-col w-full lg:w-80 lg:shrink-0" : "hidden lg:flex lg:flex-col lg:w-80 lg:shrink-0"}`}>
+          <AIPanel emailId={id} onClose={showAIPanel ? () => setShowAIPanel(false) : undefined} />
         </div>
       </div>
     </div>

@@ -86,6 +86,13 @@ export const UserScalarFieldEnum = {
   id: 'id',
   clerkUserId: 'clerkUserId',
   email: 'email',
+  gmailConnected: 'gmailConnected',
+  calendarConnected: 'calendarConnected',
+  gmailConnectedAt: 'gmailConnectedAt',
+  calendarConnectedAt: 'calendarConnectedAt',
+  lastGmailSync: 'lastGmailSync',
+  lastCalendarSync: 'lastCalendarSync',
+  onboardingCompleted: 'onboardingCompleted',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

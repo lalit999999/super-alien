@@ -33,9 +33,12 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-[#FFFDF8]">
+    <div className="flex min-h-screen bg-ps-bg">
+      {/* Desktop sidebar — hidden on mobile, always visible on lg+ */}
       <Sidebar />
-      <div className="flex flex-1 flex-col pl-[220px]">
+
+      {/* Main content — full width on mobile, offset by sidebar on desktop */}
+      <div className="flex min-w-0 flex-1 flex-col lg:pl-55">
         <Topbar />
         <main className="flex-1">{children}</main>
       </div>
