@@ -1,4 +1,4 @@
-export const AI_MODEL = "gpt-4o-mini" as const;
+export const AI_MODEL = "gemini-2.5-flash" as const;
 
 export const AI_CLASSIFICATION_MAX_TOKENS = 512;
 export const AI_SUMMARY_MAX_TOKENS = 600;
