@@ -497,18 +497,6 @@ export type SyncRecordUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.SyncRecordScalarWhereInput | Prisma.SyncRecordScalarWhereInput[]
 }
 
-export type EnumSyncStatusFieldUpdateOperationsInput = {
-  set?: $Enums.SyncStatus
-}
-
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type SyncRecordCreateWithoutUserInput = {
   id?: string
   integration: string

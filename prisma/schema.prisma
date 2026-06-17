@@ -25,6 +25,12 @@ model User {
   lastCalendarSync     DateTime?
   onboardingCompleted  Boolean   @default(false)
 
+  gmailSyncStatus      SyncStatus @default(PENDING)
+  calendarSyncStatus   SyncStatus @default(PENDING)
+  gmailSyncProgress    Int        @default(0)
+  calendarSyncProgress Int        @default(0)
+  initialSyncCompleted Boolean    @default(false)
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

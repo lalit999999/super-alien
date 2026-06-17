@@ -20,8 +20,20 @@ export type UserModel = runtime.Types.Result.DefaultSelection<Prisma.$UserPayloa
 
 export type AggregateUser = {
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
+}
+
+export type UserAvgAggregateOutputType = {
+  gmailSyncProgress: number | null
+  calendarSyncProgress: number | null
+}
+
+export type UserSumAggregateOutputType = {
+  gmailSyncProgress: number | null
+  calendarSyncProgress: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -35,6 +47,11 @@ export type UserMinAggregateOutputType = {
   lastGmailSync: Date | null
   lastCalendarSync: Date | null
   onboardingCompleted: boolean | null
+  gmailSyncStatus: $Enums.SyncStatus | null
+  calendarSyncStatus: $Enums.SyncStatus | null
+  gmailSyncProgress: number | null
+  calendarSyncProgress: number | null
+  initialSyncCompleted: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +67,11 @@ export type UserMaxAggregateOutputType = {
   lastGmailSync: Date | null
   lastCalendarSync: Date | null
   onboardingCompleted: boolean | null
+  gmailSyncStatus: $Enums.SyncStatus | null
+  calendarSyncStatus: $Enums.SyncStatus | null
+  gmailSyncProgress: number | null
+  calendarSyncProgress: number | null
+  initialSyncCompleted: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -65,11 +87,26 @@ export type UserCountAggregateOutputType = {
   lastGmailSync: number
   lastCalendarSync: number
   onboardingCompleted: number
+  gmailSyncStatus: number
+  calendarSyncStatus: number
+  gmailSyncProgress: number
+  calendarSyncProgress: number
+  initialSyncCompleted: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type UserAvgAggregateInputType = {
+  gmailSyncProgress?: true
+  calendarSyncProgress?: true
+}
+
+export type UserSumAggregateInputType = {
+  gmailSyncProgress?: true
+  calendarSyncProgress?: true
+}
 
 export type UserMinAggregateInputType = {
   id?: true
@@ -82,6 +119,11 @@ export type UserMinAggregateInputType = {
   lastGmailSync?: true
   lastCalendarSync?: true
   onboardingCompleted?: true
+  gmailSyncStatus?: true
+  calendarSyncStatus?: true
+  gmailSyncProgress?: true
+  calendarSyncProgress?: true
+  initialSyncCompleted?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -97,6 +139,11 @@ export type UserMaxAggregateInputType = {
   lastGmailSync?: true
   lastCalendarSync?: true
   onboardingCompleted?: true
+  gmailSyncStatus?: true
+  calendarSyncStatus?: true
+  gmailSyncProgress?: true
+  calendarSyncProgress?: true
+  initialSyncCompleted?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,6 +159,11 @@ export type UserCountAggregateInputType = {
   lastGmailSync?: true
   lastCalendarSync?: true
   onboardingCompleted?: true
+  gmailSyncStatus?: true
+  calendarSyncStatus?: true
+  gmailSyncProgress?: true
+  calendarSyncProgress?: true
+  initialSyncCompleted?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -155,6 +207,18 @@ export type UserAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserMinAggregateInputType
@@ -185,6 +249,8 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: UserCountAggregateInputType | true
+  _avg?: UserAvgAggregateInputType
+  _sum?: UserSumAggregateInputType
   _min?: UserMinAggregateInputType
   _max?: UserMaxAggregateInputType
 }
@@ -200,9 +266,16 @@ export type UserGroupByOutputType = {
   lastGmailSync: Date | null
   lastCalendarSync: Date | null
   onboardingCompleted: boolean
+  gmailSyncStatus: $Enums.SyncStatus
+  calendarSyncStatus: $Enums.SyncStatus
+  gmailSyncProgress: number
+  calendarSyncProgress: number
+  initialSyncCompleted: boolean
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
@@ -236,6 +309,11 @@ export type UserWhereInput = {
   lastGmailSync?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   lastCalendarSync?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   onboardingCompleted?: Prisma.BoolFilter<"User"> | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFilter<"User"> | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFilter<"User"> | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFilter<"User"> | number
+  calendarSyncProgress?: Prisma.IntFilter<"User"> | number
+  initialSyncCompleted?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   preferences?: Prisma.XOR<Prisma.UserPreferenceNullableScalarRelationFilter, Prisma.UserPreferenceWhereInput> | null
@@ -257,6 +335,11 @@ export type UserOrderByWithRelationInput = {
   lastGmailSync?: Prisma.SortOrderInput | Prisma.SortOrder
   lastCalendarSync?: Prisma.SortOrderInput | Prisma.SortOrder
   onboardingCompleted?: Prisma.SortOrder
+  gmailSyncStatus?: Prisma.SortOrder
+  calendarSyncStatus?: Prisma.SortOrder
+  gmailSyncProgress?: Prisma.SortOrder
+  calendarSyncProgress?: Prisma.SortOrder
+  initialSyncCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   preferences?: Prisma.UserPreferenceOrderByWithRelationInput
@@ -281,6 +364,11 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   lastGmailSync?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   lastCalendarSync?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   onboardingCompleted?: Prisma.BoolFilter<"User"> | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFilter<"User"> | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFilter<"User"> | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFilter<"User"> | number
+  calendarSyncProgress?: Prisma.IntFilter<"User"> | number
+  initialSyncCompleted?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   preferences?: Prisma.XOR<Prisma.UserPreferenceNullableScalarRelationFilter, Prisma.UserPreferenceWhereInput> | null
@@ -302,11 +390,18 @@ export type UserOrderByWithAggregationInput = {
   lastGmailSync?: Prisma.SortOrderInput | Prisma.SortOrder
   lastCalendarSync?: Prisma.SortOrderInput | Prisma.SortOrder
   onboardingCompleted?: Prisma.SortOrder
+  gmailSyncStatus?: Prisma.SortOrder
+  calendarSyncStatus?: Prisma.SortOrder
+  gmailSyncProgress?: Prisma.SortOrder
+  calendarSyncProgress?: Prisma.SortOrder
+  initialSyncCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
+  _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
+  _sum?: Prisma.UserSumOrderByAggregateInput
 }
 
 export type UserScalarWhereWithAggregatesInput = {
@@ -323,6 +418,11 @@ export type UserScalarWhereWithAggregatesInput = {
   lastGmailSync?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   lastCalendarSync?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   onboardingCompleted?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusWithAggregatesFilter<"User"> | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusWithAggregatesFilter<"User"> | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntWithAggregatesFilter<"User"> | number
+  calendarSyncProgress?: Prisma.IntWithAggregatesFilter<"User"> | number
+  initialSyncCompleted?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -338,6 +438,11 @@ export type UserCreateInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
@@ -359,6 +464,11 @@ export type UserUncheckedCreateInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
@@ -380,6 +490,11 @@ export type UserUpdateInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
@@ -401,6 +516,11 @@ export type UserUncheckedUpdateInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
@@ -422,6 +542,11 @@ export type UserCreateManyInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -437,6 +562,11 @@ export type UserUpdateManyMutationInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -452,6 +582,11 @@ export type UserUncheckedUpdateManyInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -467,8 +602,18 @@ export type UserCountOrderByAggregateInput = {
   lastGmailSync?: Prisma.SortOrder
   lastCalendarSync?: Prisma.SortOrder
   onboardingCompleted?: Prisma.SortOrder
+  gmailSyncStatus?: Prisma.SortOrder
+  calendarSyncStatus?: Prisma.SortOrder
+  gmailSyncProgress?: Prisma.SortOrder
+  calendarSyncProgress?: Prisma.SortOrder
+  initialSyncCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserAvgOrderByAggregateInput = {
+  gmailSyncProgress?: Prisma.SortOrder
+  calendarSyncProgress?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -482,6 +627,11 @@ export type UserMaxOrderByAggregateInput = {
   lastGmailSync?: Prisma.SortOrder
   lastCalendarSync?: Prisma.SortOrder
   onboardingCompleted?: Prisma.SortOrder
+  gmailSyncStatus?: Prisma.SortOrder
+  calendarSyncStatus?: Prisma.SortOrder
+  gmailSyncProgress?: Prisma.SortOrder
+  calendarSyncProgress?: Prisma.SortOrder
+  initialSyncCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -497,8 +647,18 @@ export type UserMinOrderByAggregateInput = {
   lastGmailSync?: Prisma.SortOrder
   lastCalendarSync?: Prisma.SortOrder
   onboardingCompleted?: Prisma.SortOrder
+  gmailSyncStatus?: Prisma.SortOrder
+  calendarSyncStatus?: Prisma.SortOrder
+  gmailSyncProgress?: Prisma.SortOrder
+  calendarSyncProgress?: Prisma.SortOrder
+  initialSyncCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserSumOrderByAggregateInput = {
+  gmailSyncProgress?: Prisma.SortOrder
+  calendarSyncProgress?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -516,6 +676,18 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
+}
+
+export type EnumSyncStatusFieldUpdateOperationsInput = {
+  set?: $Enums.SyncStatus
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -617,6 +789,11 @@ export type UserCreateWithoutEmailsInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
@@ -637,6 +814,11 @@ export type UserUncheckedCreateWithoutEmailsInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
@@ -673,6 +855,11 @@ export type UserUpdateWithoutEmailsInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
@@ -693,6 +880,11 @@ export type UserUncheckedUpdateWithoutEmailsInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
@@ -713,6 +905,11 @@ export type UserCreateWithoutEventsInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
@@ -733,6 +930,11 @@ export type UserUncheckedCreateWithoutEventsInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
@@ -769,6 +971,11 @@ export type UserUpdateWithoutEventsInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
@@ -789,6 +996,11 @@ export type UserUncheckedUpdateWithoutEventsInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
@@ -809,6 +1021,11 @@ export type UserCreateWithoutAgentExecutionsInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
@@ -829,6 +1046,11 @@ export type UserUncheckedCreateWithoutAgentExecutionsInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
@@ -865,6 +1087,11 @@ export type UserUpdateWithoutAgentExecutionsInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
@@ -885,6 +1112,11 @@ export type UserUncheckedUpdateWithoutAgentExecutionsInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
@@ -905,6 +1137,11 @@ export type UserCreateWithoutPreferencesInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   emails?: Prisma.EmailCreateNestedManyWithoutUserInput
@@ -925,6 +1162,11 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   emails?: Prisma.EmailUncheckedCreateNestedManyWithoutUserInput
@@ -961,6 +1203,11 @@ export type UserUpdateWithoutPreferencesInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emails?: Prisma.EmailUpdateManyWithoutUserNestedInput
@@ -981,6 +1228,11 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emails?: Prisma.EmailUncheckedUpdateManyWithoutUserNestedInput
@@ -1001,6 +1253,11 @@ export type UserCreateWithoutChatSessionsInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
@@ -1021,6 +1278,11 @@ export type UserUncheckedCreateWithoutChatSessionsInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
@@ -1057,6 +1319,11 @@ export type UserUpdateWithoutChatSessionsInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
@@ -1077,6 +1344,11 @@ export type UserUncheckedUpdateWithoutChatSessionsInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
@@ -1097,6 +1369,11 @@ export type UserCreateWithoutSyncRecordsInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
@@ -1117,6 +1394,11 @@ export type UserUncheckedCreateWithoutSyncRecordsInput = {
   lastGmailSync?: Date | string | null
   lastCalendarSync?: Date | string | null
   onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
@@ -1153,6 +1435,11 @@ export type UserUpdateWithoutSyncRecordsInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
@@ -1173,6 +1460,11 @@ export type UserUncheckedUpdateWithoutSyncRecordsInput = {
   lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
@@ -1260,6 +1552,11 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   lastGmailSync?: boolean
   lastCalendarSync?: boolean
   onboardingCompleted?: boolean
+  gmailSyncStatus?: boolean
+  calendarSyncStatus?: boolean
+  gmailSyncProgress?: boolean
+  calendarSyncProgress?: boolean
+  initialSyncCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   preferences?: boolean | Prisma.User$preferencesArgs<ExtArgs>
@@ -1282,6 +1579,11 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   lastGmailSync?: boolean
   lastCalendarSync?: boolean
   onboardingCompleted?: boolean
+  gmailSyncStatus?: boolean
+  calendarSyncStatus?: boolean
+  gmailSyncProgress?: boolean
+  calendarSyncProgress?: boolean
+  initialSyncCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1297,6 +1599,11 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   lastGmailSync?: boolean
   lastCalendarSync?: boolean
   onboardingCompleted?: boolean
+  gmailSyncStatus?: boolean
+  calendarSyncStatus?: boolean
+  gmailSyncProgress?: boolean
+  calendarSyncProgress?: boolean
+  initialSyncCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1312,11 +1619,16 @@ export type UserSelectScalar = {
   lastGmailSync?: boolean
   lastCalendarSync?: boolean
   onboardingCompleted?: boolean
+  gmailSyncStatus?: boolean
+  calendarSyncStatus?: boolean
+  gmailSyncProgress?: boolean
+  calendarSyncProgress?: boolean
+  initialSyncCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "email" | "gmailConnected" | "calendarConnected" | "gmailConnectedAt" | "calendarConnectedAt" | "lastGmailSync" | "lastCalendarSync" | "onboardingCompleted" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "email" | "gmailConnected" | "calendarConnected" | "gmailConnectedAt" | "calendarConnectedAt" | "lastGmailSync" | "lastCalendarSync" | "onboardingCompleted" | "gmailSyncStatus" | "calendarSyncStatus" | "gmailSyncProgress" | "calendarSyncProgress" | "initialSyncCompleted" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   preferences?: boolean | Prisma.User$preferencesArgs<ExtArgs>
   emails?: boolean | Prisma.User$emailsArgs<ExtArgs>
@@ -1350,6 +1662,11 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     lastGmailSync: Date | null
     lastCalendarSync: Date | null
     onboardingCompleted: boolean
+    gmailSyncStatus: $Enums.SyncStatus
+    calendarSyncStatus: $Enums.SyncStatus
+    gmailSyncProgress: number
+    calendarSyncProgress: number
+    initialSyncCompleted: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1791,6 +2108,11 @@ export interface UserFieldRefs {
   readonly lastGmailSync: Prisma.FieldRef<"User", 'DateTime'>
   readonly lastCalendarSync: Prisma.FieldRef<"User", 'DateTime'>
   readonly onboardingCompleted: Prisma.FieldRef<"User", 'Boolean'>
+  readonly gmailSyncStatus: Prisma.FieldRef<"User", 'SyncStatus'>
+  readonly calendarSyncStatus: Prisma.FieldRef<"User", 'SyncStatus'>
+  readonly gmailSyncProgress: Prisma.FieldRef<"User", 'Int'>
+  readonly calendarSyncProgress: Prisma.FieldRef<"User", 'Int'>
+  readonly initialSyncCompleted: Prisma.FieldRef<"User", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }

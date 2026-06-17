@@ -12,7 +12,7 @@ interface MessageRendererProps {
 }
 
 export function MessageRenderer({ type, content, className }: MessageRendererProps) {
-  if (type === "EMAIL") {
+  if (type === "AI") {
     return <EmailRenderer html={content} className={className} />;
   }
 

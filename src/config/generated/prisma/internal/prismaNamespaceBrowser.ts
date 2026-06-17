@@ -96,6 +96,11 @@ export const UserScalarFieldEnum = {
   lastGmailSync: 'lastGmailSync',
   lastCalendarSync: 'lastCalendarSync',
   onboardingCompleted: 'onboardingCompleted',
+  gmailSyncStatus: 'gmailSyncStatus',
+  calendarSyncStatus: 'calendarSyncStatus',
+  gmailSyncProgress: 'gmailSyncProgress',
+  calendarSyncProgress: 'calendarSyncProgress',
+  initialSyncCompleted: 'initialSyncCompleted',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

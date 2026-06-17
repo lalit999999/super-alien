@@ -1,4 +1,5 @@
-export const AI_MODEL = "gemini-2.5-flash" as const;
+export const AI_MODEL = "gemini-2.5-flash-lite" as const;
+// deepseek-ai/deepseek-v4-pro
 
 export const AI_CLASSIFICATION_MAX_TOKENS = 512;
 export const AI_SUMMARY_MAX_TOKENS = 600;

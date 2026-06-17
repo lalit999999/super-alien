@@ -1653,6 +1653,11 @@ export const UserScalarFieldEnum = {
   lastGmailSync: 'lastGmailSync',
   lastCalendarSync: 'lastCalendarSync',
   onboardingCompleted: 'onboardingCompleted',
+  gmailSyncStatus: 'gmailSyncStatus',
+  calendarSyncStatus: 'calendarSyncStatus',
+  gmailSyncProgress: 'gmailSyncProgress',
+  calendarSyncProgress: 'calendarSyncProgress',
+  initialSyncCompleted: 'initialSyncCompleted',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1954,6 +1959,34 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
+ * Reference to a field of type 'SyncStatus'
+ */
+export type EnumSyncStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyncStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'SyncStatus[]'
+ */
+export type ListEnumSyncStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyncStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
  * Reference to a field of type 'Json'
  */
 export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -2020,34 +2053,6 @@ export type EnumMessageRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$Pris
  * Reference to a field of type 'MessageRole[]'
  */
 export type ListEnumMessageRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageRole[]'>
-    
-
-
-/**
- * Reference to a field of type 'SyncStatus'
- */
-export type EnumSyncStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyncStatus'>
-    
-
-
-/**
- * Reference to a field of type 'SyncStatus[]'
- */
-export type ListEnumSyncStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyncStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 /**
