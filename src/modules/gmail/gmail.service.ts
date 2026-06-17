@@ -11,6 +11,14 @@ import {
 } from "@/modules/corsair";
 import type { CorsairMessagePart, SendEmailOutput, GetEmailsOutput, GetThreadOutput } from "@/modules/corsair";
 import type { AiService } from "@/modules/ai";
+import type { CacheService } from "@/modules/cache";
+import type { RateLimitService } from "@/modules/rate-limit";
+import {
+  buildGmailEmailKey,
+  buildGmailThreadKey,
+  buildGmailSearchKey,
+  CACHE_TTL,
+} from "@/modules/cache";
 import type { GmailRepository } from "./gmail.repository";
 import type { DbEmail, GmailSyncResult, GmailListOptions, GmailUpsertInput, ParsedMessage, SendEmailInput, DbEmailSearchOptions } from "./gmail.types";
 import { GMAIL_SYNC_MAX_RESULTS } from "./gmail.constants";
@@ -18,7 +26,9 @@ import { GMAIL_SYNC_MAX_RESULTS } from "./gmail.constants";
 export class GmailService {
   constructor(
     private readonly repo: GmailRepository,
-    private readonly ai?: AiService
+    private readonly ai?: AiService,
+    private readonly cache?: CacheService,
+    private readonly rateLimit?: RateLimitService
   ) {}
 
   async syncEmailsFromCorsair(
@@ -82,6 +92,16 @@ export class GmailService {
     clerkUserId: string,
     emailId: string
   ): Promise<DbEmail | null> {
+    if (this.cache) {
+      const key = buildGmailEmailKey(clerkUserId, emailId);
+      const { data, hit } = await this.cache.getOrSet<DbEmail | null>(
+        key,
+        () => this.repo.getEmailById(emailId, clerkUserId),
+        { ttl: CACHE_TTL.EMAIL }
+      );
+      console.log(`[Gmail] getEmailDetails ${hit ? "cache-hit" : "cache-miss"} emailId=${emailId}`);
+      return data;
+    }
     return this.repo.getEmailById(emailId, clerkUserId);
   }
 
@@ -96,6 +116,7 @@ export class GmailService {
     clerkUserId: string,
     input: SendEmailInput
   ): Promise<SendEmailOutput> {
+    await this.checkGmailActionLimit(clerkUserId, "sendEmail");
     return corsairSendEmail(clerkUserId, input);
   }
 
@@ -104,6 +125,16 @@ export class GmailService {
     query: string,
     maxResults?: number
   ): Promise<GetEmailsOutput> {
+    if (this.cache) {
+      const key = buildGmailSearchKey(clerkUserId, `${query}:${maxResults ?? ""}`);
+      const { data, hit } = await this.cache.getOrSet<GetEmailsOutput>(
+        key,
+        () => corsairSearchEmails(clerkUserId, query, maxResults),
+        { ttl: CACHE_TTL.SEARCH }
+      );
+      console.log(`[Gmail] searchEmails ${hit ? "cache-hit" : "cache-miss"} query="${query}"`);
+      return data;
+    }
     return corsairSearchEmails(clerkUserId, query, maxResults);
   }
 
@@ -138,6 +169,16 @@ export class GmailService {
     clerkUserId: string,
     threadId: string
   ): Promise<GetThreadOutput> {
+    if (this.cache) {
+      const key = buildGmailThreadKey(clerkUserId, threadId);
+      const { data, hit } = await this.cache.getOrSet<GetThreadOutput>(
+        key,
+        () => corsairGetThread(clerkUserId, threadId),
+        { ttl: CACHE_TTL.THREAD }
+      );
+      console.log(`[Gmail] getThread ${hit ? "cache-hit" : "cache-miss"} threadId=${threadId}`);
+      return data;
+    }
     return corsairGetThread(clerkUserId, threadId);
   }
 
@@ -145,7 +186,9 @@ export class GmailService {
     clerkUserId: string,
     corsairEmailId: string
   ): Promise<{ success: boolean }> {
+    await this.checkGmailActionLimit(clerkUserId, "archiveEmail");
     await corsairArchiveEmail(clerkUserId, corsairEmailId);
+    await this.invalidateEmailCache(clerkUserId, corsairEmailId);
     return { success: true };
   }
 
@@ -153,8 +196,10 @@ export class GmailService {
     clerkUserId: string,
     corsairEmailId: string
   ): Promise<{ success: boolean }> {
+    await this.checkGmailActionLimit(clerkUserId, "deleteEmail");
     await corsairTrashEmail(clerkUserId, corsairEmailId);
     await this.repo.deleteEmailByCorsairId(corsairEmailId, clerkUserId).catch(() => undefined);
+    await this.invalidateEmailCache(clerkUserId, corsairEmailId);
     return { success: true };
   }
 
@@ -162,8 +207,10 @@ export class GmailService {
     clerkUserId: string,
     corsairEmailId: string
   ): Promise<{ success: boolean }> {
+    await this.checkGmailActionLimit(clerkUserId, "markRead");
     await corsairMarkEmailRead(clerkUserId, corsairEmailId);
     await this.repo.updateReadStatusByCorsairId(corsairEmailId, clerkUserId, true).catch(() => undefined);
+    await this.invalidateEmailCache(clerkUserId, corsairEmailId);
     return { success: true };
   }
 
@@ -171,8 +218,10 @@ export class GmailService {
     clerkUserId: string,
     corsairEmailId: string
   ): Promise<{ success: boolean }> {
+    await this.checkGmailActionLimit(clerkUserId, "markUnread");
     await corsairMarkEmailUnread(clerkUserId, corsairEmailId);
     await this.repo.updateReadStatusByCorsairId(corsairEmailId, clerkUserId, false).catch(() => undefined);
+    await this.invalidateEmailCache(clerkUserId, corsairEmailId);
     return { success: true };
   }
 
@@ -202,6 +251,22 @@ export class GmailService {
     }
 
     return { classified, failed };
+  }
+
+  private async checkGmailActionLimit(clerkUserId: string, action: string): Promise<void> {
+    if (!this.rateLimit) return;
+    const result = await this.rateLimit.checkGmailActions(clerkUserId);
+    if (!result.allowed) {
+      const err = new Error(`Gmail action rate limit exceeded for ${action}`);
+      (err as Error & { code: string }).code = "RATE_LIMIT_EXCEEDED";
+      throw err;
+    }
+  }
+
+  private async invalidateEmailCache(clerkUserId: string, emailId: string): Promise<void> {
+    if (!this.cache) return;
+    const key = buildGmailEmailKey(clerkUserId, emailId);
+    await this.cache.del(key).catch(() => undefined);
   }
 }
 

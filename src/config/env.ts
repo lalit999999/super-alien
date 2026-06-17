@@ -18,6 +18,10 @@ const envSchema = z.object({
   // AI
   OPENAI_API_KEY: z.string().min(1, "OPENAI_API_KEY is required"),
 
+  // Upstash Redis
+  UPSTASH_REDIS_REST_URL: z.string().min(1, "UPSTASH_REDIS_REST_URL is required"),
+  UPSTASH_REDIS_REST_TOKEN: z.string().min(1, "UPSTASH_REDIS_REST_TOKEN is required"),
+
   // App
   NEXT_PUBLIC_APP_URL: z.string().optional(),
 });

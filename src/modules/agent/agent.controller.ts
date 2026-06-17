@@ -1,6 +1,7 @@
 import { type NextRequest } from "next/server";
 import { ok, fail } from "@/lib/response";
 import { requireAuth } from "@/lib/auth";
+import { rateLimitService, getRateLimitHeaders, RATE_LIMIT_ERRORS } from "@/modules/rate-limit";
 import { agentChatRequestSchema } from "./agent.schema";
 import type { AgentService } from "./agent.service";
 
@@ -19,6 +20,24 @@ export async function handleAgentChat(
   service: AgentService
 ) {
   const session = await requireAuth();
+
+  const chatLimit = await rateLimitService.checkChat(session.userId);
+  if (!chatLimit.allowed) {
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: RATE_LIMIT_ERRORS.EXCEEDED,
+        code: RATE_LIMIT_ERRORS.CODE,
+      }),
+      {
+        status: 429,
+        headers: {
+          "Content-Type": "application/json",
+          ...getRateLimitHeaders(chatLimit.limit, chatLimit.remaining, chatLimit.resetAt),
+        },
+      }
+    );
+  }
 
   const body = await req.json().catch(() => null);
   const parsed = agentChatRequestSchema.safeParse(body);

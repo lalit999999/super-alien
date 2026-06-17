@@ -2,6 +2,7 @@ import { type NextRequest } from "next/server";
 import { requireAuth } from "@/lib/auth";
 import { ok, fail } from "@/lib/response";
 import { AuthRepository } from "@/modules/auth";
+import { cacheService } from "@/modules/cache";
 import { prisma } from "@/lib/prisma";
 import { CalendarRepository } from "./calendar.repository";
 import { CalendarService } from "./calendar.service";
@@ -17,7 +18,7 @@ import {
 } from "./calendar.constants";
 
 function makeService(): CalendarService {
-  return new CalendarService(new CalendarRepository(prisma));
+  return new CalendarService(new CalendarRepository(prisma), cacheService);
 }
 
 function makeAuthRepo(): AuthRepository {

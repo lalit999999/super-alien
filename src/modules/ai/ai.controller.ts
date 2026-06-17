@@ -2,6 +2,7 @@ import { type NextRequest } from "next/server";
 import { requireAuth } from "@/lib/auth";
 import { ok, fail } from "@/lib/response";
 import { prisma } from "@/lib/prisma";
+import { rateLimitService, getRateLimitHeaders, RATE_LIMIT_ERRORS } from "@/modules/rate-limit";
 import { AiRepository } from "./ai.repository";
 import { AiService } from "./ai.service";
 import { openai } from "./ai.provider";
@@ -18,8 +19,38 @@ function makeService(): AiService {
   return new AiService(openai, new AiRepository(prisma));
 }
 
+async function enforceRateLimit(
+  userId: string,
+  action: "summaries" | "drafts"
+) {
+  const result = await (action === "drafts"
+    ? rateLimitService.checkDrafts(userId)
+    : rateLimitService.checkSummaries(userId));
+
+  if (!result.allowed) {
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: RATE_LIMIT_ERRORS.EXCEEDED,
+        code: RATE_LIMIT_ERRORS.CODE,
+      }),
+      {
+        status: 429,
+        headers: {
+          "Content-Type": "application/json",
+          ...getRateLimitHeaders(result.limit, result.remaining, result.resetAt),
+        },
+      }
+    );
+  }
+  return null;
+}
+
 export async function handleGenerateDraft(req: NextRequest) {
-  await requireAuth();
+  const { userId } = await requireAuth();
+
+  const rateLimitErr = await enforceRateLimit(userId, "drafts");
+  if (rateLimitErr) return rateLimitErr;
 
   const body = await req.json().catch(() => ({}));
   const parsed = generateDraftRequestSchema.safeParse(body);
@@ -58,6 +89,9 @@ export async function handleClassify(req: NextRequest) {
 export async function handleSummarize(req: NextRequest) {
   const { userId } = await requireAuth();
 
+  const rateLimitErr = await enforceRateLimit(userId, "summaries");
+  if (rateLimitErr) return rateLimitErr;
+
   const body = await req.json().catch(() => ({}));
   const parsed = summarizeEmailRequestSchema.safeParse(body);
   if (!parsed.success) {
@@ -83,6 +117,9 @@ export async function handleSummarize(req: NextRequest) {
 
 export async function handleDraftFromEmail(req: NextRequest) {
   const { userId } = await requireAuth();
+
+  const rateLimitErr = await enforceRateLimit(userId, "drafts");
+  if (rateLimitErr) return rateLimitErr;
 
   const body = await req.json().catch(() => ({}));
   const parsed = draftFromEmailRequestSchema.safeParse(body);

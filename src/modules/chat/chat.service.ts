@@ -1,5 +1,7 @@
 import type { AgentService } from "@/modules/agent";
 import type { ChatHistoryMessage } from "@/modules/agent";
+import type { CacheService } from "@/modules/cache";
+import { buildChatMessagesKey, CACHE_TTL } from "@/modules/cache";
 import type { ChatRepository } from "./chat.repository";
 import type { ChatSession, ChatMessage, ChatSessionGroup } from "./chat.types";
 import { CHAT_DEFAULT_TITLE, CHAT_TITLE_MAX_LENGTH, CHAT_SESSION_GROUPS } from "./chat.constants";
@@ -51,7 +53,8 @@ function groupSessionsByDate(sessions: ChatSession[]): ChatSessionGroup[] {
 export class ChatService {
   constructor(
     private readonly repo: ChatRepository,
-    private readonly agent: AgentService
+    private readonly agent: AgentService,
+    private readonly cache?: CacheService
   ) {}
 
   async createSession(userId: string, title?: string): Promise<ChatSession> {
@@ -72,6 +75,7 @@ export class ChatService {
   async deleteSession(sessionId: string, userId: string): Promise<void> {
     log("Deleting session", { sessionId, userId });
     await this.repo.deleteSession(sessionId, userId);
+    await this.invalidateChatCache(sessionId);
   }
 
   async sendMessage(
@@ -83,7 +87,6 @@ export class ChatService {
     const session = await this.repo.getSession(sessionId, dbUserId);
     if (!session) throw new Error("Session not found");
 
-    // Auto-set title from the first user message
     if (session.title === CHAT_DEFAULT_TITLE || !session.title) {
       await this.repo.updateTitle(sessionId, dbUserId, deriveTitleFromPrompt(prompt));
     }
@@ -91,10 +94,8 @@ export class ChatService {
     const userMessage = await this.repo.addMessage(sessionId, "USER", prompt);
     log("User message saved", { sessionId });
 
-    const history: ChatHistoryMessage[] = (session.messages ?? []).map((m) => ({
-      role: m.role === "USER" ? "user" : "assistant",
-      content: m.content,
-    }));
+    // Read history from cache or DB
+    const history = await this.getChatHistory(sessionId);
 
     const agentResult = await this.agent.chat({
       userId: clerkUserId,
@@ -106,6 +107,42 @@ export class ChatService {
     const assistantMessage = await this.repo.addMessage(sessionId, "ASSISTANT", agentResult.response);
     log("Assistant message saved", { sessionId, toolsUsed: agentResult.toolsUsed });
 
+    // Invalidate cache so next read gets fresh messages
+    await this.invalidateChatCache(sessionId);
+
     return { userMessage, assistantMessage, toolsUsed: agentResult.toolsUsed };
+  }
+
+  private async getChatHistory(sessionId: string): Promise<ChatHistoryMessage[]> {
+    if (this.cache) {
+      const key = buildChatMessagesKey(sessionId);
+      const cached = await this.cache.get<ChatHistoryMessage[]>(key);
+      if (cached.hit && cached.data) {
+        log("Chat history cache-hit", { sessionId });
+        return cached.data;
+      }
+
+      const messages = (await this.repo.getRecentMessages(sessionId)) ?? [];
+      const history: ChatHistoryMessage[] = messages.map((m) => ({
+        role: m.role === "USER" ? "user" : "assistant",
+        content: m.content,
+      }));
+
+      await this.cache.set(key, history, { ttl: CACHE_TTL.CHAT_MESSAGES });
+      log("Chat history cache-miss — populated", { sessionId });
+      return history;
+    }
+
+    const messages = (await this.repo.getRecentMessages(sessionId)) ?? [];
+    return messages.map((m) => ({
+      role: m.role === "USER" ? "user" : "assistant",
+      content: m.content,
+    }));
+  }
+
+  private async invalidateChatCache(sessionId: string): Promise<void> {
+    if (!this.cache) return;
+    const key = buildChatMessagesKey(sessionId);
+    await this.cache.del(key).catch(() => undefined);
   }
 }

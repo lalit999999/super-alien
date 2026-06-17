@@ -1,4 +1,10 @@
 import { getEvents, createEvent, updateEvent as corsairUpdateEvent, deleteEvent as corsairDeleteEvent } from "@/modules/corsair";
+import type { CacheService } from "@/modules/cache";
+import {
+  buildCalendarEventsKey,
+  buildCalendarEventKey,
+  CACHE_TTL,
+} from "@/modules/cache";
 import type { CalendarRepository } from "./calendar.repository";
 import type {
   DbCalendarEvent,
@@ -10,7 +16,10 @@ import type { CreateCalendarEventInput, UpdateCalendarEventInput } from "./calen
 import { CALENDAR_SYNC_MAX_RESULTS } from "./calendar.constants";
 
 export class CalendarService {
-  constructor(private readonly repo: CalendarRepository) {}
+  constructor(
+    private readonly repo: CalendarRepository,
+    private readonly cache?: CacheService
+  ) {}
 
   async syncEventsFromCorsair(
     clerkUserId: string,
@@ -63,10 +72,30 @@ export class CalendarService {
     dbUserId: string,
     eventId: string
   ): Promise<DbCalendarEvent | null> {
+    if (this.cache) {
+      const key = buildCalendarEventKey(dbUserId, eventId);
+      const { data, hit } = await this.cache.getOrSet<DbCalendarEvent | null>(
+        key,
+        () => this.repo.getEventById(eventId, dbUserId),
+        { ttl: CACHE_TTL.CALENDAR_EVENT }
+      );
+      console.log(`[Calendar] getEventDetails ${hit ? "cache-hit" : "cache-miss"} eventId=${eventId}`);
+      return data;
+    }
     return this.repo.getEventById(eventId, dbUserId);
   }
 
   async getUpcomingEvents(dbUserId: string, limit = 10): Promise<DbCalendarEvent[]> {
+    if (this.cache) {
+      const key = buildCalendarEventsKey(dbUserId, `upcoming:${limit}`);
+      const { data, hit } = await this.cache.getOrSet<DbCalendarEvent[]>(
+        key,
+        () => this.repo.getUpcomingEvents(dbUserId, limit),
+        { ttl: CACHE_TTL.CALENDAR_UPCOMING }
+      );
+      console.log(`[Calendar] getUpcomingEvents ${hit ? "cache-hit" : "cache-miss"} userId=${dbUserId}`);
+      return data;
+    }
     return this.repo.getUpcomingEvents(dbUserId, limit);
   }
 
@@ -93,7 +122,9 @@ export class CalendarService {
       throw new Error("Failed to parse event returned from Corsair");
     }
 
-    return this.repo.upsertEvent(parsed);
+    const event = await this.repo.upsertEvent(parsed);
+    await this.invalidateCalendarCache(dbUserId);
+    return event;
   }
 
   async updateCalendarEvent(
@@ -120,7 +151,9 @@ export class CalendarService {
       throw new Error("Failed to parse updated event returned from Corsair");
     }
 
-    return this.repo.upsertEvent(parsed);
+    const event = await this.repo.upsertEvent(parsed);
+    await this.invalidateEventCache(dbUserId, corsairEventId);
+    return event;
   }
 
   async deleteCalendarEvent(
@@ -130,6 +163,7 @@ export class CalendarService {
   ): Promise<void> {
     await corsairDeleteEvent(clerkUserId, { id: corsairEventId });
     await this.repo.deleteEvent(corsairEventId, dbUserId);
+    await this.invalidateEventCache(dbUserId, corsairEventId);
   }
 
   async getEventsByDateRange(
@@ -151,6 +185,19 @@ export class CalendarService {
 
   async deleteCalendarEventFromDB(corsairEventId: string, dbUserId: string): Promise<void> {
     await this.repo.deleteEvent(corsairEventId, dbUserId);
+  }
+
+  private async invalidateEventCache(dbUserId: string, eventId: string): Promise<void> {
+    if (!this.cache) return;
+    await Promise.all([
+      this.cache.del(buildCalendarEventKey(dbUserId, eventId)),
+      this.cache.del(buildCalendarEventsKey(dbUserId, `upcoming:10`)),
+    ]).catch(() => undefined);
+  }
+
+  private async invalidateCalendarCache(dbUserId: string): Promise<void> {
+    if (!this.cache) return;
+    await this.cache.del(buildCalendarEventsKey(dbUserId, `upcoming:10`)).catch(() => undefined);
   }
 }
 

@@ -7,7 +7,10 @@ export async function POST(req: NextRequest) {
   try {
     return await handleCreateSession(req, chatService);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Internal server error";
+    console.log("error at the /session file ", err);
+
+    const message =
+      err instanceof Error ? err.message : "Internal server error";
     return fail(message, "INTERNAL_ERROR", 500);
   }
 }

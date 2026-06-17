@@ -3,6 +3,8 @@ import { requireAuth, requireCurrentUser } from "@/lib/auth";
 import { ok, fail } from "@/lib/response";
 import { AiService, AiRepository, openai } from "@/modules/ai";
 import { AuthService, AuthRepository } from "@/modules/auth";
+import { cacheService } from "@/modules/cache";
+import { rateLimitService, getRateLimitHeaders, RATE_LIMIT_ERRORS } from "@/modules/rate-limit";
 import { prisma } from "@/lib/prisma";
 import { GmailRepository } from "./gmail.repository";
 import { GmailService } from "./gmail.service";
@@ -11,7 +13,7 @@ import { GMAIL_ERRORS, GMAIL_SYNC_MAX_RESULTS } from "./gmail.constants";
 
 function makeService(): GmailService {
   const ai = new AiService(openai, new AiRepository(prisma));
-  return new GmailService(new GmailRepository(prisma), ai);
+  return new GmailService(new GmailRepository(prisma), ai, cacheService, rateLimitService);
 }
 
 export async function handleSync(req: NextRequest) {
@@ -82,12 +84,85 @@ export async function handleMarkAsRead(
   const { userId: clerkUserId } = await requireAuth();
   const { id } = await params;
 
-  const email = await makeService().markEmailAsRead(clerkUserId, id);
-  if (!email) {
-    return fail("Email not found", GMAIL_ERRORS.EMAIL_NOT_FOUND, 404);
+  try {
+    const result = await makeService().markRead(clerkUserId, id);
+    return ok(result);
+  } catch (err) {
+    if (err instanceof Error && (err as Error & { code: string }).code === "RATE_LIMIT_EXCEEDED") {
+      const rl = await rateLimitService.checkGmailActions(clerkUserId);
+      return new Response(
+        JSON.stringify({ success: false, error: RATE_LIMIT_ERRORS.EXCEEDED, code: RATE_LIMIT_ERRORS.CODE }),
+        { status: 429, headers: { "Content-Type": "application/json", ...getRateLimitHeaders(rl.limit, rl.remaining, rl.resetAt) } }
+      );
+    }
+    return fail("Failed to mark email as read", "UPDATE_FAILED", 500);
   }
+}
 
-  return ok(email);
+export async function handleMarkAsUnread(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { userId: clerkUserId } = await requireAuth();
+  const { id } = await params;
+
+  try {
+    const result = await makeService().markUnread(clerkUserId, id);
+    return ok(result);
+  } catch (err) {
+    if (err instanceof Error && (err as Error & { code: string }).code === "RATE_LIMIT_EXCEEDED") {
+      const rl = await rateLimitService.checkGmailActions(clerkUserId);
+      return new Response(
+        JSON.stringify({ success: false, error: RATE_LIMIT_ERRORS.EXCEEDED, code: RATE_LIMIT_ERRORS.CODE }),
+        { status: 429, headers: { "Content-Type": "application/json", ...getRateLimitHeaders(rl.limit, rl.remaining, rl.resetAt) } }
+      );
+    }
+    return fail("Failed to mark email as unread", "UPDATE_FAILED", 500);
+  }
+}
+
+export async function handleArchiveEmail(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { userId: clerkUserId } = await requireAuth();
+  const { id } = await params;
+
+  try {
+    const result = await makeService().archiveEmail(clerkUserId, id);
+    return ok(result);
+  } catch (err) {
+    if (err instanceof Error && (err as Error & { code: string }).code === "RATE_LIMIT_EXCEEDED") {
+      const rl = await rateLimitService.checkGmailActions(clerkUserId);
+      return new Response(
+        JSON.stringify({ success: false, error: RATE_LIMIT_ERRORS.EXCEEDED, code: RATE_LIMIT_ERRORS.CODE }),
+        { status: 429, headers: { "Content-Type": "application/json", ...getRateLimitHeaders(rl.limit, rl.remaining, rl.resetAt) } }
+      );
+    }
+    return fail("Failed to archive email", "ACTION_FAILED", 500);
+  }
+}
+
+export async function handleDeleteEmail(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { userId: clerkUserId } = await requireAuth();
+  const { id } = await params;
+
+  try {
+    const result = await makeService().deleteEmail(clerkUserId, id);
+    return ok(result);
+  } catch (err) {
+    if (err instanceof Error && (err as Error & { code: string }).code === "RATE_LIMIT_EXCEEDED") {
+      const rl = await rateLimitService.checkGmailActions(clerkUserId);
+      return new Response(
+        JSON.stringify({ success: false, error: RATE_LIMIT_ERRORS.EXCEEDED, code: RATE_LIMIT_ERRORS.CODE }),
+        { status: 429, headers: { "Content-Type": "application/json", ...getRateLimitHeaders(rl.limit, rl.remaining, rl.resetAt) } }
+      );
+    }
+    return fail("Failed to delete email", "ACTION_FAILED", 500);
+  }
 }
 
 export async function handleSendEmail(req: NextRequest) {
@@ -102,9 +177,19 @@ export async function handleSendEmail(req: NextRequest) {
     );
   }
 
-  const result = await makeService().sendEmail(clerkUserId, parsed.data);
-
-  return ok(result, 200);
+  try {
+    const result = await makeService().sendEmail(clerkUserId, parsed.data);
+    return ok(result, 200);
+  } catch (err) {
+    if (err instanceof Error && (err as Error & { code: string }).code === "RATE_LIMIT_EXCEEDED") {
+      const rl = await rateLimitService.checkGmailActions(clerkUserId);
+      return new Response(
+        JSON.stringify({ success: false, error: RATE_LIMIT_ERRORS.EXCEEDED, code: RATE_LIMIT_ERRORS.CODE }),
+        { status: 429, headers: { "Content-Type": "application/json", ...getRateLimitHeaders(rl.limit, rl.remaining, rl.resetAt) } }
+      );
+    }
+    throw err;
+  }
 }
 
 export async function handleSearchEmails(req: NextRequest) {
