@@ -33,8 +33,14 @@ type EmailApiResponse =
   | { success: true; data: { email: Email } }
   | { success: false; error: string; code: string };
 
+type MultiSummary = {
+  shortSummary: string;
+  mediumSummary: string;
+  bulletSummary: string[];
+};
+
 type SummarizeResponse =
-  | { success: true; data: { summary: string } }
+  | { success: true; data: MultiSummary }
   | { success: false; error: string; code: string };
 
 type DraftResponse =
@@ -80,7 +86,7 @@ function SenderAvatar({ sender, size = "md" }: { sender: string; size?: "sm" | "
 // ─── AI Panel ─────────────────────────────────────────────────────────────────
 
 function AIPanel({ emailId, onClose }: { emailId: string; onClose?: () => void }) {
-  const [summary, setSummary] = useState<string | null>(null);
+  const [summaryData, setSummaryData] = useState<MultiSummary | null>(null);
   const [draft, setDraft] = useState<string | null>(null);
   const [classification, setClassification] = useState<{ category: string; priority: string } | null>(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
@@ -100,7 +106,7 @@ function AIPanel({ emailId, onClose }: { emailId: string; onClose?: () => void }
       });
       const json: SummarizeResponse = await res.json();
       if (!json.success) { setErrorSummary(json.error); return; }
-      setSummary(json.data.summary);
+      setSummaryData(json.data);
     } catch {
       setErrorSummary("Failed to generate summary.");
     } finally {
@@ -235,7 +241,7 @@ function AIPanel({ emailId, onClose }: { emailId: string; onClose?: () => void }
       )}
 
       {/* AI Summary */}
-      {(summary || errorSummary) && (
+      {(summaryData || errorSummary) && (
         <div className="rounded-2xl border border-ps-border bg-ps-accent-light p-5">
           <div className="mb-3 flex items-center gap-1.5">
             <Sparkles className="h-4 w-4 text-ps-accent" />
@@ -247,9 +253,31 @@ function AIPanel({ emailId, onClose }: { emailId: string; onClose?: () => void }
             <div className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
               <AlertCircle className="h-3.5 w-3.5" /> {errorSummary}
             </div>
-          ) : (
-            <MarkdownRenderer content={summary ?? ""} showCopyMessage={false} />
-          )}
+          ) : summaryData ? (
+            <div className="flex flex-col gap-3">
+              <p className="text-sm font-medium text-ps-text leading-snug">
+                {summaryData.shortSummary}
+              </p>
+              <details className="group">
+                <summary className="cursor-pointer select-none text-xs font-semibold text-ps-accent hover:underline">
+                  More detail
+                </summary>
+                <p className="mt-2 text-xs leading-relaxed text-ps-secondary">
+                  {summaryData.mediumSummary}
+                </p>
+              </details>
+              {summaryData.bulletSummary.length > 0 && (
+                <ul className="flex flex-col gap-1 pl-1">
+                  {summaryData.bulletSummary.map((point, i) => (
+                    <li key={i} className="flex items-start gap-1.5 text-xs text-ps-secondary">
+                      <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-ps-accent" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ) : null}
         </div>
       )}
 
