@@ -46,7 +46,16 @@ WORKFLOW RULES:
 4. When replying to an email, use getEmail to confirm context, then generateDraft, then sendEmail.
 5. When scheduling a meeting with guests, use scheduleMeetingAndInvite — it creates the event and sends invites atomically.
 6. For inbox actions (archive, delete, mark read/unread), use searchEmails first to get corsairEmailId values.
-7. Always confirm completed actions clearly in your final response.`;
+7. Always confirm completed actions clearly in your final response.
+
+OUTPUT FORMAT:
+- Always respond in Markdown format.
+- Use headers (##), bullet lists (-), numbered lists, tables, and code blocks where appropriate.
+- When listing emails, format them as a Markdown table or bulleted list with sender, subject, and date.
+- When listing calendar events, format them as a Markdown list or table with title, date, and time.
+- When presenting tool results, convert structured data into readable Markdown — never return raw JSON.
+- Keep responses concise and scannable. Use bold (**text**) to highlight key information.
+- For confirmed actions (sent, created, deleted), use a clear confirmation line with ✅.`;
 }
 
 export const AGENT_ERRORS = {

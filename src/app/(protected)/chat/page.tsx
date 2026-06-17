@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 import { OnboardingEmptyState } from "@/components/onboarding/empty-state";
+import { MarkdownRenderer } from "@/components/renderers/markdown-renderer";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -146,7 +147,7 @@ function AssistantBubble({ message }: { message: Message }) {
           <Bot className="h-3.5 w-3.5 text-ps-accent" />
         </div>
         <div className="rounded-2xl rounded-bl-sm border border-ps-border bg-ps-card px-4 py-3 text-sm text-ps-text leading-relaxed">
-          <p className="whitespace-pre-wrap">{message.content}</p>
+          <MarkdownRenderer content={message.content} />
           {message.toolsUsed && message.toolsUsed.length > 0 && (
             <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-ps-border pt-3">
               <Wrench className="h-3 w-3 text-ps-muted" />

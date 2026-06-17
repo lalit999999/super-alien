@@ -14,6 +14,8 @@ import {
   Zap,
   X,
 } from "lucide-react";
+import { EmailRenderer } from "@/components/renderers/email-renderer";
+import { MarkdownRenderer } from "@/components/renderers/markdown-renderer";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -246,7 +248,7 @@ function AIPanel({ emailId, onClose }: { emailId: string; onClose?: () => void }
               <AlertCircle className="h-3.5 w-3.5" /> {errorSummary}
             </div>
           ) : (
-            <p className="text-sm leading-relaxed text-ps-text">{summary}</p>
+            <MarkdownRenderer content={summary ?? ""} showCopyMessage={false} />
           )}
         </div>
       )}
@@ -266,13 +268,7 @@ function AIPanel({ emailId, onClose }: { emailId: string; onClose?: () => void }
             </div>
           ) : (
             <>
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-ps-text">{draft}</p>
-              <button
-                onClick={() => navigator.clipboard?.writeText(draft ?? "")}
-                className="mt-3 rounded-lg border border-ps-border px-3 py-1.5 text-xs font-medium text-ps-secondary transition-colors hover:bg-ps-surface"
-              >
-                Copy to clipboard
-              </button>
+              <MarkdownRenderer content={draft ?? ""} showCopyMessage={true} />
             </>
           )}
         </div>
@@ -412,10 +408,7 @@ export default function EmailDetailPage({
           {/* Email body */}
           <div className="flex-1 px-5 py-5 sm:px-8 sm:py-6">
             {email.body ? (
-              <div
-                className="prose prose-sm max-w-none text-ps-text"
-                dangerouslySetInnerHTML={{ __html: email.body }}
-              />
+              <EmailRenderer html={email.body} />
             ) : email.snippet ? (
               <p className="text-sm leading-relaxed text-ps-text">{email.snippet}</p>
             ) : (
