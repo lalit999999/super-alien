@@ -1,21 +1,30 @@
+import { ZodError } from "zod";
 import type { GmailService } from "@/modules/gmail";
 import type { CalendarService } from "@/modules/calendar";
 import type { AiService } from "@/modules/ai";
+import type { SyncService } from "@/modules/sync";
 import {
   searchEmailsArgsSchema,
   getEmailArgsSchema,
+  getThreadArgsSchema,
   summarizeEmailArgsSchema,
   classifyEmailArgsSchema,
   generateDraftArgsSchema,
   sendEmailArgsSchema,
+  archiveEmailArgsSchema,
+  deleteEmailArgsSchema,
+  markReadArgsSchema,
+  markUnreadArgsSchema,
   getEventsArgsSchema,
   createEventArgsSchema,
   updateEventArgsSchema,
   deleteEventArgsSchema,
   scheduleMeetingAndInviteArgsSchema,
+  triggerSyncArgsSchema,
 } from "./agent.schema";
 import { AGENT_TOOL_NAMES } from "./agent.constants";
 import type { ToolResult } from "./agent.types";
+import { sanitizeArgsForLog } from "@/modules/shared/utils/log-sanitizer";
 
 // ─── Logger ───────────────────────────────────────────────────────────────────
 
@@ -31,7 +40,8 @@ export class AgentWorkflow {
   constructor(
     private readonly gmail: GmailService,
     private readonly calendar: CalendarService,
-    private readonly ai: AiService
+    private readonly ai: AiService,
+    private readonly sync?: SyncService
   ) {}
 
   async executeToolCall(
@@ -61,6 +71,30 @@ export class AgentWorkflow {
           break;
         case AGENT_TOOL_NAMES.SEND_EMAIL:
           result = await this.handleSendEmail(clerkUserId, rawArgs);
+          break;
+        case AGENT_TOOL_NAMES.GET_THREAD:
+          result = await this.handleGetThread(clerkUserId, rawArgs);
+          break;
+        case AGENT_TOOL_NAMES.ARCHIVE_EMAIL:
+          result = await this.handleArchiveEmail(clerkUserId, rawArgs);
+          break;
+        case AGENT_TOOL_NAMES.DELETE_EMAIL:
+          result = await this.handleDeleteEmail(clerkUserId, rawArgs);
+          break;
+        case AGENT_TOOL_NAMES.MARK_READ:
+          result = await this.handleMarkRead(clerkUserId, rawArgs);
+          break;
+        case AGENT_TOOL_NAMES.MARK_UNREAD:
+          result = await this.handleMarkUnread(clerkUserId, rawArgs);
+          break;
+        case AGENT_TOOL_NAMES.TRIGGER_SYNC:
+          result = await this.handleTriggerSync(clerkUserId, dbUserId, rawArgs);
+          break;
+        case AGENT_TOOL_NAMES.GET_SYNC_STATUS:
+          result = await this.handleGetSyncStatus(dbUserId);
+          break;
+        case AGENT_TOOL_NAMES.CHECK_PROGRESS:
+          result = await this.handleCheckProgress(dbUserId);
           break;
         case AGENT_TOOL_NAMES.GET_EVENTS:
           result = await this.handleGetEvents(dbUserId, rawArgs);
@@ -157,7 +191,18 @@ export class AgentWorkflow {
   }
 
   private async handleGenerateDraft(clerkUserId: string, rawArgs: unknown): Promise<ToolResult> {
-    const args = generateDraftArgsSchema.parse(rawArgs);
+    let args: ReturnType<typeof generateDraftArgsSchema.parse>;
+    try {
+      args = generateDraftArgsSchema.parse(rawArgs);
+    } catch (err) {
+      if (err instanceof ZodError) {
+        const issues = (err.issues ?? (err as { errors?: { message: string }[] }).errors) ?? [];
+        const message = issues[0]?.message ?? "Provide either emailId or prompt";
+        log("TOOL", "generateDraft validation failed", { error: message });
+        return { toolName: AGENT_TOOL_NAMES.GENERATE_DRAFT, success: false, error: message };
+      }
+      throw err;
+    }
 
     if (args.emailId) {
       log("AI", "Generating reply draft", { emailId: args.emailId, tone: args.tone });
@@ -168,18 +213,104 @@ export class AgentWorkflow {
 
     log("AI", "Generating new email draft", { tone: args.tone });
     const result = await this.ai.generateDraft({
-      prompt: args.prompt ?? "Write a professional email",
+      prompt: args.prompt!,
       context: args.context,
     });
     log("AI", "New draft generated");
     return { toolName: AGENT_TOOL_NAMES.GENERATE_DRAFT, success: true, data: result };
   }
 
+  // ─── New Gmail actions ──────────────────────────────────────────────────────
+
+  private async handleGetThread(clerkUserId: string, rawArgs: unknown): Promise<ToolResult> {
+    const args = getThreadArgsSchema.parse(rawArgs);
+    log("GMAIL", "Fetching thread", { threadId: args.threadId });
+
+    const thread = await this.gmail.getThread(clerkUserId, args.threadId);
+    log("GMAIL", "Thread fetched", { messageCount: thread.messages?.length ?? 0 });
+    return { toolName: AGENT_TOOL_NAMES.GET_THREAD, success: true, data: thread };
+  }
+
+  private async handleArchiveEmail(clerkUserId: string, rawArgs: unknown): Promise<ToolResult> {
+    const args = archiveEmailArgsSchema.parse(rawArgs);
+    log("GMAIL", "Archiving email", { emailId: args.emailId });
+
+    const result = await this.gmail.archiveEmail(clerkUserId, args.emailId);
+    log("GMAIL", "Email archived");
+    return { toolName: AGENT_TOOL_NAMES.ARCHIVE_EMAIL, success: true, data: result };
+  }
+
+  private async handleDeleteEmail(clerkUserId: string, rawArgs: unknown): Promise<ToolResult> {
+    const args = deleteEmailArgsSchema.parse(rawArgs);
+    log("GMAIL", "Deleting email", { emailId: args.emailId });
+
+    const result = await this.gmail.deleteEmail(clerkUserId, args.emailId);
+    log("GMAIL", "Email deleted");
+    return { toolName: AGENT_TOOL_NAMES.DELETE_EMAIL, success: true, data: result };
+  }
+
+  private async handleMarkRead(clerkUserId: string, rawArgs: unknown): Promise<ToolResult> {
+    const args = markReadArgsSchema.parse(rawArgs);
+    log("GMAIL", "Marking email as read", { emailId: args.emailId });
+
+    const result = await this.gmail.markRead(clerkUserId, args.emailId);
+    log("GMAIL", "Email marked as read");
+    return { toolName: AGENT_TOOL_NAMES.MARK_READ, success: true, data: result };
+  }
+
+  private async handleMarkUnread(clerkUserId: string, rawArgs: unknown): Promise<ToolResult> {
+    const args = markUnreadArgsSchema.parse(rawArgs);
+    log("GMAIL", "Marking email as unread", { emailId: args.emailId });
+
+    const result = await this.gmail.markUnread(clerkUserId, args.emailId);
+    log("GMAIL", "Email marked as unread");
+    return { toolName: AGENT_TOOL_NAMES.MARK_UNREAD, success: true, data: result };
+  }
+
+  // ─── Sync tools ─────────────────────────────────────────────────────────────
+
+  private async handleTriggerSync(clerkUserId: string, dbUserId: string, rawArgs: unknown): Promise<ToolResult> {
+    const args = triggerSyncArgsSchema.parse(rawArgs);
+    log("SYNC", "Triggering sync", { integration: args.integration });
+
+    if (!this.sync) {
+      return { toolName: AGENT_TOOL_NAMES.TRIGGER_SYNC, success: false, error: "Sync service not available" };
+    }
+
+    const result = await this.sync.triggerSync(clerkUserId, dbUserId, args.integration);
+    log("SYNC", "Sync triggered", { integration: args.integration, status: result.status });
+    return { toolName: AGENT_TOOL_NAMES.TRIGGER_SYNC, success: true, data: result };
+  }
+
+  private async handleGetSyncStatus(dbUserId: string): Promise<ToolResult> {
+    log("SYNC", "Getting sync status");
+
+    if (!this.sync) {
+      return { toolName: AGENT_TOOL_NAMES.GET_SYNC_STATUS, success: false, error: "Sync service not available" };
+    }
+
+    const result = await this.sync.getSyncStatus(dbUserId);
+    log("SYNC", "Sync status fetched");
+    return { toolName: AGENT_TOOL_NAMES.GET_SYNC_STATUS, success: true, data: result };
+  }
+
+  private async handleCheckProgress(dbUserId: string): Promise<ToolResult> {
+    log("SYNC", "Checking sync progress");
+
+    if (!this.sync) {
+      return { toolName: AGENT_TOOL_NAMES.CHECK_PROGRESS, success: false, error: "Sync service not available" };
+    }
+
+    const result = await this.sync.checkProgress(dbUserId);
+    log("SYNC", "Sync progress fetched");
+    return { toolName: AGENT_TOOL_NAMES.CHECK_PROGRESS, success: true, data: result };
+  }
+
   // ─── Email actions (Corsair) ────────────────────────────────────────────────
 
   private async handleSendEmail(clerkUserId: string, rawArgs: unknown): Promise<ToolResult> {
     const args = sendEmailArgsSchema.parse(rawArgs);
-    log("GMAIL", "Sending email", { to: args.to, subject: args.subject });
+    log("GMAIL", "Sending email", sanitizeArgsForLog({ to: args.to, subject: args.subject, body: args.body }));
 
     const data = await this.gmail.sendEmail(clerkUserId, {
       to: args.to,
@@ -298,11 +429,12 @@ export class AgentWorkflow {
   ): Promise<ToolResult> {
     const args = scheduleMeetingAndInviteArgsSchema.parse(rawArgs);
     const tz = args.timeZone ?? "UTC";
-    log("CALENDAR", "Scheduling meeting with invites", {
+    log("CALENDAR", "Scheduling meeting with invites", sanitizeArgsForLog({
       summary: args.summary,
       start: args.startDateTime,
       attendees: args.attendeeEmails,
-    });
+      invitationBody: args.invitationBody,
+    }));
 
     const event = await this.calendar.createCalendarEvent(clerkUserId, dbUserId, {
       summary: args.summary,

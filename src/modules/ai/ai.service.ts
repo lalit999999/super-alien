@@ -69,6 +69,18 @@ export class AiService {
     emailId: string,
     clerkUserId: string
   ): Promise<CategoryOutput & { emailId: string }> {
+    const cached = await this.repo.getClassificationByEmailId(emailId);
+    if (cached?.category) {
+      console.log(`[AI] classifyEmail cache-hit emailId=${emailId}`);
+      return {
+        emailId,
+        category: cached.category as CategoryOutput["category"],
+        confidence: cached.confidence ?? 0,
+        reasoning: cached.reason ?? "",
+      };
+    }
+    console.log(`[AI] classifyEmail cache-miss emailId=${emailId}`);
+
     const email = await this.repo.getEmailById(emailId, clerkUserId);
     if (!email) throw new Error(AI_ERRORS.EMAIL_NOT_FOUND);
 
@@ -128,6 +140,18 @@ export class AiService {
     emailId: string,
     clerkUserId: string
   ): Promise<MultiSummaryOutput & { emailId: string }> {
+    const cached = await this.repo.getSummaryByEmailId(emailId);
+    if (cached) {
+      console.log(`[AI] summarizeEmail cache-hit emailId=${emailId}`);
+      return {
+        emailId,
+        shortSummary: cached.shortSummary,
+        mediumSummary: cached.mediumSummary,
+        bulletSummary: cached.bulletSummary as string[],
+      };
+    }
+    console.log(`[AI] summarizeEmail cache-miss emailId=${emailId}`);
+
     const email = await this.repo.getEmailById(emailId, clerkUserId);
     if (!email) throw new Error(AI_ERRORS.EMAIL_NOT_FOUND);
 

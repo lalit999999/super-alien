@@ -82,3 +82,18 @@ export type CorsairEvent = Prisma.CorsairEventModel
  * 
  */
 export type WebhookLog = Prisma.WebhookLogModel
+/**
+ * Model ChatSession
+ * 
+ */
+export type ChatSession = Prisma.ChatSessionModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel
+/**
+ * Model SyncRecord
+ * 
+ */
+export type SyncRecord = Prisma.SyncRecordModel

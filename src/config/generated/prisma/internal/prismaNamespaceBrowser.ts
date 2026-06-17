@@ -63,7 +63,10 @@ export const ModelName = {
   CorsairAccount: 'CorsairAccount',
   CorsairEntity: 'CorsairEntity',
   CorsairEvent: 'CorsairEvent',
-  WebhookLog: 'WebhookLog'
+  WebhookLog: 'WebhookLog',
+  ChatSession: 'ChatSession',
+  ChatMessage: 'ChatMessage',
+  SyncRecord: 'SyncRecord'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -264,6 +267,44 @@ export const WebhookLogScalarFieldEnum = {
 } as const
 
 export type WebhookLogScalarFieldEnum = (typeof WebhookLogScalarFieldEnum)[keyof typeof WebhookLogScalarFieldEnum]
+
+
+export const ChatSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  lastMessageAt: 'lastMessageAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChatSessionScalarFieldEnum = (typeof ChatSessionScalarFieldEnum)[keyof typeof ChatSessionScalarFieldEnum]
+
+
+export const ChatMessageScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  role: 'role',
+  content: 'content',
+  createdAt: 'createdAt'
+} as const
+
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
+
+
+export const SyncRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  integration: 'integration',
+  status: 'status',
+  progress: 'progress',
+  total: 'total',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  error: 'error'
+} as const
+
+export type SyncRecordScalarFieldEnum = (typeof SyncRecordScalarFieldEnum)[keyof typeof SyncRecordScalarFieldEnum]
 
 
 export const SortOrder = {

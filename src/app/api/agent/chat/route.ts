@@ -5,6 +5,7 @@ import { GmailRepository, GmailService } from "@/modules/gmail";
 import { CalendarRepository, CalendarService } from "@/modules/calendar";
 import { AiRepository, AiService, openai } from "@/modules/ai";
 import { AgentRepository, AgentService, AgentWorkflow, handleAgentChat } from "@/modules/agent";
+import { SyncRepository, SyncService } from "@/modules/sync";
 
 // ─── Dependency injection ─────────────────────────────────────────────────────
 
@@ -16,7 +17,10 @@ const aiService = new AiService(openai, aiRepo);
 const gmailService = new GmailService(gmailRepo, aiService);
 const calendarService = new CalendarService(calendarRepo);
 
-const workflow = new AgentWorkflow(gmailService, calendarService, aiService);
+const syncRepo = new SyncRepository(prisma);
+const syncService = new SyncService(syncRepo, gmailService, calendarService);
+
+const workflow = new AgentWorkflow(gmailService, calendarService, aiService, syncService);
 const agentRepo = new AgentRepository();
 const agentService = new AgentService(openai, agentRepo, workflow);
 

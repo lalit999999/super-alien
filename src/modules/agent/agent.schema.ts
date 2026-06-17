@@ -1,9 +1,16 @@
 import { z } from "zod";
 
+// ─── Shared validators ────────────────────────────────────────────────────────
+
+const iso8601Schema = z
+  .string()
+  .datetime({ message: "Must be a valid ISO 8601 date (e.g. 2026-06-17T10:00:00Z)" });
+
 // ─── Chat request ─────────────────────────────────────────────────────────────
 
 export const agentChatRequestSchema = z.object({
   prompt: z.string().min(1, "Prompt is required").max(4000, "Prompt too long"),
+  sessionId: z.string().optional(),
 });
 
 export type AgentChatRequest = z.infer<typeof agentChatRequestSchema>;
@@ -16,8 +23,8 @@ export const searchEmailsArgsSchema = z.object({
   category: z
     .enum(["IMPORTANT", "FINANCE", "MEETING", "SOCIAL", "PROMOTION", "NEWSLETTER", "ORDER", "OTHER"])
     .optional(),
-  from: z.string().optional(),
-  to: z.string().optional(),
+  from: iso8601Schema.optional(),
+  to: iso8601Schema.optional(),
   limit: z.number().int().positive().max(50).optional().default(10),
 });
 
@@ -33,12 +40,16 @@ export const classifyEmailArgsSchema = z.object({
   emailId: z.string().min(1, "emailId is required"),
 });
 
-export const generateDraftArgsSchema = z.object({
-  emailId: z.string().optional(),
-  tone: z.enum(["professional", "friendly", "short", "detailed"]).default("professional"),
-  prompt: z.string().optional(),
-  context: z.string().optional(),
-});
+export const generateDraftArgsSchema = z
+  .object({
+    emailId: z.string().optional(),
+    tone: z.enum(["professional", "friendly", "short", "detailed"]).default("professional"),
+    prompt: z.string().optional(),
+    context: z.string().optional(),
+  })
+  .refine((data) => data.emailId !== undefined || data.prompt !== undefined, {
+    message: "Provide either emailId or prompt",
+  });
 
 // ─── Email action tool schemas (Corsair) ──────────────────────────────────────
 
@@ -52,8 +63,8 @@ export const sendEmailArgsSchema = z.object({
 // ─── Calendar read tool schemas (DB-first) ────────────────────────────────────
 
 export const getEventsArgsSchema = z.object({
-  timeMin: z.string().optional(),
-  timeMax: z.string().optional(),
+  timeMin: iso8601Schema.optional(),
+  timeMax: iso8601Schema.optional(),
   limit: z.number().int().positive().max(50).optional().default(10),
 });
 
@@ -83,6 +94,38 @@ export const updateEventArgsSchema = z.object({
 export const deleteEventArgsSchema = z.object({
   corsairEventId: z.string().min(1, "corsairEventId is required"),
 });
+
+// ─── New Gmail action tool schemas ────────────────────────────────────────────
+
+export const getThreadArgsSchema = z.object({
+  threadId: z.string().min(1, "threadId is required"),
+});
+
+export const archiveEmailArgsSchema = z.object({
+  emailId: z.string().min(1, "emailId is required"),
+});
+
+export const deleteEmailArgsSchema = z.object({
+  emailId: z.string().min(1, "emailId is required"),
+});
+
+export const markReadArgsSchema = z.object({
+  emailId: z.string().min(1, "emailId is required"),
+});
+
+export const markUnreadArgsSchema = z.object({
+  emailId: z.string().min(1, "emailId is required"),
+});
+
+// ─── Sync tool schemas ────────────────────────────────────────────────────────
+
+export const triggerSyncArgsSchema = z.object({
+  integration: z.enum(["gmail", "calendar"]),
+});
+
+export const getSyncStatusArgsSchema = z.object({});
+
+export const checkProgressArgsSchema = z.object({});
 
 // ─── Composite tool schema ────────────────────────────────────────────────────
 

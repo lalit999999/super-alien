@@ -242,6 +242,8 @@ export type UserWhereInput = {
   emails?: Prisma.EmailListRelationFilter
   events?: Prisma.CalendarEventListRelationFilter
   agentExecutions?: Prisma.AgentExecutionListRelationFilter
+  chatSessions?: Prisma.ChatSessionListRelationFilter
+  syncRecords?: Prisma.SyncRecordListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -261,6 +263,8 @@ export type UserOrderByWithRelationInput = {
   emails?: Prisma.EmailOrderByRelationAggregateInput
   events?: Prisma.CalendarEventOrderByRelationAggregateInput
   agentExecutions?: Prisma.AgentExecutionOrderByRelationAggregateInput
+  chatSessions?: Prisma.ChatSessionOrderByRelationAggregateInput
+  syncRecords?: Prisma.SyncRecordOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -283,6 +287,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   emails?: Prisma.EmailListRelationFilter
   events?: Prisma.CalendarEventListRelationFilter
   agentExecutions?: Prisma.AgentExecutionListRelationFilter
+  chatSessions?: Prisma.ChatSessionListRelationFilter
+  syncRecords?: Prisma.SyncRecordListRelationFilter
 }, "id" | "clerkUserId" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -338,6 +344,8 @@ export type UserCreateInput = {
   emails?: Prisma.EmailCreateNestedManyWithoutUserInput
   events?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
   agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -357,6 +365,8 @@ export type UserUncheckedCreateInput = {
   emails?: Prisma.EmailUncheckedCreateNestedManyWithoutUserInput
   events?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
   agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -376,6 +386,8 @@ export type UserUpdateInput = {
   emails?: Prisma.EmailUpdateManyWithoutUserNestedInput
   events?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
   agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -395,6 +407,8 @@ export type UserUncheckedUpdateInput = {
   emails?: Prisma.EmailUncheckedUpdateManyWithoutUserNestedInput
   events?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
   agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -564,6 +578,34 @@ export type UserUpdateOneRequiredWithoutPreferencesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPreferencesInput, Prisma.UserUpdateWithoutPreferencesInput>, Prisma.UserUncheckedUpdateWithoutPreferencesInput>
 }
 
+export type UserCreateNestedOneWithoutChatSessionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChatSessionsInput, Prisma.UserUncheckedCreateWithoutChatSessionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatSessionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutChatSessionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChatSessionsInput, Prisma.UserUncheckedCreateWithoutChatSessionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatSessionsInput
+  upsert?: Prisma.UserUpsertWithoutChatSessionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatSessionsInput, Prisma.UserUpdateWithoutChatSessionsInput>, Prisma.UserUncheckedUpdateWithoutChatSessionsInput>
+}
+
+export type UserCreateNestedOneWithoutSyncRecordsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSyncRecordsInput, Prisma.UserUncheckedCreateWithoutSyncRecordsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSyncRecordsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSyncRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSyncRecordsInput, Prisma.UserUncheckedCreateWithoutSyncRecordsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSyncRecordsInput
+  upsert?: Prisma.UserUpsertWithoutSyncRecordsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSyncRecordsInput, Prisma.UserUpdateWithoutSyncRecordsInput>, Prisma.UserUncheckedUpdateWithoutSyncRecordsInput>
+}
+
 export type UserCreateWithoutEmailsInput = {
   id?: string
   clerkUserId: string
@@ -580,6 +622,8 @@ export type UserCreateWithoutEmailsInput = {
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
   events?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
   agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEmailsInput = {
@@ -598,6 +642,8 @@ export type UserUncheckedCreateWithoutEmailsInput = {
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
   events?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
   agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEmailsInput = {
@@ -632,6 +678,8 @@ export type UserUpdateWithoutEmailsInput = {
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
   events?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
   agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmailsInput = {
@@ -650,6 +698,8 @@ export type UserUncheckedUpdateWithoutEmailsInput = {
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
   events?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
   agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutEventsInput = {
@@ -668,6 +718,8 @@ export type UserCreateWithoutEventsInput = {
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
   emails?: Prisma.EmailCreateNestedManyWithoutUserInput
   agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEventsInput = {
@@ -686,6 +738,8 @@ export type UserUncheckedCreateWithoutEventsInput = {
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
   emails?: Prisma.EmailUncheckedCreateNestedManyWithoutUserInput
   agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEventsInput = {
@@ -720,6 +774,8 @@ export type UserUpdateWithoutEventsInput = {
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
   emails?: Prisma.EmailUpdateManyWithoutUserNestedInput
   agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEventsInput = {
@@ -738,6 +794,8 @@ export type UserUncheckedUpdateWithoutEventsInput = {
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
   emails?: Prisma.EmailUncheckedUpdateManyWithoutUserNestedInput
   agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAgentExecutionsInput = {
@@ -756,6 +814,8 @@ export type UserCreateWithoutAgentExecutionsInput = {
   preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
   emails?: Prisma.EmailCreateNestedManyWithoutUserInput
   events?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAgentExecutionsInput = {
@@ -774,6 +834,8 @@ export type UserUncheckedCreateWithoutAgentExecutionsInput = {
   preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
   emails?: Prisma.EmailUncheckedCreateNestedManyWithoutUserInput
   events?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAgentExecutionsInput = {
@@ -808,6 +870,8 @@ export type UserUpdateWithoutAgentExecutionsInput = {
   preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
   emails?: Prisma.EmailUpdateManyWithoutUserNestedInput
   events?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAgentExecutionsInput = {
@@ -826,6 +890,8 @@ export type UserUncheckedUpdateWithoutAgentExecutionsInput = {
   preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
   emails?: Prisma.EmailUncheckedUpdateManyWithoutUserNestedInput
   events?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPreferencesInput = {
@@ -844,6 +910,8 @@ export type UserCreateWithoutPreferencesInput = {
   emails?: Prisma.EmailCreateNestedManyWithoutUserInput
   events?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
   agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPreferencesInput = {
@@ -862,6 +930,8 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   emails?: Prisma.EmailUncheckedCreateNestedManyWithoutUserInput
   events?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
   agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPreferencesInput = {
@@ -896,6 +966,8 @@ export type UserUpdateWithoutPreferencesInput = {
   emails?: Prisma.EmailUpdateManyWithoutUserNestedInput
   events?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
   agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPreferencesInput = {
@@ -914,6 +986,200 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   emails?: Prisma.EmailUncheckedUpdateManyWithoutUserNestedInput
   events?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
   agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutChatSessionsInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
+  emails?: Prisma.EmailCreateNestedManyWithoutUserInput
+  events?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
+  agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutChatSessionsInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
+  emails?: Prisma.EmailUncheckedCreateNestedManyWithoutUserInput
+  events?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
+  agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutChatSessionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutChatSessionsInput, Prisma.UserUncheckedCreateWithoutChatSessionsInput>
+}
+
+export type UserUpsertWithoutChatSessionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutChatSessionsInput, Prisma.UserUncheckedUpdateWithoutChatSessionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutChatSessionsInput, Prisma.UserUncheckedCreateWithoutChatSessionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutChatSessionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutChatSessionsInput, Prisma.UserUncheckedUpdateWithoutChatSessionsInput>
+}
+
+export type UserUpdateWithoutChatSessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
+  emails?: Prisma.EmailUpdateManyWithoutUserNestedInput
+  events?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
+  agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutChatSessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  emails?: Prisma.EmailUncheckedUpdateManyWithoutUserNestedInput
+  events?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
+  agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSyncRecordsInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
+  emails?: Prisma.EmailCreateNestedManyWithoutUserInput
+  events?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
+  agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSyncRecordsInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
+  emails?: Prisma.EmailUncheckedCreateNestedManyWithoutUserInput
+  events?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
+  agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSyncRecordsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSyncRecordsInput, Prisma.UserUncheckedCreateWithoutSyncRecordsInput>
+}
+
+export type UserUpsertWithoutSyncRecordsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSyncRecordsInput, Prisma.UserUncheckedUpdateWithoutSyncRecordsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSyncRecordsInput, Prisma.UserUncheckedCreateWithoutSyncRecordsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSyncRecordsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSyncRecordsInput, Prisma.UserUncheckedUpdateWithoutSyncRecordsInput>
+}
+
+export type UserUpdateWithoutSyncRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
+  emails?: Prisma.EmailUpdateManyWithoutUserNestedInput
+  events?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
+  agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSyncRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  emails?: Prisma.EmailUncheckedUpdateManyWithoutUserNestedInput
+  events?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
+  agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -925,12 +1191,16 @@ export type UserCountOutputType = {
   emails: number
   events: number
   agentExecutions: number
+  chatSessions: number
+  syncRecords: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   emails?: boolean | UserCountOutputTypeCountEmailsArgs
   events?: boolean | UserCountOutputTypeCountEventsArgs
   agentExecutions?: boolean | UserCountOutputTypeCountAgentExecutionsArgs
+  chatSessions?: boolean | UserCountOutputTypeCountChatSessionsArgs
+  syncRecords?: boolean | UserCountOutputTypeCountSyncRecordsArgs
 }
 
 /**
@@ -964,6 +1234,20 @@ export type UserCountOutputTypeCountAgentExecutionsArgs<ExtArgs extends runtime.
   where?: Prisma.AgentExecutionWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountChatSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatSessionWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSyncRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SyncRecordWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -982,6 +1266,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   emails?: boolean | Prisma.User$emailsArgs<ExtArgs>
   events?: boolean | Prisma.User$eventsArgs<ExtArgs>
   agentExecutions?: boolean | Prisma.User$agentExecutionsArgs<ExtArgs>
+  chatSessions?: boolean | Prisma.User$chatSessionsArgs<ExtArgs>
+  syncRecords?: boolean | Prisma.User$syncRecordsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1036,6 +1322,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   emails?: boolean | Prisma.User$emailsArgs<ExtArgs>
   events?: boolean | Prisma.User$eventsArgs<ExtArgs>
   agentExecutions?: boolean | Prisma.User$agentExecutionsArgs<ExtArgs>
+  chatSessions?: boolean | Prisma.User$chatSessionsArgs<ExtArgs>
+  syncRecords?: boolean | Prisma.User$syncRecordsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1048,6 +1336,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     emails: Prisma.$EmailPayload<ExtArgs>[]
     events: Prisma.$CalendarEventPayload<ExtArgs>[]
     agentExecutions: Prisma.$AgentExecutionPayload<ExtArgs>[]
+    chatSessions: Prisma.$ChatSessionPayload<ExtArgs>[]
+    syncRecords: Prisma.$SyncRecordPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1460,6 +1750,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   emails<T extends Prisma.User$emailsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$emailsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   events<T extends Prisma.User$eventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   agentExecutions<T extends Prisma.User$agentExecutionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$agentExecutionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AgentExecutionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  chatSessions<T extends Prisma.User$chatSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  syncRecords<T extends Prisma.User$syncRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$syncRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SyncRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1982,6 +2274,54 @@ export type User$agentExecutionsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.AgentExecutionScalarFieldEnum | Prisma.AgentExecutionScalarFieldEnum[]
+}
+
+/**
+ * User.chatSessions
+ */
+export type User$chatSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChatSession
+   */
+  select?: Prisma.ChatSessionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChatSession
+   */
+  omit?: Prisma.ChatSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatSessionInclude<ExtArgs> | null
+  where?: Prisma.ChatSessionWhereInput
+  orderBy?: Prisma.ChatSessionOrderByWithRelationInput | Prisma.ChatSessionOrderByWithRelationInput[]
+  cursor?: Prisma.ChatSessionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatSessionScalarFieldEnum | Prisma.ChatSessionScalarFieldEnum[]
+}
+
+/**
+ * User.syncRecords
+ */
+export type User$syncRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SyncRecord
+   */
+  select?: Prisma.SyncRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SyncRecord
+   */
+  omit?: Prisma.SyncRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SyncRecordInclude<ExtArgs> | null
+  where?: Prisma.SyncRecordWhereInput
+  orderBy?: Prisma.SyncRecordOrderByWithRelationInput | Prisma.SyncRecordOrderByWithRelationInput[]
+  cursor?: Prisma.SyncRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SyncRecordScalarFieldEnum | Prisma.SyncRecordScalarFieldEnum[]
 }
 
 /**

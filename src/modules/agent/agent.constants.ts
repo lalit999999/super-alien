@@ -17,10 +17,15 @@ Always use ISO 8601 format for all dates and times (e.g. 2026-06-15T16:00:00).
 EMAIL CAPABILITIES:
 - searchEmails  — search the inbox by keyword, sender, category, or date range (DB-first, fast)
 - getEmail      — fetch the full body of a specific email by its ID
+- getThread     — fetch a complete email conversation thread by thread ID
 - summarizeEmail — generate or retrieve a short + bullet-point AI summary
 - classifyEmail  — classify an email into IMPORTANT / FINANCE / MEETING / SOCIAL / etc.
 - generateDraft  — generate a reply draft for an email, or compose a new email from a prompt
 - sendEmail      — send an email (or reply) via Gmail
+- archiveEmail  — archive an email (remove from inbox, keep in Gmail)
+- deleteEmail   — move an email to trash
+- markRead      — mark an email as read
+- markUnread    — mark an email as unread
 
 CALENDAR CAPABILITIES:
 - getEvents              — list upcoming or date-ranged events from the calendar database
@@ -29,13 +34,19 @@ CALENDAR CAPABILITIES:
 - deleteEvent            — delete a calendar event by its corsairEventId
 - scheduleMeetingAndInvite — composite: create event + send invitation emails in one step
 
+SYNC CAPABILITIES:
+- triggerSync    — start a Gmail or Calendar sync
+- getSyncStatus  — check current sync status (PENDING, RUNNING, COMPLETED, FAILED)
+- checkProgress  — check how many items have been synced
+
 WORKFLOW RULES:
 1. For READ requests (search, summarize, list events), prefer DB tools first — they are faster.
 2. For ACTION requests (send, create, update, delete), call the appropriate action tool.
 3. When summarizing multiple emails, call searchEmails first to get IDs, then summarizeEmail per ID.
 4. When replying to an email, use getEmail to confirm context, then generateDraft, then sendEmail.
 5. When scheduling a meeting with guests, use scheduleMeetingAndInvite — it creates the event and sends invites atomically.
-6. Always confirm completed actions clearly in your final response.`;
+6. For inbox actions (archive, delete, mark read/unread), use searchEmails first to get corsairEmailId values.
+7. Always confirm completed actions clearly in your final response.`;
 }
 
 export const AGENT_ERRORS = {
@@ -50,11 +61,16 @@ export const AGENT_TOOL_NAMES = {
   // Email reads (DB-first)
   SEARCH_EMAILS: "searchEmails",
   GET_EMAIL: "getEmail",
+  GET_THREAD: "getThread",
   SUMMARIZE_EMAIL: "summarizeEmail",
   CLASSIFY_EMAIL: "classifyEmail",
   GENERATE_DRAFT: "generateDraft",
   // Email actions (Corsair)
   SEND_EMAIL: "sendEmail",
+  ARCHIVE_EMAIL: "archiveEmail",
+  DELETE_EMAIL: "deleteEmail",
+  MARK_READ: "markRead",
+  MARK_UNREAD: "markUnread",
   // Calendar reads (DB-first)
   GET_EVENTS: "getEvents",
   // Calendar actions (Corsair)
@@ -63,6 +79,10 @@ export const AGENT_TOOL_NAMES = {
   DELETE_EVENT: "deleteEvent",
   // Composite
   SCHEDULE_MEETING_AND_INVITE: "scheduleMeetingAndInvite",
+  // Sync
+  TRIGGER_SYNC: "triggerSync",
+  GET_SYNC_STATUS: "getSyncStatus",
+  CHECK_PROGRESS: "checkProgress",
 } as const;
 
 export const AGENT_INTENTS = {

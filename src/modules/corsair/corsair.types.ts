@@ -18,6 +18,8 @@ export type SendEmailInput = {
   threadId?: string;
 };
 export type SendEmailOutput = GmailEndpointOutputs["messagesSend"];
+export type GetThreadOutput = GmailEndpointOutputs["threadsGet"];
+export type ModifyEmailOutput = GmailEndpointOutputs["messagesModify"];
 
 // Re-exported so downstream Gmail module code never imports from @corsair-dev/gmail directly.
 export type CorsairMessagePart = GmailMessagePartSdk;

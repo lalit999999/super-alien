@@ -1,5 +1,15 @@
-import { getEmails, getEmailById, sendEmail as corsairSendEmail, searchEmails as corsairSearchEmails } from "@/modules/corsair";
-import type { CorsairMessagePart, SendEmailOutput, GetEmailsOutput } from "@/modules/corsair";
+import {
+  getEmails,
+  getEmailById,
+  sendEmail as corsairSendEmail,
+  searchEmails as corsairSearchEmails,
+  getThread as corsairGetThread,
+  archiveEmail as corsairArchiveEmail,
+  trashEmail as corsairTrashEmail,
+  markEmailRead as corsairMarkEmailRead,
+  markEmailUnread as corsairMarkEmailUnread,
+} from "@/modules/corsair";
+import type { CorsairMessagePart, SendEmailOutput, GetEmailsOutput, GetThreadOutput } from "@/modules/corsair";
 import type { AiService } from "@/modules/ai";
 import type { GmailRepository } from "./gmail.repository";
 import type { DbEmail, GmailSyncResult, GmailListOptions, GmailUpsertInput, ParsedMessage, SendEmailInput, DbEmailSearchOptions } from "./gmail.types";
@@ -122,6 +132,48 @@ export class GmailService {
 
   async deleteEmailByCorsairId(corsairEmailId: string, clerkUserId: string): Promise<void> {
     return this.repo.deleteEmailByCorsairId(corsairEmailId, clerkUserId);
+  }
+
+  async getThread(
+    clerkUserId: string,
+    threadId: string
+  ): Promise<GetThreadOutput> {
+    return corsairGetThread(clerkUserId, threadId);
+  }
+
+  async archiveEmail(
+    clerkUserId: string,
+    corsairEmailId: string
+  ): Promise<{ success: boolean }> {
+    await corsairArchiveEmail(clerkUserId, corsairEmailId);
+    return { success: true };
+  }
+
+  async deleteEmail(
+    clerkUserId: string,
+    corsairEmailId: string
+  ): Promise<{ success: boolean }> {
+    await corsairTrashEmail(clerkUserId, corsairEmailId);
+    await this.repo.deleteEmailByCorsairId(corsairEmailId, clerkUserId).catch(() => undefined);
+    return { success: true };
+  }
+
+  async markRead(
+    clerkUserId: string,
+    corsairEmailId: string
+  ): Promise<{ success: boolean }> {
+    await corsairMarkEmailRead(clerkUserId, corsairEmailId);
+    await this.repo.updateReadStatusByCorsairId(corsairEmailId, clerkUserId, true).catch(() => undefined);
+    return { success: true };
+  }
+
+  async markUnread(
+    clerkUserId: string,
+    corsairEmailId: string
+  ): Promise<{ success: boolean }> {
+    await corsairMarkEmailUnread(clerkUserId, corsairEmailId);
+    await this.repo.updateReadStatusByCorsairId(corsairEmailId, clerkUserId, false).catch(() => undefined);
+    return { success: true };
   }
 
   async classifyEmailsForUser(

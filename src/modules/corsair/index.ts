@@ -12,6 +12,11 @@ export {
   updateEvent,
   deleteEvent,
   searchEmails,
+  getThread,
+  archiveEmail,
+  trashEmail,
+  markEmailRead,
+  markEmailUnread,
 } from "./corsair.service";
 
 export {
@@ -30,6 +35,8 @@ export type {
   GetEmailByIdOutput,
   SendEmailInput,
   SendEmailOutput,
+  GetThreadOutput,
+  ModifyEmailOutput,
   GetEventsOutput,
   CreateEventOutput,
   UpdateEventOutput,

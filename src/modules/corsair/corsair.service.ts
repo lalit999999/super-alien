@@ -13,6 +13,7 @@ import {
   GMAIL_DEFAULT_MAX_RESULTS,
   CALENDAR_DEFAULT_MAX_RESULTS,
   CALENDAR_ID_PRIMARY,
+  GMAIL_LABEL,
 } from "./corsair.constants";
 import type {
   GetEmailsOutput,
@@ -22,6 +23,8 @@ import type {
   CreateEventOutput,
   UpdateEventOutput,
   DeleteEventOutput,
+  GetThreadOutput,
+  ModifyEmailOutput,
 } from "./corsair.types";
 import type { CorsairUpdateEventOptions, CorsairDeleteEventOptions } from "./corsair.types";
 
@@ -32,13 +35,21 @@ function forTenant(userId: string) {
 }
 
 /**
+ * Removes CRLF characters from an email header value to prevent header injection.
+ * Trims leading/trailing whitespace and collapses internal runs of whitespace.
+ */
+export function sanitizeHeader(value: string): string {
+  return value.replace(/[\r\n]+/g, "").replace(/\s+/g, " ").trim();
+}
+
+/**
  * Encodes plain text email parts into RFC 2822 base64url format required by
  * Gmail's messages.send endpoint.
  */
 function buildRawEmail(to: string, subject: string, body: string): string {
   const message = [
-    `To: ${to}`,
-    `Subject: ${subject}`,
+    `To: ${sanitizeHeader(to)}`,
+    `Subject: ${sanitizeHeader(subject)}`,
     `Content-Type: text/plain; charset="UTF-8"`,
     `MIME-Version: 1.0`,
     "",
@@ -177,7 +188,6 @@ export async function deleteEvent(
 
 /**
  * Search emails using Gmail query syntax (e.g. "from:alice subject:invoice").
- * Placeholder — implement fully when the search module is built.
  */
 export async function searchEmails(
   userId: string,
@@ -185,5 +195,69 @@ export async function searchEmails(
   maxResults = GMAIL_DEFAULT_MAX_RESULTS
 ): Promise<GetEmailsOutput> {
   return getEmails(userId, { q: query, maxResults });
+}
+
+/**
+ * Fetch a complete Gmail thread by threadId.
+ */
+export async function getThread(
+  userId: string,
+  threadId: string
+): Promise<GetThreadOutput> {
+  const tenant = forTenant(userId);
+  return tenant.gmail.api.threads.get({ id: threadId, format: "full" });
+}
+
+/**
+ * Archive an email by removing the INBOX label.
+ */
+export async function archiveEmail(
+  userId: string,
+  messageId: string
+): Promise<ModifyEmailOutput> {
+  const tenant = forTenant(userId);
+  return tenant.gmail.api.messages.modify({
+    id: messageId,
+    removeLabelIds: [GMAIL_LABEL.INBOX],
+  });
+}
+
+/**
+ * Move an email to trash.
+ */
+export async function trashEmail(
+  userId: string,
+  messageId: string
+): Promise<ModifyEmailOutput> {
+  const tenant = forTenant(userId);
+  return tenant.gmail.api.messages.trash({ id: messageId });
+}
+
+/**
+ * Mark an email as read by removing the UNREAD label.
+ */
+export async function markEmailRead(
+  userId: string,
+  messageId: string
+): Promise<ModifyEmailOutput> {
+  const tenant = forTenant(userId);
+  return tenant.gmail.api.messages.modify({
+    id: messageId,
+    removeLabelIds: [GMAIL_LABEL.UNREAD],
+  });
+}
+
+/**
+ * Mark an email as unread by adding the UNREAD label.
+ */
+export async function markEmailUnread(
+  userId: string,
+  messageId: string
+): Promise<ModifyEmailOutput> {
+  const tenant = forTenant(userId);
+  return tenant.gmail.api.messages.modify({
+    id: messageId,
+    addLabelIds: [GMAIL_LABEL.UNREAD],
+  });
 }
 

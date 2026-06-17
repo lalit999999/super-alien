@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { CALENDAR_DEFAULT_LIST_LIMIT, CALENDAR_MAX_LIST_LIMIT } from "./calendar.constants";
 
+const iso8601Schema = z
+  .string()
+  .datetime({ message: "Must be a valid ISO 8601 date (e.g. 2026-06-17T10:00:00Z)" });
+
 // Page-based pagination (matches Gmail pattern)
 export const calendarListQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
@@ -16,8 +20,8 @@ export type CalendarListQuery = z.infer<typeof calendarListQuerySchema>;
 
 export const calendarSyncBodySchema = z.object({
   maxResults: z.number().int().positive().max(2500).optional(),
-  timeMin: z.string().optional(),
-  timeMax: z.string().optional(),
+  timeMin: iso8601Schema.optional(),
+  timeMax: iso8601Schema.optional(),
 });
 
 export type CalendarSyncBody = z.infer<typeof calendarSyncBodySchema>;

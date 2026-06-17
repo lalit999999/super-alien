@@ -103,13 +103,13 @@ export const agentTools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
     function: {
       name: "generateDraft",
       description:
-        "Generate an email draft. Provide emailId to reply to an existing email, or provide prompt to compose a new one.",
+        "Generate an email draft. You MUST provide at least one of: emailId (to reply to an existing email) OR prompt (to compose a new email). Calling with neither will fail.",
       parameters: {
         type: "object",
         properties: {
           emailId: {
             type: "string",
-            description: "ID of the email to reply to (leave empty for a new email)",
+            description: "ID of the email to reply to. Required when composing a reply. Omit when writing a new email.",
           },
           tone: {
             type: "string",
@@ -118,7 +118,7 @@ export const agentTools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
           },
           prompt: {
             type: "string",
-            description: "What the new email should say (for composing, not replying)",
+            description: "Instructions for what the new email should say. Required when writing a new email (not a reply).",
           },
           context: {
             type: "string",
@@ -126,6 +126,7 @@ export const agentTools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
           },
         },
         required: [],
+        // At least one of emailId or prompt must be provided — the server will reject requests with neither.
         additionalProperties: false,
       },
     },
@@ -276,6 +277,149 @@ export const agentTools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
           },
         },
         required: ["corsairEventId"],
+        additionalProperties: false,
+      },
+    },
+  },
+  // ─── New Gmail actions (Corsair) ─────────────────────────────────────────────
+  {
+    type: "function",
+    function: {
+      name: "getThread",
+      description:
+        "Retrieve a full Gmail conversation thread by its thread ID. Returns all messages in chronological order. Use this to show email conversations.",
+      parameters: {
+        type: "object",
+        properties: {
+          threadId: {
+            type: "string",
+            description: "The Gmail thread ID (from searchEmails results)",
+          },
+        },
+        required: ["threadId"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "archiveEmail",
+      description:
+        "Archive a specific email — removes it from the inbox without deleting. Use when the user wants to clean up their inbox.",
+      parameters: {
+        type: "object",
+        properties: {
+          emailId: {
+            type: "string",
+            description: "The corsairEmailId of the email to archive (from searchEmails results)",
+          },
+        },
+        required: ["emailId"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "deleteEmail",
+      description:
+        "Move a specific email to trash. Use when the user explicitly wants to delete an email.",
+      parameters: {
+        type: "object",
+        properties: {
+          emailId: {
+            type: "string",
+            description: "The corsairEmailId of the email to delete (from searchEmails results)",
+          },
+        },
+        required: ["emailId"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "markRead",
+      description: "Mark a specific email as read.",
+      parameters: {
+        type: "object",
+        properties: {
+          emailId: {
+            type: "string",
+            description: "The corsairEmailId of the email to mark as read",
+          },
+        },
+        required: ["emailId"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "markUnread",
+      description: "Mark a specific email as unread.",
+      parameters: {
+        type: "object",
+        properties: {
+          emailId: {
+            type: "string",
+            description: "The corsairEmailId of the email to mark as unread",
+          },
+        },
+        required: ["emailId"],
+        additionalProperties: false,
+      },
+    },
+  },
+  // ─── Sync tools ───────────────────────────────────────────────────────────────
+  {
+    type: "function",
+    function: {
+      name: "triggerSync",
+      description:
+        "Trigger a synchronization for Gmail or Calendar. Use when the user says 'sync my Gmail', 'sync my calendar', or 'refresh my data'.",
+      parameters: {
+        type: "object",
+        properties: {
+          integration: {
+            type: "string",
+            enum: ["gmail", "calendar"],
+            description: "Which integration to sync",
+          },
+        },
+        required: ["integration"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "getSyncStatus",
+      description:
+        "Get the current sync status for Gmail and Calendar. Returns whether sync is pending, running, completed, or failed.",
+      parameters: {
+        type: "object",
+        properties: {},
+        required: [],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "checkProgress",
+      description:
+        "Check how much of the sync has completed. Returns progress counts for Gmail and Calendar.",
+      parameters: {
+        type: "object",
+        properties: {},
+        required: [],
         additionalProperties: false,
       },
     },

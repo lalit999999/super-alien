@@ -12,7 +12,9 @@
     "test:corsair:send": "npx tsx scripts/test-corsair-send.ts",
     "test:corsair:events": "npx tsx scripts/test-corsair-events.ts",
     "test:corsair:create-event": "npx tsx scripts/test-corsair-create-event.ts",
-    "list:users": "npx tsx scripts/list-users.ts"
+    "list:users": "npx tsx scripts/list-users.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.5.2",
@@ -55,6 +57,7 @@
     "prisma": "^7.8.0",
     "tailwindcss": "^4",
     "tsx": "^4.22.4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.9"
   }
 }

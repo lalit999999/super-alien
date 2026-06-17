@@ -1,9 +1,16 @@
 import type { ExecutionStatus } from "@/config/generated/prisma/enums";
 import type { AGENT_INTENTS } from "./agent.constants";
 
+export type ChatHistoryMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
 export type AgentChatInput = {
-  userId: string;  // Clerk user ID
+  userId: string;
   prompt: string;
+  history?: ChatHistoryMessage[];
+  sessionId?: string;
 };
 
 export type AgentChatOutput = {

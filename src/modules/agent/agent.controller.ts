@@ -29,6 +29,7 @@ export async function handleAgentChat(
   const result = await service.chat({
     userId: session.userId,
     prompt: parsed.data.prompt,
+    sessionId: parsed.data.sessionId,
   });
 
   if (result.status === "FAILED") {

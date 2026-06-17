@@ -10,6 +10,7 @@ import {
   buildAgentSystemPrompt,
   AGENT_ERRORS,
 } from "./agent.constants";
+import { sanitizeArgsForLog } from "@/modules/shared/utils/log-sanitizer";
 
 // ─── Logger ───────────────────────────────────────────────────────────────────
 
@@ -69,8 +70,15 @@ export class AgentService {
     const toolResults: ToolResult[] = [];
 
     try {
+      const historyMessages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] =
+        (input.history ?? []).map((h) => ({
+          role: h.role,
+          content: h.content,
+        }));
+
       const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
         { role: "system", content: buildAgentSystemPrompt() },
+        ...historyMessages,
         { role: "user", content: input.prompt },
       ];
 
@@ -143,7 +151,7 @@ export class AgentService {
 
           log("TOOL", `Executing ${toolName}`, {
             toolCallId: toolCall.id,
-            args: parsedArgs,
+            args: sanitizeArgsForLog((parsedArgs ?? {}) as Record<string, unknown>),
           });
 
           const result = await this.workflow.executeToolCall(
