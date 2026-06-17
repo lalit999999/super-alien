@@ -35,6 +35,7 @@ export {
   AGENT_INTENTS,
 } from "./agent.constants";
 export type {
+  ActiveContext,
   AgentChatInput,
   AgentChatOutput,
   ChatHistoryMessage,

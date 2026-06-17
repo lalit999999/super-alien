@@ -279,6 +279,7 @@ export const ChatSessionScalarFieldEnum = {
   userId: 'userId',
   title: 'title',
   lastMessageAt: 'lastMessageAt',
+  activeContext: 'activeContext',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

@@ -6,11 +6,28 @@ export type ChatHistoryMessage = {
   content: string;
 };
 
+// Structured entity context that persists across turns within a chat session.
+// Prevents the agent from re-deriving entities it already resolved and stops
+// it from fabricating IDs that were never returned by a real tool call.
+export type ActiveContext = {
+  lastEmailId?: string;
+  lastCorsairEmailId?: string;
+  lastThreadId?: string;
+  lastSearchResultIds?: string[];
+  lastEventId?: string;
+  lastCorsairEventId?: string;
+  pendingAction?: {
+    type: "showThread" | "showDetails" | "archive" | "delete" | "sendDraft" | "sendEmail";
+    targetId: string;
+  };
+};
+
 export type AgentChatInput = {
   userId: string;
   prompt: string;
   history?: ChatHistoryMessage[];
   sessionId?: string;
+  activeContext?: ActiveContext;
 };
 
 export type AgentChatOutput = {
@@ -18,6 +35,7 @@ export type AgentChatOutput = {
   response: string;
   toolsUsed: string[];
   status: ExecutionStatus;
+  updatedContext?: ActiveContext;
 };
 
 export type ToolCall = {

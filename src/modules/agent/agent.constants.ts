@@ -8,11 +8,29 @@ export const AGENT_MODEL = "gemini-2.5-flash-lite" as const;
 export const AGENT_MAX_TOKENS = 2048;
 export const AGENT_MAX_TOOL_ITERATIONS = 8;
 
-export function buildAgentSystemPrompt(): string {
+export function buildAgentSystemPrompt(activeContext?: import("./agent.types").ActiveContext): string {
   const now = new Date().toISOString();
+
+  let contextSection = "";
+  if (activeContext) {
+    const lines: string[] = [];
+    if (activeContext.lastEmailId) lines.push(`- Last resolved email DB ID: ${activeContext.lastEmailId}`);
+    if (activeContext.lastCorsairEmailId) lines.push(`- Last resolved corsairEmailId (for archive/delete/mark): ${activeContext.lastCorsairEmailId}`);
+    if (activeContext.lastThreadId) lines.push(`- Last resolved thread ID: ${activeContext.lastThreadId}`);
+    if (activeContext.lastSearchResultIds?.length) lines.push(`- Recent search result IDs: ${activeContext.lastSearchResultIds.join(", ")}`);
+    if (activeContext.lastEventId) lines.push(`- Last resolved calendar event DB ID: ${activeContext.lastEventId}`);
+    if (activeContext.lastCorsairEventId) lines.push(`- Last resolved corsairEventId (for update/delete): ${activeContext.lastCorsairEventId}`);
+    if (activeContext.pendingAction) lines.push(`- Pending action: ${activeContext.pendingAction.type} on ID ${activeContext.pendingAction.targetId}`);
+    if (lines.length > 0) {
+      contextSection = `\nACTIVE CONTEXT (these IDs were returned by real tool calls — use them directly, never fabricate different ones):
+${lines.join("\n")}\n`;
+    }
+  }
+
   return `You are SuperAlien, an AI productivity assistant with access to Gmail and Google Calendar.
 
 Current date and time (UTC): ${now}
+${contextSection}
 
 When users say "today", "tomorrow", "next week", etc., resolve relative to the date above.
 Always use ISO 8601 format for all dates and times (e.g. 2026-06-15T16:00:00).
@@ -50,6 +68,9 @@ WORKFLOW RULES:
 5. When scheduling a meeting with guests, use scheduleMeetingAndInvite — it creates the event and sends invites atomically.
 6. For inbox actions (archive, delete, mark read/unread), use searchEmails first to get corsairEmailId values.
 7. Always confirm completed actions clearly in your final response.
+8. CRITICAL — ID GROUNDING: Never invent or guess an emailId, threadId, corsairEmailId, corsairEventId, or eventId. Every ID argument to every tool call MUST come from either (a) the ACTIVE CONTEXT above, or (b) a tool result already returned in this conversation. If you do not have a valid ID, call searchEmails or getEvents first to obtain one.
+9. ENTITY REUSE: When the user refers to "it", "that email", "latest email", "the thread", or any ambiguous reference, resolve against ACTIVE CONTEXT first. Only issue a new searchEmails call if the context is empty or the user has specified a different filter.
+10. PENDING ACTIONS: If ACTIVE CONTEXT lists a pending action and the user confirms (yes/sure/ok), execute that action immediately using the targetId from the context — do not ask again what to do.
 
 OUTPUT FORMAT:
 - Always respond in Markdown format.

@@ -94,15 +94,24 @@ export class ChatService {
     const userMessage = await this.repo.addMessage(sessionId, "USER", prompt);
     log("User message saved", { sessionId });
 
-    // Read history from cache or DB
-    const history = await this.getChatHistory(sessionId);
+    // Load history and persisted context in parallel
+    const [history, activeContext] = await Promise.all([
+      this.getChatHistory(sessionId),
+      this.repo.getActiveContext(sessionId, dbUserId),
+    ]);
 
     const agentResult = await this.agent.chat({
       userId: clerkUserId,
       prompt,
       history,
       sessionId,
+      activeContext: activeContext ?? undefined,
     });
+
+    // Persist updated context returned by the agent
+    if (agentResult.updatedContext) {
+      await this.repo.updateActiveContext(sessionId, agentResult.updatedContext);
+    }
 
     const assistantMessage = await this.repo.addMessage(sessionId, "ASSISTANT", agentResult.response);
     log("Assistant message saved", { sessionId, toolsUsed: agentResult.toolsUsed });

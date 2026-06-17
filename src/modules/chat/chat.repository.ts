@@ -1,4 +1,5 @@
 import type { PrismaClient } from "@/config/generated/prisma/client";
+import type { ActiveContext } from "@/modules/agent/agent.types";
 import type { ChatSession, ChatMessage, MessageRoleValue } from "./chat.types";
 import { CHAT_HISTORY_LIMIT } from "./chat.constants";
 
@@ -63,6 +64,22 @@ export class ChatRepository {
     await this.db.chatSession.updateMany({
       where: { id: sessionId, userId },
       data: { title },
+    });
+  }
+
+  async getActiveContext(sessionId: string, userId: string): Promise<ActiveContext | null> {
+    const session = await this.db.chatSession.findFirst({
+      where: { id: sessionId, userId },
+      select: { activeContext: true },
+    });
+    if (!session) return null;
+    return (session.activeContext as ActiveContext | null) ?? null;
+  }
+
+  async updateActiveContext(sessionId: string, context: ActiveContext): Promise<void> {
+    await this.db.chatSession.update({
+      where: { id: sessionId },
+      data: { activeContext: context as object },
     });
   }
 }

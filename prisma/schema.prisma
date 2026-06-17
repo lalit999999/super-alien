@@ -236,6 +236,7 @@ model ChatSession {
   userId        String
   title         String
   lastMessageAt DateTime      @default(now())
+  activeContext Json?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 

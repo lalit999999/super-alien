@@ -1,3 +1,5 @@
+import type { ActiveContext } from "@/modules/agent/agent.types";
+
 export type MessageRoleValue = "USER" | "ASSISTANT" | "SYSTEM";
 
 export type ChatMessage = {
@@ -13,6 +15,7 @@ export type ChatSession = {
   userId: string;
   title: string;
   lastMessageAt: Date;
+  activeContext?: ActiveContext | null;
   createdAt: Date;
   updatedAt: Date;
   messages?: ChatMessage[];
