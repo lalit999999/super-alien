@@ -1,7 +1,12 @@
 import type { EmailModel } from "@/config/generated/prisma/models/Email";
+import type { EmailClassificationModel } from "@/config/generated/prisma/models/EmailClassification";
 import type { SendEmailInput as CorsairSendEmailInput } from "@/modules/corsair";
 
 export type DbEmail = EmailModel;
+
+export type DbEmailWithClassification = DbEmail & {
+  classification: EmailClassificationModel | null;
+};
 
 export type GmailUpsertInput = {
   corsairEmailId: string;

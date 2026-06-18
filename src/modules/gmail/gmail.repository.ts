@@ -1,5 +1,5 @@
 import type { PrismaClient } from "@/config/generated/prisma/client";
-import type { DbEmail, GmailUpsertInput, DbEmailSearchOptions } from "./gmail.types";
+import type { DbEmail, DbEmailWithClassification, GmailUpsertInput, DbEmailSearchOptions } from "./gmail.types";
 
 export class GmailRepository {
   constructor(private readonly db: PrismaClient) {}
@@ -127,7 +127,7 @@ export class GmailRepository {
     });
   }
 
-  async getImportantEmails(clerkUserId: string, limit: number): Promise<DbEmail[]> {
+  async getImportantEmails(clerkUserId: string, limit: number): Promise<DbEmailWithClassification[]> {
     return this.db.email.findMany({
       where: {
         user: { clerkUserId },
@@ -136,7 +136,7 @@ export class GmailRepository {
       include: { classification: true },
       orderBy: { receivedAt: "desc" },
       take: limit,
-    });
+    }) as Promise<DbEmailWithClassification[]>;
   }
 
   async searchEmailsInDb(

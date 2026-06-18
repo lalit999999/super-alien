@@ -217,6 +217,17 @@ export async function handleSearchEmails(req: NextRequest) {
   return ok(result);
 }
 
+export async function handleListImportant(req: NextRequest) {
+  const { userId: clerkUserId } = await requireAuth();
+
+  const { searchParams } = new URL(req.url);
+  const limit = Math.min(Number(searchParams.get("limit") ?? "6"), 20);
+
+  const emails = await makeService().getImportantEmails(clerkUserId, limit);
+
+  return ok({ emails });
+}
+
 export async function handleClassifyEmails(req: NextRequest) {
   const { userId: clerkUserId } = await requireAuth();
 

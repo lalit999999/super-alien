@@ -20,7 +20,7 @@ import {
   CACHE_TTL,
 } from "@/modules/cache";
 import type { GmailRepository } from "./gmail.repository";
-import type { DbEmail, GmailSyncResult, GmailListOptions, GmailUpsertInput, ParsedMessage, SendEmailInput, DbEmailSearchOptions } from "./gmail.types";
+import type { DbEmail, DbEmailWithClassification, GmailSyncResult, GmailListOptions, GmailUpsertInput, ParsedMessage, SendEmailInput, DbEmailSearchOptions } from "./gmail.types";
 import { GMAIL_SYNC_MAX_RESULTS } from "./gmail.constants";
 
 export class GmailService {
@@ -223,6 +223,13 @@ export class GmailService {
     await this.repo.updateReadStatusByCorsairId(corsairEmailId, clerkUserId, false).catch(() => undefined);
     await this.invalidateEmailCache(clerkUserId, corsairEmailId);
     return { success: true };
+  }
+
+  async getImportantEmails(
+    clerkUserId: string,
+    limit = 6
+  ): Promise<DbEmailWithClassification[]> {
+    return this.repo.getImportantEmails(clerkUserId, limit);
   }
 
   async classifyEmailsForUser(
