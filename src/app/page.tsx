@@ -10,6 +10,7 @@ import {
   Clock,
   Shield,
 } from "lucide-react";
+import { Pricing } from "@/components/Pricing";
 
 function Navbar() {
   return (
@@ -32,6 +33,9 @@ function Navbar() {
           </a>
           <a href="#how-it-works" className="text-sm font-medium text-ps-secondary hover:text-ps-accent transition-colors">
             How it works
+          </a>
+          <a href="#pricing" className="text-sm font-medium text-ps-secondary hover:text-ps-accent transition-colors">
+            Pricing
           </a>
         </div>
 
@@ -415,6 +419,7 @@ export default function LandingPage() {
       <Hero />
       <Features />
       <HowItWorks />
+      <Pricing />
       <FinalCTA />
       <Footer />
     </div>

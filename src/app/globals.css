@@ -39,6 +39,10 @@
 /* ─── Base layer ──────────────────────────────────────────────────────────── */
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: var(--color-ps-bg);
     color: var(--color-ps-text);
