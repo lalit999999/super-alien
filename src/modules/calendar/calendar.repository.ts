@@ -20,6 +20,8 @@ export class CalendarRepository {
         status: input.status ?? null,
         organizer: input.organizer ?? null,
         attendees: input.attendees ?? Prisma.DbNull,
+        colorId: input.colorId ?? "7",
+        isAllDay: input.isAllDay ?? false,
         syncedAt: new Date(),
       },
       update: {
@@ -32,6 +34,8 @@ export class CalendarRepository {
         status: input.status ?? null,
         organizer: input.organizer ?? null,
         attendees: input.attendees ?? Prisma.DbNull,
+        colorId: input.colorId ?? "7",
+        isAllDay: input.isAllDay ?? false,
         syncedAt: new Date(),
       },
     });
@@ -56,6 +60,8 @@ export class CalendarRepository {
           status: input.status ?? null,
           organizer: input.organizer ?? null,
           attendees: input.attendees ?? Prisma.DbNull,
+          colorId: input.colorId ?? "7",
+          isAllDay: input.isAllDay ?? false,
           syncedAt: now,
         },
         update: {
@@ -68,6 +74,8 @@ export class CalendarRepository {
           status: input.status ?? null,
           organizer: input.organizer ?? null,
           attendees: input.attendees ?? Prisma.DbNull,
+          colorId: input.colorId ?? "7",
+          isAllDay: input.isAllDay ?? false,
           syncedAt: now,
         },
       });

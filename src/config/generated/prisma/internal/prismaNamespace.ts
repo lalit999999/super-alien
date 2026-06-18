@@ -1965,6 +1965,8 @@ export const CalendarEventScalarFieldEnum = {
   status: 'status',
   organizer: 'organizer',
   attendees: 'attendees',
+  colorId: 'colorId',
+  isAllDay: 'isAllDay',
   syncedAt: 'syncedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

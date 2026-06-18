@@ -16,6 +16,7 @@ export type SendEmailInput = {
   subject: string;
   body: string;
   threadId?: string;
+  attachments?: { filename: string; mimeType: string; data: string }[];
 };
 export type SendEmailOutput = GmailEndpointOutputs["messagesSend"];
 export type GetThreadOutput = GmailEndpointOutputs["threadsGet"];

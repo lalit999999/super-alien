@@ -48,6 +48,7 @@ export const createCalendarEventSchema = z.object({
   attendees: z.array(attendeeSchema).optional(),
   sendUpdates: z.enum(["all", "externalOnly", "none"]).optional(),
   conferenceDataVersion: z.number().optional(),
+  colorId: z.string().optional(),
 });
 
 export type CreateCalendarEventInput = z.infer<typeof createCalendarEventSchema>;

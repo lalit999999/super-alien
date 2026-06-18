@@ -158,6 +158,8 @@ model CalendarEvent {
   status         String?
   organizer      String?
   attendees      Json?
+  colorId        String?  @default("7")
+  isAllDay       Boolean  @default(false)
   syncedAt       DateTime @default(now())
 
   user           User     @relation(fields: [userId], references: [id])

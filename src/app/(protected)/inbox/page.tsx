@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { RefreshCw, Search, Mail, Star, DollarSign, CalendarDays, Tag, Circle, ChevronRight, X, ExternalLink } from "lucide-react";
+import { RefreshCw, Search, Mail, Star, DollarSign, CalendarDays, Tag, Circle, ChevronRight, X, ExternalLink, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { OnboardingEmptyState } from "@/components/onboarding/empty-state";
+import { ComposeModal } from "@/components/inbox/compose-modal";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -263,6 +264,7 @@ export default function InboxPage() {
   const [activeFilter, setActiveFilter] = useState<FilterId>("all");
   const [search, setSearch] = useState("");
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
+  const [showCompose, setShowCompose] = useState(false);
 
   useEffect(() => {
     fetch("/api/integrations")
@@ -369,6 +371,13 @@ export default function InboxPage() {
                 {syncResult.synced} synced
               </span>
             )}
+            <button
+              onClick={() => setShowCompose(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-ps-border bg-ps-surface px-2.5 py-1.5 text-xs font-medium text-ps-secondary transition-colors hover:bg-ps-surface-2"
+            >
+              <Pencil className="h-3 w-3" />
+              Compose
+            </button>
             <button
               onClick={handleSync}
               disabled={syncing}
@@ -492,6 +501,11 @@ export default function InboxPage() {
           <EmptyPreview />
         )}
       </div>
+
+      <ComposeModal
+        open={showCompose}
+        onClose={() => setShowCompose(false)}
+      />
     </div>
   );
 }

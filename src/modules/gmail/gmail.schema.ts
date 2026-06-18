@@ -24,6 +24,11 @@ export const sendEmailBodySchema = z.object({
   subject: z.string().min(1, "Subject is required"),
   body: z.string().min(1, "Email body is required"),
   threadId: z.string().optional(),
+  attachments: z.array(z.object({
+    filename: z.string(),
+    mimeType: z.string(),
+    data: z.string(),
+  })).optional(),
 });
 
 export type SendEmailBody = z.infer<typeof sendEmailBodySchema>;

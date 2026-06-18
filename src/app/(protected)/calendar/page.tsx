@@ -3,6 +3,27 @@
 import { useState, useEffect, useCallback } from "react";
 import { RefreshCw, CalendarDays, Clock, Users, Plus } from "lucide-react";
 import { OnboardingEmptyState } from "@/components/onboarding/empty-state";
+import { NewEventDialog } from "@/components/calendar/new-event-dialog";
+
+// ─── Color palette ─────────────────────────────────────────────────────────────
+
+const COLOR_MAP: Record<string, string> = {
+  "1":  "#7986CB",
+  "2":  "#33B679",
+  "3":  "#8E24AA",
+  "4":  "#E67C73",
+  "5":  "#F6BF26",
+  "6":  "#F4511E",
+  "7":  "#039BE5",
+  "8":  "#616161",
+  "9":  "#3F51B5",
+  "10": "#0B8043",
+  "11": "#D50000",
+};
+
+function getEventColor(colorId?: string | null): string {
+  return COLOR_MAP[colorId ?? "7"] ?? COLOR_MAP["7"];
+}
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -20,6 +41,8 @@ type CalendarEvent = {
   description: string | null;
   location: string | null;
   attendees: Attendee[] | null;
+  colorId?: string | null;
+  isAllDay?: boolean;
 };
 
 type ApiResponse =
@@ -85,16 +108,27 @@ function groupEventsByDay(events: CalendarEvent[]): Map<string, CalendarEvent[]>
 
 function EventCard({ event }: { event: CalendarEvent }) {
   const today = isToday(event.startTime);
+  const color = getEventColor(event.colorId);
   return (
-    <div className={`rounded-2xl border p-4 transition-shadow hover:shadow-sm sm:p-5 ${today ? "border-ps-accent/30 bg-ps-accent-light" : "border-ps-border bg-ps-card"}`}>
+    <div
+      className={`rounded-2xl border p-4 transition-shadow hover:shadow-sm sm:p-5 overflow-hidden ${today ? "border-ps-accent/30 bg-ps-accent-light" : "border-ps-border bg-ps-card"}`}
+      style={{ borderLeft: `4px solid ${color}` }}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <h3 className="font-medium text-ps-text">{event.title}</h3>
           <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-ps-muted sm:gap-3">
-            <span className="flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5" />
-              {formatEventTime(event.startTime, event.endTime)}
-            </span>
+            {event.isAllDay ? (
+              <span className="flex items-center gap-1">
+                <CalendarDays className="h-3.5 w-3.5" />
+                All day
+              </span>
+            ) : (
+              <span className="flex items-center gap-1">
+                <Clock className="h-3.5 w-3.5" />
+                {formatEventTime(event.startTime, event.endTime)}
+              </span>
+            )}
             {event.location && (
               <span className="flex items-center gap-1">
                 <CalendarDays className="h-3.5 w-3.5" />
@@ -181,6 +215,7 @@ export default function CalendarPage() {
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<View>("Today");
+  const [showNewEvent, setShowNewEvent] = useState(false);
 
   useEffect(() => {
     fetch("/api/integrations")
@@ -263,7 +298,10 @@ export default function CalendarPage() {
             <RefreshCw className={`h-3.5 w-3.5 ${syncing ? "animate-spin" : ""}`} />
             {syncing ? "Syncing…" : "Sync"}
           </button>
-          <button className="flex items-center gap-1.5 rounded-lg border border-ps-border bg-ps-card px-3 py-2 text-xs font-medium text-ps-secondary transition-colors hover:bg-ps-surface">
+          <button
+            onClick={() => setShowNewEvent(true)}
+            className="flex items-center gap-1.5 rounded-lg border border-ps-border bg-ps-card px-3 py-2 text-xs font-medium text-ps-secondary transition-colors hover:bg-ps-surface"
+          >
             <Plus className="h-3.5 w-3.5" />
             New event
           </button>
@@ -349,6 +387,12 @@ export default function CalendarPage() {
           ))}
         </div>
       )}
+
+      <NewEventDialog
+        open={showNewEvent}
+        onClose={() => setShowNewEvent(false)}
+        onCreated={fetchEvents}
+      />
     </div>
   );
 }

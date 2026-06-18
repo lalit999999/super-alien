@@ -1,30 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { z } from "zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Plus, X } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { X, Check } from "lucide-react";
 
-const newEventSchema = z.object({
-  summary: z.string().min(1, "Event title is required"),
-  description: z.string().optional(),
-  location: z.string().optional(),
-  startDateTime: z.string().min(1, "Start time is required"),
-  endDateTime: z.string().min(1, "End time is required"),
-  timeZone: z.string().min(1),
-  attendees: z.array(z.string().email()),
-  sendUpdates: z.enum(["all", "externalOnly", "none"]),
-}).refine((d) => new Date(d.endDateTime) > new Date(d.startDateTime), {
-  message: "End time must be after start time",
-  path: ["endDateTime"],
-});
-
-type NewEventForm = z.infer<typeof newEventSchema>;
+// Google Calendar color palette
+const CALENDAR_COLORS = [
+  { id: "1",  label: "Lavender",  hex: "#7986CB" },
+  { id: "2",  label: "Sage",      hex: "#33B679" },
+  { id: "3",  label: "Grape",     hex: "#8E24AA" },
+  { id: "4",  label: "Flamingo",  hex: "#E67C73" },
+  { id: "5",  label: "Banana",    hex: "#F6BF26" },
+  { id: "6",  label: "Tangerine", hex: "#F4511E" },
+  { id: "7",  label: "Peacock",   hex: "#039BE5" },
+  { id: "8",  label: "Graphite",  hex: "#616161" },
+  { id: "9",  label: "Blueberry", hex: "#3F51B5" },
+  { id: "10", label: "Basil",     hex: "#0B8043" },
+  { id: "11", label: "Tomato",    hex: "#D50000" },
+] as const;
 
 type CreateResponse =
   | { success: true; data: unknown }
@@ -36,84 +29,93 @@ interface NewEventDialogProps {
   onCreated: () => void;
 }
 
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+function toDateValue(d: Date): string {
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+function toTimeValue(d: Date): string {
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 function toLocalDateTimeValue(d: Date): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${toDateValue(d)}T${toTimeValue(d)}`;
+}
+
+function nextDayDateValue(date: string): string {
+  const d = new Date(date);
+  d.setDate(d.getDate() + 1);
+  return toDateValue(d);
 }
 
 export function NewEventDialog({ open, onClose, onCreated }: NewEventDialogProps) {
   const now = new Date();
   const inOneHour = new Date(now.getTime() + 60 * 60 * 1000);
 
-  const [form, setForm] = useState<NewEventForm>({
-    summary: "",
-    description: "",
-    location: "",
-    startDateTime: toLocalDateTimeValue(now),
-    endDateTime: toLocalDateTimeValue(inOneHour),
-    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    attendees: [],
-    sendUpdates: "all",
-  });
-  const [attendeeInput, setAttendeeInput] = useState("");
-  const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [isAllDay, setIsAllDay] = useState(false);
+  const [startDate, setStartDate] = useState(toDateValue(now));
+  const [endDate, setEndDate] = useState(toDateValue(now));
+  const [startTime, setStartTime] = useState(toTimeValue(now));
+  const [endTime, setEndTime] = useState(toTimeValue(inOneHour));
+  const [colorId, setColorId] = useState("7");
   const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  function update<K extends keyof NewEventForm>(field: K, value: NewEventForm[K]) {
-    setForm((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: undefined }));
-    setServerError(null);
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  function reset() {
+    const n = new Date();
+    const n1h = new Date(n.getTime() + 60 * 60 * 1000);
+    setTitle("");
+    setDescription("");
+    setIsAllDay(false);
+    setStartDate(toDateValue(n));
+    setEndDate(toDateValue(n));
+    setStartTime(toTimeValue(n));
+    setEndTime(toTimeValue(n1h));
+    setColorId("7");
+    setError(null);
   }
 
-  function addAttendee() {
-    const email = attendeeInput.trim();
-    if (!email) return;
-    const result = z.string().email().safeParse(email);
-    if (!result.success) {
-      setErrors((prev) => ({ ...prev, attendeeInput: "Invalid email address" }));
-      return;
-    }
-    if (form.attendees.includes(email)) {
-      setErrors((prev) => ({ ...prev, attendeeInput: "Already added" }));
-      return;
-    }
-    setForm((prev) => ({ ...prev, attendees: [...prev.attendees, email] }));
-    setAttendeeInput("");
-    setErrors((prev) => ({ ...prev, attendeeInput: undefined }));
-  }
-
-  function removeAttendee(email: string) {
-    setForm((prev) => ({ ...prev, attendees: prev.attendees.filter((a) => a !== email) }));
-  }
-
-  function validate(): boolean {
-    const result = newEventSchema.safeParse(form);
-    if (result.success) { setErrors({}); return true; }
-    const fieldErrors: Partial<Record<string, string>> = {};
-    for (const issue of result.error.issues) {
-      const field = issue.path[0] as string;
-      fieldErrors[field] = issue.message;
-    }
-    setErrors(fieldErrors);
-    return false;
+  function handleClose() {
+    reset();
+    onClose();
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!validate()) return;
+    if (!title.trim()) { setError("Title is required"); return; }
 
     setSubmitting(true);
-    setServerError(null);
+    setError(null);
     try {
+      let start: Record<string, string>;
+      let end: Record<string, string>;
+
+      if (isAllDay) {
+        start = { date: startDate };
+        end = { date: nextDayDateValue(endDate || startDate) };
+      } else {
+        start = { dateTime: new Date(toLocalDateTimeValue(new Date(`${startDate}T${startTime}`))).toISOString(), timeZone };
+        end = { dateTime: new Date(toLocalDateTimeValue(new Date(`${endDate}T${endTime}`))).toISOString(), timeZone };
+        if (new Date(end.dateTime) <= new Date(start.dateTime)) {
+          setError("End time must be after start time");
+          setSubmitting(false);
+          return;
+        }
+      }
+
       const payload = {
-        summary: form.summary,
-        ...(form.description && { description: form.description }),
-        ...(form.location && { location: form.location }),
-        start: { dateTime: new Date(form.startDateTime).toISOString(), timeZone: form.timeZone },
-        end: { dateTime: new Date(form.endDateTime).toISOString(), timeZone: form.timeZone },
-        ...(form.attendees.length > 0 && { attendees: form.attendees.map((email) => ({ email })) }),
-        sendUpdates: form.sendUpdates,
+        summary: title.trim(),
+        ...(description.trim() && { description: description.trim() }),
+        start,
+        end,
+        colorId,
       };
 
       const res = await fetch("/api/calendar", {
@@ -122,176 +124,161 @@ export function NewEventDialog({ open, onClose, onCreated }: NewEventDialogProps
         body: JSON.stringify(payload),
       });
       const json: CreateResponse = await res.json();
-      if (!json.success) {
-        setServerError(json.error);
-        return;
-      }
+      if (!json.success) { setError(json.error); return; }
       onCreated();
       handleClose();
     } catch {
-      setServerError("Failed to create event. Please try again.");
+      setError("Failed to create event. Please try again.");
     } finally {
       setSubmitting(false);
     }
   }
 
-  function handleClose() {
-    const now = new Date();
-    const inOneHour = new Date(now.getTime() + 60 * 60 * 1000);
-    setForm({
-      summary: "",
-      description: "",
-      location: "",
-      startDateTime: toLocalDateTimeValue(now),
-      endDateTime: toLocalDateTimeValue(inOneHour),
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      attendees: [],
-      sendUpdates: "all",
-    });
-    setAttendeeInput("");
-    setErrors({});
-    setServerError(null);
-    onClose();
-  }
-
   const inputClass =
-    "w-full rounded-lg border border-ps-border bg-ps-surface px-3 py-2 text-sm text-ps-text placeholder:text-ps-muted outline-none transition-colors focus:border-ps-accent focus:ring-2 focus:ring-ps-accent/10";
+    "rounded-lg border border-ps-border bg-ps-surface px-3 py-2 text-sm text-ps-text placeholder:text-ps-muted outline-none transition-colors focus:border-ps-accent focus:ring-2 focus:ring-ps-accent/10";
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
-      <DialogContent className="sm:max-w-lg bg-ps-card border-ps-border max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-ps-text">New Event</DialogTitle>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-[420px] p-0 bg-ps-card border-ps-border overflow-hidden">
+        {/* Header bar */}
+        <div className="flex items-center justify-between border-b border-ps-border px-4 py-3">
+          <span className="text-sm font-semibold text-ps-text">New event</span>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="rounded-lg p-1 text-ps-muted transition-colors hover:bg-ps-surface hover:text-ps-text"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* Title */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-ps-secondary">Title *</label>
-            <input
-              type="text"
-              value={form.summary}
-              onChange={(e) => update("summary", e.target.value)}
-              placeholder="Event title"
-              className={inputClass}
-            />
-            {errors.summary && <p className="text-xs text-red-500">{errors.summary}</p>}
-          </div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4">
+          {/* Title — large, borderless */}
+          <input
+            autoFocus
+            type="text"
+            value={title}
+            onChange={(e) => { setTitle(e.target.value); setError(null); }}
+            placeholder="Add title"
+            className="w-full border-0 bg-transparent text-xl font-medium text-ps-text placeholder:text-ps-muted outline-none"
+          />
 
-          {/* Start / End */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-ps-secondary">Start *</label>
-              <input
-                type="datetime-local"
-                value={form.startDateTime}
-                onChange={(e) => update("startDateTime", e.target.value)}
-                className={inputClass}
-              />
-              {errors.startDateTime && <p className="text-xs text-red-500">{errors.startDateTime}</p>}
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-ps-secondary">End *</label>
-              <input
-                type="datetime-local"
-                value={form.endDateTime}
-                onChange={(e) => update("endDateTime", e.target.value)}
-                className={inputClass}
-              />
-              {errors.endDateTime && <p className="text-xs text-red-500">{errors.endDateTime}</p>}
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-ps-secondary">Description</label>
-            <textarea
-              value={form.description}
-              onChange={(e) => update("description", e.target.value)}
-              placeholder="Add a description..."
-              rows={3}
-              className={`${inputClass} resize-none`}
-            />
-          </div>
-
-          {/* Location */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-ps-secondary">Location</label>
-            <input
-              type="text"
-              value={form.location}
-              onChange={(e) => update("location", e.target.value)}
-              placeholder="Add location or meeting link"
-              className={inputClass}
-            />
-          </div>
-
-          {/* Attendees */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-ps-secondary">Attendees</label>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                value={attendeeInput}
-                onChange={(e) => { setAttendeeInput(e.target.value); setErrors((prev) => ({ ...prev, attendeeInput: undefined })); }}
-                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addAttendee(); } }}
-                placeholder="attendee@example.com"
-                className={`flex-1 ${inputClass}`}
-              />
-              <button
-                type="button"
-                onClick={addAttendee}
-                className="flex items-center gap-1 rounded-lg border border-ps-border bg-ps-surface px-3 py-2 text-xs font-medium text-ps-secondary transition-colors hover:bg-ps-surface-2"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                Add
-              </button>
-            </div>
-            {errors.attendeeInput && <p className="text-xs text-red-500">{errors.attendeeInput}</p>}
-            {form.attendees.length > 0 && (
-              <div className="mt-1 flex flex-wrap gap-1.5">
-                {form.attendees.map((email) => (
-                  <span
-                    key={email}
-                    className="flex items-center gap-1 rounded-full border border-ps-border bg-ps-surface px-2.5 py-0.5 text-xs text-ps-secondary"
-                  >
-                    {email}
-                    <button
-                      type="button"
-                      onClick={() => removeAttendee(email)}
-                      className="ml-0.5 rounded-full text-ps-muted hover:text-ps-text"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Send updates */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-ps-secondary">Notify attendees</label>
-            <select
-              value={form.sendUpdates}
-              onChange={(e) => update("sendUpdates", e.target.value as NewEventForm["sendUpdates"])}
-              className={inputClass}
+          {/* All day toggle */}
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-ps-secondary">All day</span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isAllDay}
+              onClick={() => setIsAllDay((v) => !v)}
+              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
+                isAllDay ? "bg-ps-accent" : "bg-ps-border"
+              }`}
             >
-              <option value="all">All attendees</option>
-              <option value="externalOnly">External attendees only</option>
-              <option value="none">No notifications</option>
-            </select>
+              <span
+                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
+                  isAllDay ? "translate-x-4.5" : "translate-x-0.5"
+                }`}
+              />
+            </button>
           </div>
 
-          {/* Server error */}
-          {serverError && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400">
-              {serverError}
+          {/* Date / time pickers */}
+          {isAllDay ? (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-ps-muted">Start date</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-ps-muted">End date</label>
+                <input
+                  type="date"
+                  value={endDate || startDate}
+                  min={startDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-ps-muted">Start</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className={`${inputClass} mb-1`}
+                />
+                <input
+                  type="time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-ps-muted">End</label>
+                <input
+                  type="date"
+                  value={endDate}
+                  min={startDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className={`${inputClass} mb-1`}
+                />
+                <input
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
             </div>
           )}
 
+          {/* Description */}
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Add description"
+            rows={3}
+            className={`${inputClass} w-full resize-none`}
+          />
+
+          {/* Color swatches */}
+          <div>
+            <p className="mb-2 text-xs text-ps-muted">Color</p>
+            <div className="flex flex-wrap gap-2">
+              {CALENDAR_COLORS.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  title={c.label}
+                  onClick={() => setColorId(c.id)}
+                  className="relative flex h-6 w-6 items-center justify-center rounded-full transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1"
+                  style={{ backgroundColor: c.hex, boxShadow: colorId === c.id ? `0 0 0 2px white, 0 0 0 4px ${c.hex}` : undefined }}
+                >
+                  {colorId === c.id && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400">
+              {error}
+            </p>
+          )}
+
           {/* Actions */}
-          <div className="flex items-center justify-end gap-2 pt-1">
+          <div className="flex items-center justify-end gap-2">
             <button
               type="button"
               onClick={handleClose}
@@ -304,7 +291,7 @@ export function NewEventDialog({ open, onClose, onCreated }: NewEventDialogProps
               disabled={submitting}
               className="rounded-lg bg-ps-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-ps-accent-dark disabled:opacity-50"
             >
-              {submitting ? "Creating…" : "Create event"}
+              {submitting ? "Creating…" : "Create"}
             </button>
           </div>
         </form>

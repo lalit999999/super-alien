@@ -112,6 +112,7 @@ export class CalendarService {
         start: input.start,
         end: input.end,
         attendees: input.attendees,
+        colorId: input.colorId,
       },
       sendUpdates: input.sendUpdates,
       conferenceDataVersion: input.conferenceDataVersion,
@@ -216,6 +217,7 @@ type RawEvent = {
   description?: string;
   location?: string;
   status?: string;
+  colorId?: string;
   organizer?: { email?: string; displayName?: string };
   attendees?: RawAttendee[];
   start?: { dateTime?: string; date?: string; timeZone?: string };
@@ -245,6 +247,8 @@ function parseEvent(
         }))
       : null;
 
+  const isAllDay = Boolean(raw.start?.date && !raw.start.dateTime);
+
   return {
     corsairEventId: raw.id,
     userId: dbUserId,
@@ -257,6 +261,8 @@ function parseEvent(
     status: raw.status ?? null,
     organizer,
     attendees,
+    colorId: raw.colorId ?? null,
+    isAllDay,
   };
 }
 

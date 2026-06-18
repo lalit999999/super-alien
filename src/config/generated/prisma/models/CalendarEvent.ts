@@ -36,6 +36,8 @@ export type CalendarEventMinAggregateOutputType = {
   meetingLink: string | null
   status: string | null
   organizer: string | null
+  colorId: string | null
+  isAllDay: boolean | null
   syncedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -53,6 +55,8 @@ export type CalendarEventMaxAggregateOutputType = {
   meetingLink: string | null
   status: string | null
   organizer: string | null
+  colorId: string | null
+  isAllDay: boolean | null
   syncedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -71,6 +75,8 @@ export type CalendarEventCountAggregateOutputType = {
   status: number
   organizer: number
   attendees: number
+  colorId: number
+  isAllDay: number
   syncedAt: number
   createdAt: number
   updatedAt: number
@@ -90,6 +96,8 @@ export type CalendarEventMinAggregateInputType = {
   meetingLink?: true
   status?: true
   organizer?: true
+  colorId?: true
+  isAllDay?: true
   syncedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -107,6 +115,8 @@ export type CalendarEventMaxAggregateInputType = {
   meetingLink?: true
   status?: true
   organizer?: true
+  colorId?: true
+  isAllDay?: true
   syncedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -125,6 +135,8 @@ export type CalendarEventCountAggregateInputType = {
   status?: true
   organizer?: true
   attendees?: true
+  colorId?: true
+  isAllDay?: true
   syncedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -216,6 +228,8 @@ export type CalendarEventGroupByOutputType = {
   status: string | null
   organizer: string | null
   attendees: runtime.JsonValue | null
+  colorId: string | null
+  isAllDay: boolean
   syncedAt: Date
   createdAt: Date
   updatedAt: Date
@@ -255,6 +269,8 @@ export type CalendarEventWhereInput = {
   status?: Prisma.StringNullableFilter<"CalendarEvent"> | string | null
   organizer?: Prisma.StringNullableFilter<"CalendarEvent"> | string | null
   attendees?: Prisma.JsonNullableFilter<"CalendarEvent">
+  colorId?: Prisma.StringNullableFilter<"CalendarEvent"> | string | null
+  isAllDay?: Prisma.BoolFilter<"CalendarEvent"> | boolean
   syncedAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
@@ -274,6 +290,8 @@ export type CalendarEventOrderByWithRelationInput = {
   status?: Prisma.SortOrderInput | Prisma.SortOrder
   organizer?: Prisma.SortOrderInput | Prisma.SortOrder
   attendees?: Prisma.SortOrderInput | Prisma.SortOrder
+  colorId?: Prisma.SortOrderInput | Prisma.SortOrder
+  isAllDay?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -296,6 +314,8 @@ export type CalendarEventWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringNullableFilter<"CalendarEvent"> | string | null
   organizer?: Prisma.StringNullableFilter<"CalendarEvent"> | string | null
   attendees?: Prisma.JsonNullableFilter<"CalendarEvent">
+  colorId?: Prisma.StringNullableFilter<"CalendarEvent"> | string | null
+  isAllDay?: Prisma.BoolFilter<"CalendarEvent"> | boolean
   syncedAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
@@ -315,6 +335,8 @@ export type CalendarEventOrderByWithAggregationInput = {
   status?: Prisma.SortOrderInput | Prisma.SortOrder
   organizer?: Prisma.SortOrderInput | Prisma.SortOrder
   attendees?: Prisma.SortOrderInput | Prisma.SortOrder
+  colorId?: Prisma.SortOrderInput | Prisma.SortOrder
+  isAllDay?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -339,6 +361,8 @@ export type CalendarEventScalarWhereWithAggregatesInput = {
   status?: Prisma.StringNullableWithAggregatesFilter<"CalendarEvent"> | string | null
   organizer?: Prisma.StringNullableWithAggregatesFilter<"CalendarEvent"> | string | null
   attendees?: Prisma.JsonNullableWithAggregatesFilter<"CalendarEvent">
+  colorId?: Prisma.StringNullableWithAggregatesFilter<"CalendarEvent"> | string | null
+  isAllDay?: Prisma.BoolWithAggregatesFilter<"CalendarEvent"> | boolean
   syncedAt?: Prisma.DateTimeWithAggregatesFilter<"CalendarEvent"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CalendarEvent"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CalendarEvent"> | Date | string
@@ -356,6 +380,8 @@ export type CalendarEventCreateInput = {
   status?: string | null
   organizer?: string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: string | null
+  isAllDay?: boolean
   syncedAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -375,6 +401,8 @@ export type CalendarEventUncheckedCreateInput = {
   status?: string | null
   organizer?: string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: string | null
+  isAllDay?: boolean
   syncedAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -392,6 +420,8 @@ export type CalendarEventUpdateInput = {
   status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAllDay?: Prisma.BoolFieldUpdateOperationsInput | boolean
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -411,6 +441,8 @@ export type CalendarEventUncheckedUpdateInput = {
   status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAllDay?: Prisma.BoolFieldUpdateOperationsInput | boolean
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -429,6 +461,8 @@ export type CalendarEventCreateManyInput = {
   status?: string | null
   organizer?: string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: string | null
+  isAllDay?: boolean
   syncedAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -446,6 +480,8 @@ export type CalendarEventUpdateManyMutationInput = {
   status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAllDay?: Prisma.BoolFieldUpdateOperationsInput | boolean
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -464,6 +500,8 @@ export type CalendarEventUncheckedUpdateManyInput = {
   status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAllDay?: Prisma.BoolFieldUpdateOperationsInput | boolean
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -492,6 +530,8 @@ export type CalendarEventCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   organizer?: Prisma.SortOrder
   attendees?: Prisma.SortOrder
+  colorId?: Prisma.SortOrder
+  isAllDay?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -509,6 +549,8 @@ export type CalendarEventMaxOrderByAggregateInput = {
   meetingLink?: Prisma.SortOrder
   status?: Prisma.SortOrder
   organizer?: Prisma.SortOrder
+  colorId?: Prisma.SortOrder
+  isAllDay?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -526,6 +568,8 @@ export type CalendarEventMinOrderByAggregateInput = {
   meetingLink?: Prisma.SortOrder
   status?: Prisma.SortOrder
   organizer?: Prisma.SortOrder
+  colorId?: Prisma.SortOrder
+  isAllDay?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -585,6 +629,8 @@ export type CalendarEventCreateWithoutUserInput = {
   status?: string | null
   organizer?: string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: string | null
+  isAllDay?: boolean
   syncedAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -602,6 +648,8 @@ export type CalendarEventUncheckedCreateWithoutUserInput = {
   status?: string | null
   organizer?: string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: string | null
+  isAllDay?: boolean
   syncedAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -649,6 +697,8 @@ export type CalendarEventScalarWhereInput = {
   status?: Prisma.StringNullableFilter<"CalendarEvent"> | string | null
   organizer?: Prisma.StringNullableFilter<"CalendarEvent"> | string | null
   attendees?: Prisma.JsonNullableFilter<"CalendarEvent">
+  colorId?: Prisma.StringNullableFilter<"CalendarEvent"> | string | null
+  isAllDay?: Prisma.BoolFilter<"CalendarEvent"> | boolean
   syncedAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
@@ -666,6 +716,8 @@ export type CalendarEventCreateManyUserInput = {
   status?: string | null
   organizer?: string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: string | null
+  isAllDay?: boolean
   syncedAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -683,6 +735,8 @@ export type CalendarEventUpdateWithoutUserInput = {
   status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAllDay?: Prisma.BoolFieldUpdateOperationsInput | boolean
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -700,6 +754,8 @@ export type CalendarEventUncheckedUpdateWithoutUserInput = {
   status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAllDay?: Prisma.BoolFieldUpdateOperationsInput | boolean
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -717,6 +773,8 @@ export type CalendarEventUncheckedUpdateManyWithoutUserInput = {
   status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendees?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  colorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAllDay?: Prisma.BoolFieldUpdateOperationsInput | boolean
   syncedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -737,6 +795,8 @@ export type CalendarEventSelect<ExtArgs extends runtime.Types.Extensions.Interna
   status?: boolean
   organizer?: boolean
   attendees?: boolean
+  colorId?: boolean
+  isAllDay?: boolean
   syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -756,6 +816,8 @@ export type CalendarEventSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   status?: boolean
   organizer?: boolean
   attendees?: boolean
+  colorId?: boolean
+  isAllDay?: boolean
   syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -775,6 +837,8 @@ export type CalendarEventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   status?: boolean
   organizer?: boolean
   attendees?: boolean
+  colorId?: boolean
+  isAllDay?: boolean
   syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -794,12 +858,14 @@ export type CalendarEventSelectScalar = {
   status?: boolean
   organizer?: boolean
   attendees?: boolean
+  colorId?: boolean
+  isAllDay?: boolean
   syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CalendarEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "corsairEventId" | "userId" | "title" | "description" | "location" | "startTime" | "endTime" | "meetingLink" | "status" | "organizer" | "attendees" | "syncedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["calendarEvent"]>
+export type CalendarEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "corsairEventId" | "userId" | "title" | "description" | "location" | "startTime" | "endTime" | "meetingLink" | "status" | "organizer" | "attendees" | "colorId" | "isAllDay" | "syncedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["calendarEvent"]>
 export type CalendarEventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -828,6 +894,8 @@ export type $CalendarEventPayload<ExtArgs extends runtime.Types.Extensions.Inter
     status: string | null
     organizer: string | null
     attendees: runtime.JsonValue | null
+    colorId: string | null
+    isAllDay: boolean
     syncedAt: Date
     createdAt: Date
     updatedAt: Date
@@ -1267,6 +1335,8 @@ export interface CalendarEventFieldRefs {
   readonly status: Prisma.FieldRef<"CalendarEvent", 'String'>
   readonly organizer: Prisma.FieldRef<"CalendarEvent", 'String'>
   readonly attendees: Prisma.FieldRef<"CalendarEvent", 'Json'>
+  readonly colorId: Prisma.FieldRef<"CalendarEvent", 'String'>
+  readonly isAllDay: Prisma.FieldRef<"CalendarEvent", 'Boolean'>
   readonly syncedAt: Prisma.FieldRef<"CalendarEvent", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"CalendarEvent", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"CalendarEvent", 'DateTime'>

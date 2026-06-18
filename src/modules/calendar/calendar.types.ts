@@ -14,6 +14,8 @@ export type CalendarEventUpsertInput = {
   status?: string | null;
   organizer?: string | null;
   attendees?: unknown;
+  colorId?: string | null;
+  isAllDay?: boolean;
 };
 
 export type CalendarListOptions = {

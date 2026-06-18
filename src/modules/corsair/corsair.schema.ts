@@ -7,6 +7,11 @@ export const sendEmailSchema = z.object({
   subject: z.string().min(1, "Subject is required"),
   body: z.string().min(1, "Email body is required"),
   threadId: z.string().optional(),
+  attachments: z.array(z.object({
+    filename: z.string(),
+    mimeType: z.string(),
+    data: z.string(),
+  })).optional(),
 });
 
 export type SendEmailPayload = z.infer<typeof sendEmailSchema>;
@@ -48,6 +53,7 @@ export const createEventSchema = z.object({
     end: calendarDateTimeSchema,
     attendees: z.array(attendeeSchema).optional(),
     recurrence: z.array(z.string()).optional(),
+    colorId: z.string().optional(),
     reminders: z
       .object({
         useDefault: z.boolean().optional(),

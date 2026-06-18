@@ -42,25 +42,60 @@ export function sanitizeHeader(value: string): string {
   return value.replace(/[\r\n]+/g, "").replace(/\s+/g, " ").trim();
 }
 
-/**
- * Encodes plain text email parts into RFC 2822 base64url format required by
- * Gmail's messages.send endpoint.
- */
-function buildRawEmail(to: string, subject: string, body: string): string {
-  const message = [
+function toBase64Url(message: string): string {
+  return Buffer.from(message).toString("base64")
+    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function wrapBase64(data: string): string {
+  return data.replace(/.{76}/g, "$&\r\n");
+}
+
+function buildRawEmail(
+  to: string,
+  subject: string,
+  body: string,
+  attachments: { filename: string; mimeType: string; data: string }[] = []
+): string {
+  if (attachments.length === 0) {
+    const message = [
+      `To: ${sanitizeHeader(to)}`,
+      `Subject: ${sanitizeHeader(subject)}`,
+      `Content-Type: text/plain; charset="UTF-8"`,
+      `MIME-Version: 1.0`,
+      "",
+      body,
+    ].join("\r\n");
+    return toBase64Url(message);
+  }
+
+  const boundary = `boundary_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  const parts = [
     `To: ${sanitizeHeader(to)}`,
     `Subject: ${sanitizeHeader(subject)}`,
-    `Content-Type: text/plain; charset="UTF-8"`,
     `MIME-Version: 1.0`,
+    `Content-Type: multipart/mixed; boundary="${boundary}"`,
+    "",
+    `--${boundary}`,
+    `Content-Type: text/plain; charset="UTF-8"`,
     "",
     body,
-  ].join("\r\n");
+    "",
+  ];
 
-  return Buffer.from(message)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+  for (const att of attachments) {
+    parts.push(
+      `--${boundary}`,
+      `Content-Type: ${att.mimeType}; name="${att.filename}"`,
+      `Content-Disposition: attachment; filename="${att.filename}"`,
+      `Content-Transfer-Encoding: base64`,
+      "",
+      wrapBase64(att.data),
+      ""
+    );
+  }
+  parts.push(`--${boundary}--`);
+  return toBase64Url(parts.join("\r\n"));
 }
 
 // ─── Gmail ────────────────────────────────────────────────────────────────────
@@ -105,11 +140,16 @@ export async function sendEmail(
   userId: string,
   payload: SendEmailPayload
 ): Promise<SendEmailOutput> {
-  const { to, subject, body, threadId } = sendEmailSchema.parse(payload);
+  const { to, subject, body, threadId, attachments } = sendEmailSchema.parse(payload);
   const tenant = forTenant(userId);
 
+  const totalBytes = (attachments ?? []).reduce((sum, a) => sum + a.data.length * 0.75, 0);
+  if (totalBytes > 25 * 1024 * 1024) {
+    throw Object.assign(new Error("Attachments exceed 25MB limit"), { code: "ATTACHMENT_TOO_LARGE" });
+  }
+
   return tenant.gmail.api.messages.send({
-    raw: buildRawEmail(to, subject, body),
+    raw: buildRawEmail(to, subject, body, attachments),
     ...(threadId ? { threadId } : {}),
   });
 }
