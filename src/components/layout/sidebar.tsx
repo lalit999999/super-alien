@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -8,7 +9,6 @@ import {
   Calendar,
   MessageSquare,
   Settings,
-  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,9 +26,13 @@ export function Sidebar() {
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-55 flex-col border-r border-ps-border bg-ps-surface lg:flex">
       {/* Logo */}
       <div className="flex h-[57px] items-center gap-2.5 border-b border-ps-border px-5">
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-ps-accent">
-          <Zap className="h-4 w-4 text-white" />
-        </div>
+        <Image
+          src="/Logo.png"
+          alt="SuperAlien"
+          width={28}
+          height={28}
+          className="rounded-lg"
+        />
         <span className="text-[15px] font-semibold tracking-tight text-ps-text">
           SuperAlien
         </span>

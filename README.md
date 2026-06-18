@@ -1,3 +1,11 @@
+<img src="public/Logo.png" alt="SuperAlien" width="80" />
+
+# SuperAlien
+
+AI-powered Gmail & Google Calendar productivity platform.
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

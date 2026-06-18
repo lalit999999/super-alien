@@ -1,6 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
-  Zap,
   Mail,
   Calendar,
   MessageSquare,
@@ -16,9 +16,13 @@ function Navbar() {
     <nav className="fixed top-0 inset-x-0 z-50 border-b border-ps-border bg-ps-bg/95 backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-ps-accent">
-            <Zap className="h-4 w-4 text-white" />
-          </div>
+          <Image
+            src="/Logo.png"
+            alt="SuperAlien"
+            width={32}
+            height={32}
+            className="rounded-lg"
+          />
           <span className="text-[15px] font-semibold text-ps-text">SuperAlien</span>
         </div>
 
@@ -372,9 +376,13 @@ function Footer() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-ps-accent">
-              <Zap className="h-3.5 w-3.5 text-white" />
-            </div>
+            <Image
+              src="/Logo.png"
+              alt="SuperAlien"
+              width={28}
+              height={28}
+              className="rounded-lg"
+            />
             <span className="text-sm font-semibold text-ps-text">SuperAlien</span>
           </div>
 

@@ -1,26 +1,47 @@
 // gpt-4o-mini: reliably supports tool calling + JSON structured output via OpenRouter.
 // Do NOT use ":free" suffix models — they share a global rate limit and break under
 // multi-tool workflows that make 10+ LLM calls per request.
-export const AGENT_MODEL = "gemini-2.5-flash-lite" as const;
+export const AGENT_MODEL = "openrouter/free" as const;
 // gemini-2.5-flash
 // gemini-2.5-flash-lite
 // deepseek-ai/deepseek-v4-pro
+// meta-llama/llama-3.3-70b-instruct:free
+// openrouter/free
 export const AGENT_MAX_TOKENS = 2048;
 export const AGENT_MAX_TOOL_ITERATIONS = 8;
 
-export function buildAgentSystemPrompt(activeContext?: import("./agent.types").ActiveContext): string {
+export function buildAgentSystemPrompt(
+  activeContext?: import("./agent.types").ActiveContext,
+): string {
   const now = new Date().toISOString();
 
   let contextSection = "";
   if (activeContext) {
     const lines: string[] = [];
-    if (activeContext.lastEmailId) lines.push(`- Last resolved email DB ID: ${activeContext.lastEmailId}`);
-    if (activeContext.lastCorsairEmailId) lines.push(`- Last resolved corsairEmailId (for archive/delete/mark): ${activeContext.lastCorsairEmailId}`);
-    if (activeContext.lastThreadId) lines.push(`- Last resolved thread ID: ${activeContext.lastThreadId}`);
-    if (activeContext.lastSearchResultIds?.length) lines.push(`- Recent search result IDs: ${activeContext.lastSearchResultIds.join(", ")}`);
-    if (activeContext.lastEventId) lines.push(`- Last resolved calendar event DB ID: ${activeContext.lastEventId}`);
-    if (activeContext.lastCorsairEventId) lines.push(`- Last resolved corsairEventId (for update/delete): ${activeContext.lastCorsairEventId}`);
-    if (activeContext.pendingAction) lines.push(`- Pending action: ${activeContext.pendingAction.type} on ID ${activeContext.pendingAction.targetId}`);
+    if (activeContext.lastEmailId)
+      lines.push(`- Last resolved email DB ID: ${activeContext.lastEmailId}`);
+    if (activeContext.lastCorsairEmailId)
+      lines.push(
+        `- Last resolved corsairEmailId (for archive/delete/mark): ${activeContext.lastCorsairEmailId}`,
+      );
+    if (activeContext.lastThreadId)
+      lines.push(`- Last resolved thread ID: ${activeContext.lastThreadId}`);
+    if (activeContext.lastSearchResultIds?.length)
+      lines.push(
+        `- Recent search result IDs: ${activeContext.lastSearchResultIds.join(", ")}`,
+      );
+    if (activeContext.lastEventId)
+      lines.push(
+        `- Last resolved calendar event DB ID: ${activeContext.lastEventId}`,
+      );
+    if (activeContext.lastCorsairEventId)
+      lines.push(
+        `- Last resolved corsairEventId (for update/delete): ${activeContext.lastCorsairEventId}`,
+      );
+    if (activeContext.pendingAction)
+      lines.push(
+        `- Pending action: ${activeContext.pendingAction.type} on ID ${activeContext.pendingAction.targetId}`,
+      );
     if (lines.length > 0) {
       contextSection = `\nACTIVE CONTEXT (these IDs were returned by real tool calls — use them directly, never fabricate different ones):
 ${lines.join("\n")}\n`;

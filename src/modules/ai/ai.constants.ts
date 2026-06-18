@@ -1,5 +1,7 @@
-export const AI_MODEL = "gemini-2.5-flash-lite" as const;
+export const AI_MODEL = "openrouter/free" as const;
 // deepseek-ai/deepseek-v4-pro
+// meta-llama/llama-3.3-70b-instruct:free
+// openrouter/free
 
 export const AI_CLASSIFICATION_MAX_TOKENS = 512;
 export const AI_SUMMARY_MAX_TOKENS = 600;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -9,7 +10,6 @@ import {
   Calendar,
   MessageSquare,
   Settings,
-  Zap,
   Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -50,9 +50,13 @@ export function MobileNav() {
         <SheetTitle className="sr-only">Navigation menu</SheetTitle>
         {/* Logo */}
         <div className="flex h-[57px] items-center gap-2.5 border-b border-ps-border px-5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-ps-accent">
-            <Zap className="h-4 w-4 text-white" />
-          </div>
+          <Image
+            src="/Logo.png"
+            alt="SuperAlien"
+            width={28}
+            height={28}
+            className="rounded-lg"
+          />
           <span className="text-[15px] font-semibold tracking-tight text-ps-text">
             SuperAlien
           </span>

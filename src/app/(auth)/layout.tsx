@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Check } from "lucide-react";
 
 const features = [
@@ -40,9 +41,13 @@ export default function AuthLayout({
         {/* Top: Logo + Hero */}
         <div className="relative z-10">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-ps-accent">
-              <span className="text-sm font-bold text-white">SA</span>
-            </div>
+            <Image
+              src="/Logo.png"
+              alt="SuperAlien"
+              width={32}
+              height={32}
+              className="rounded-lg"
+            />
             <span className="text-lg font-semibold tracking-tight text-white">
               SuperAlien
             </span>
@@ -102,9 +107,13 @@ export default function AuthLayout({
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 sm:px-10">
         {/* Mobile-only logo */}
         <div className="mb-8 flex items-center gap-2 lg:hidden">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-ps-accent">
-            <span className="text-sm font-bold text-white">SA</span>
-          </div>
+          <Image
+            src="/Logo.png"
+            alt="SuperAlien"
+            width={32}
+            height={32}
+            className="rounded-lg"
+          />
           <span className="text-lg font-semibold tracking-tight text-ps-text">
             SuperAlien
           </span>
