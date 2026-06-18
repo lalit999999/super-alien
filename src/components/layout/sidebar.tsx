@@ -8,9 +8,9 @@ import {
   Mail,
   Calendar,
   MessageSquare,
-  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AccountMenu } from "@/components/layout/account-menu";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -62,18 +62,7 @@ export function Sidebar() {
 
       {/* Bottom */}
       <div className="border-t border-ps-border px-3 py-3">
-        <Link
-          href="/settings"
-          className={cn(
-            "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-            pathname === "/settings"
-              ? "bg-ps-accent text-white"
-              : "text-ps-secondary hover:bg-ps-surface-2 hover:text-ps-text"
-          )}
-        >
-          <Settings className="h-4 w-4 shrink-0" />
-          Settings
-        </Link>
+        <AccountMenu />
       </div>
     </aside>
   );

@@ -27,4 +27,29 @@ export class AuthRepository {
   async deleteByClerkUserId(clerkUserId: string): Promise<void> {
     await this.db.user.delete({ where: { clerkUserId } });
   }
+
+  async deleteAccountCascade(userId: string): Promise<void> {
+    const emails = await this.db.email.findMany({
+      where: { userId },
+      select: { id: true },
+    });
+    const emailIds = emails.map((e) => e.id);
+
+    await this.db.$transaction([
+      this.db.emailDraft.deleteMany({ where: { emailId: { in: emailIds } } }),
+      this.db.emailSummary.deleteMany({ where: { emailId: { in: emailIds } } }),
+      this.db.emailClassification.deleteMany({ where: { emailId: { in: emailIds } } }),
+      this.db.email.deleteMany({ where: { userId } }),
+      this.db.calendarEvent.deleteMany({ where: { userId } }),
+      this.db.agentExecution.deleteMany({ where: { userId } }),
+      this.db.chatSession.deleteMany({ where: { userId } }),
+      this.db.syncRecord.deleteMany({ where: { userId } }),
+      this.db.payment.deleteMany({ where: { userId } }),
+      this.db.subscription.deleteMany({ where: { userId } }),
+      this.db.tokenUsage.deleteMany({ where: { userId } }),
+      this.db.userPreference.deleteMany({ where: { userId } }),
+      this.db.task.deleteMany({ where: { userId } }),
+      this.db.user.delete({ where: { id: userId } }),
+    ]);
+  }
 }

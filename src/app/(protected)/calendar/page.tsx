@@ -233,10 +233,10 @@ export default function CalendarPage() {
   }
 
   const filteredEvents = events.filter((ev) => {
-    const start = new Date(ev.startTime);
-    const now = new Date();
     if (activeView === "Today") return isToday(ev.startTime);
     if (activeView === "Tomorrow") return isTomorrow(ev.startTime);
+    const start = new Date(ev.startTime);
+    const now = new Date();
     if (activeView === "This Week") {
       const endOfWeek = new Date(now);
       endOfWeek.setDate(now.getDate() + 7);

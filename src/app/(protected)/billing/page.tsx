@@ -112,7 +112,9 @@ export default async function BillingPage() {
             <CreditCard className="h-4 w-4 text-ps-accent" />
           </div>
           <p className="text-[11px] font-medium text-ps-muted sm:text-xs">Plan</p>
-          <p className="mt-0.5 text-lg font-semibold text-ps-text sm:text-xl">Pro</p>
+          <p className="mt-0.5 text-lg font-semibold text-ps-text sm:text-xl">
+            {sub?.status === "ACTIVE" ? "Pro" : "Free"}
+          </p>
         </div>
 
         <div className="rounded-2xl border border-ps-border bg-ps-card p-4 sm:p-5">

@@ -1,46 +1,7 @@
 "use client";
 
-import { Search, Bell, Sun, Moon, Monitor } from "lucide-react";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-import { UserMenu } from "@/components/layout/user-menu";
+import { Search, Bell } from "lucide-react";
 import { MobileNav } from "@/components/layout/mobile-nav";
-
-function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-
-  if (!mounted) {
-    return <div className="h-8 w-8" />;
-  }
-
-  const icons = {
-    light: Sun,
-    dark: Moon,
-    system: Monitor,
-  };
-
-  const cycles: Record<string, string> = {
-    light: "dark",
-    dark: "system",
-    system: "light",
-  };
-
-  const current = theme ?? "system";
-  const Icon = icons[current as keyof typeof icons] ?? Monitor;
-
-  return (
-    <button
-      onClick={() => setTheme(cycles[current] ?? "system")}
-      className="relative flex h-8 w-8 items-center justify-center rounded-lg text-ps-secondary transition-colors hover:bg-ps-surface"
-      aria-label={`Switch theme (current: ${current})`}
-    >
-      <Icon className="h-4 w-4" />
-    </button>
-  );
-}
 
 export function Topbar() {
   return (
@@ -62,13 +23,11 @@ export function Topbar() {
         </div>
       </div>
 
-      {/* Right */}
+      {/* Right — notifications only */}
       <div className="flex items-center gap-1.5 sm:gap-3">
-        <ThemeToggle />
         <button className="relative flex h-8 w-8 items-center justify-center rounded-lg text-ps-secondary transition-colors hover:bg-ps-surface">
           <Bell className="h-4 w-4" />
         </button>
-        <UserMenu />
       </div>
     </header>
   );

@@ -19,4 +19,10 @@ export class AuthService {
   async removeUser(clerkUserId: string): Promise<void> {
     return this.repo.deleteByClerkUserId(clerkUserId);
   }
+
+  async deleteAccount(clerkUserId: string): Promise<void> {
+    const dbUser = await this.repo.findByClerkUserId(clerkUserId);
+    if (!dbUser) return;
+    await this.repo.deleteAccountCascade(dbUser.id);
+  }
 }
