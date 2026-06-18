@@ -1,10 +1,31 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Mail, CalendarDays, Clock, Inbox, Bot, ArrowRight, TrendingUp } from "lucide-react";
+import {
+  Mail,
+  CalendarDays,
+  Clock,
+  Inbox,
+  Bot,
+  ArrowRight,
+  TrendingUp,
+} from "lucide-react";
 import { CalendarSidebar } from "@/components/dashboard/calendar-sidebar";
 import { ImportantEmails } from "@/components/dashboard/important-emails";
 import { TodoList } from "@/components/dashboard/todo-list";
+import { Spinner } from "@/components/loaders/spinner";
 
-const stats = [
+type Stat = {
+  label: string;
+  value: string | number;
+  icon: React.ComponentType<{ className?: string }>;
+  href: string;
+  color: string;
+  iconColor: string;
+};
+
+const INITIAL_STATS: Stat[] = [
   {
     label: "Unread Emails",
     value: "—",
@@ -61,9 +82,33 @@ const quickActions = [
 ];
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState<Stat[]>(INITIAL_STATS);
+  const [loadingStats, setLoadingStats] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/dashboard/stats")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          const { unreadCount, importantCount, meetingsToday, upcomingEvents } =
+            data.data.stats;
+          setStats((prev) =>
+            prev.map((stat) => {
+              if (stat.label === "Unread Emails") return { ...stat, value: unreadCount };
+              if (stat.label === "Important") return { ...stat, value: importantCount };
+              if (stat.label === "Meetings Today") return { ...stat, value: meetingsToday };
+              if (stat.label === "Upcoming Events") return { ...stat, value: upcomingEvents };
+              return stat;
+            })
+          );
+        }
+      })
+      .catch((err) => console.error("Failed to fetch stats:", err))
+      .finally(() => setLoadingStats(false));
+  }, []);
+
   return (
     <div className="min-h-full bg-ps-bg px-4 py-6 sm:px-6 sm:py-8">
-      {/* Page header */}
       <div className="mb-6 sm:mb-8">
         <h1 className="text-xl font-semibold text-ps-text sm:text-2xl">Dashboard</h1>
         <p className="mt-1 text-sm text-ps-secondary">
@@ -71,7 +116,6 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stats grid — 1 col mobile, 2 col tablet, 4 col desktop */}
       <div className="mb-6 grid gap-3 sm:mb-8 sm:gap-4 grid-cols-2 lg:grid-cols-4">
         {stats.map(({ label, value, icon: Icon, href, color, iconColor }) => (
           <Link
@@ -84,7 +128,9 @@ export default function DashboardPage() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-[11px] font-medium text-ps-muted sm:text-xs">{label}</p>
-              <p className="mt-0.5 text-xl font-semibold text-ps-text sm:text-2xl">{value}</p>
+              <p className="mt-0.5 text-xl font-semibold text-ps-text sm:text-2xl">
+                {loadingStats ? <Spinner size="sm" /> : value}
+              </p>
             </div>
             <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-ps-border transition-colors group-hover:text-ps-accent" />
           </Link>
@@ -92,9 +138,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
-        {/* Left column */}
         <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-          {/* Quick Actions */}
           <div className="rounded-2xl border border-ps-border bg-ps-card p-5 sm:p-6">
             <h2 className="mb-4 text-sm font-semibold text-ps-text">Quick Actions</h2>
             <div className="space-y-2">
@@ -121,13 +165,11 @@ export default function DashboardPage() {
           <TodoList />
         </div>
 
-        {/* Right sidebar */}
         <aside className="space-y-4 sm:space-y-6 lg:sticky lg:top-20 lg:self-start">
           <CalendarSidebar />
         </aside>
       </div>
 
-      {/* Getting started banner */}
       <div className="mt-4 rounded-2xl bg-ps-text p-5 flex flex-col gap-4 sm:mt-6 sm:p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         <div>
           <h3 className="font-semibold text-ps-bg">Get the most out of SuperAlien</h3>

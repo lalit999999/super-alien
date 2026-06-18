@@ -35,7 +35,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-const SUPPORT_EMAIL = "support@superalien.app";
+const SUPPORT_EMAIL = "lalitgurjar.dev@gmail.com";
 
 export function AccountMenu() {
   const { user, isLoaded } = useUser();
@@ -55,14 +55,18 @@ export function AccountMenu() {
       .then((r) => r.json())
       .then((j) => {
         if (j.success) {
-          setPlanLabel(j.data?.subscription?.status === "ACTIVE" ? "Pro" : "Free");
+          setPlanLabel(
+            j.data?.subscription?.status === "ACTIVE" ? "Pro" : "Free",
+          );
         }
       })
       .catch(() => setPlanLabel("Free"));
   }, []);
 
   if (!isLoaded) {
-    return <div className="h-8 w-32 animate-pulse rounded-lg bg-ps-surface-2" />;
+    return (
+      <div className="h-8 w-32 animate-pulse rounded-lg bg-ps-surface-2" />
+    );
   }
 
   const displayName =
@@ -90,7 +94,9 @@ export function AccountMenu() {
           <button className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-ps-secondary transition-colors hover:bg-ps-surface-2 hover:text-ps-text focus:outline-none focus-visible:ring-2 focus-visible:ring-ps-accent">
             <UserAvatar size="sm" />
             <div className="flex-1 min-w-0 text-left">
-              <p className="truncate text-sm font-medium text-ps-text">{displayName}</p>
+              <p className="truncate text-sm font-medium text-ps-text">
+                {displayName}
+              </p>
             </div>
             {planLabel && (
               <span className="shrink-0 rounded-full bg-ps-accent-light px-2 py-0.5 text-[10px] font-semibold text-ps-accent">
@@ -111,7 +117,9 @@ export function AccountMenu() {
           <div className="flex items-center gap-3 border-b border-ps-border px-4 py-3.5">
             <UserAvatar size="lg" />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-ps-text">{displayName}</p>
+              <p className="truncate text-sm font-semibold text-ps-text">
+                {displayName}
+              </p>
               <p className="truncate text-xs text-ps-muted">{email}</p>
             </div>
           </div>
@@ -150,9 +158,12 @@ export function AccountMenu() {
             {/* Theme */}
             {mounted && (
               <div className="flex items-center gap-1.5 rounded-md px-2 py-2">
-                <span className="flex-1 text-xs font-medium text-ps-muted">Theme</span>
+                <span className="flex-1 text-xs font-medium text-ps-muted">
+                  Theme
+                </span>
                 {(["light", "dark", "system"] as const).map((t) => {
-                  const Icon = t === "light" ? Sun : t === "dark" ? Moon : Monitor;
+                  const Icon =
+                    t === "light" ? Sun : t === "dark" ? Moon : Monitor;
                   return (
                     <button
                       key={t}
@@ -175,7 +186,10 @@ export function AccountMenu() {
 
             <DropdownMenuItem
               className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-2 text-sm text-ps-text hover:bg-ps-surface focus:bg-ps-surface focus:text-ps-text"
-              onSelect={(e) => { e.preventDefault(); setHelpOpen(true); }}
+              onSelect={(e) => {
+                e.preventDefault();
+                setHelpOpen(true);
+              }}
             >
               <HelpCircle className="h-3.5 w-3.5 text-ps-accent" />
               Get help
@@ -185,7 +199,10 @@ export function AccountMenu() {
 
             <DropdownMenuItem
               className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-2 text-sm text-red-600 hover:bg-red-50 focus:bg-red-50 focus:text-red-600"
-              onSelect={(e) => { e.preventDefault(); setSignOutOpen(true); }}
+              onSelect={(e) => {
+                e.preventDefault();
+                setSignOutOpen(true);
+              }}
             >
               <LogOut className="h-3.5 w-3.5" />
               Sign out
@@ -206,7 +223,9 @@ export function AccountMenu() {
           <div className="space-y-3 pt-1">
             <div className="flex items-center gap-3 rounded-xl border border-ps-border bg-ps-card px-4 py-3">
               <Mail className="h-4 w-4 shrink-0 text-ps-accent" />
-              <span className="flex-1 text-sm text-ps-text">{SUPPORT_EMAIL}</span>
+              <span className="flex-1 text-sm text-ps-text">
+                {SUPPORT_EMAIL}
+              </span>
               <button
                 onClick={handleCopyEmail}
                 className="flex h-7 w-7 items-center justify-center rounded-lg text-ps-secondary transition-colors hover:bg-ps-surface"
@@ -234,7 +253,9 @@ export function AccountMenu() {
       <Dialog open={signOutOpen} onOpenChange={setSignOutOpen}>
         <DialogContent className="max-w-sm border-ps-border bg-ps-bg">
           <DialogHeader>
-            <DialogTitle className="text-ps-text">Sign out of SuperAlien?</DialogTitle>
+            <DialogTitle className="text-ps-text">
+              Sign out of SuperAlien?
+            </DialogTitle>
             <DialogDescription className="text-ps-muted">
               You&apos;ll need to sign in again to access your dashboard.
             </DialogDescription>

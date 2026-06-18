@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Trash2, ChevronDown, ChevronUp, Plus } from "lucide-react";
+import { Spinner } from "@/components/loaders/spinner";
 
 type TaskPriority = "LOW" | "MEDIUM" | "HIGH";
 
@@ -47,13 +48,15 @@ export function TodoList() {
   const [newPriority, setNewPriority] = useState<TaskPriority>("MEDIUM");
   const [completedOpen, setCompletedOpen] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch("/api/tasks")
       .then((r) => r.json())
       .then((j) => { if (j.success) setTasks(j.data.tasks); })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setFetching(false));
   }, []);
 
   async function addTask() {
@@ -130,13 +133,17 @@ export function TodoList() {
           disabled={adding || !newTitle.trim()}
           className="flex h-9 w-9 items-center justify-center rounded-lg bg-ps-accent text-white transition-colors hover:bg-ps-accent-dark disabled:opacity-50"
         >
-          <Plus className="h-4 w-4" />
+          {adding ? <Spinner size="sm" className="text-white" /> : <Plus className="h-4 w-4" />}
         </button>
       </div>
 
       {/* Incomplete tasks */}
       <div className="space-y-1.5">
-        {incomplete.length === 0 && (
+        {fetching ? (
+          <div className="flex justify-center py-4">
+            <Spinner size="md" />
+          </div>
+        ) : incomplete.length === 0 && (
           <p className="py-3 text-center text-xs text-ps-muted">No pending tasks</p>
         )}
         {incomplete.map((task) => {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { Spinner } from "@/components/loaders/spinner";
 
 type Priority = "URGENT" | "IMPORTANT" | "NORMAL" | "LOW";
 
@@ -42,10 +43,8 @@ export function ImportantEmails() {
       <h2 className="mb-4 text-sm font-semibold text-ps-text">Important Emails</h2>
 
       {loading ? (
-        <div className="space-y-2">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-12 animate-pulse rounded-xl bg-ps-surface" />
-          ))}
+        <div className="flex justify-center py-4">
+          <Spinner size="md" />
         </div>
       ) : emails.length === 0 ? (
         <p className="py-3 text-center text-xs text-ps-muted">No urgent or important emails</p>

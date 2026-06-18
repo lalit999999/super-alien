@@ -44,3 +44,4 @@ next-env.d.ts
 dixplan.txt
 /src/generated/prisma
 /reports
+/.claude

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@/providers/clerk-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { GlobalLoader } from "@/components/loaders/global-loader";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function RootLayout({
         <ThemeProvider>
           <ClerkProvider>{children}</ClerkProvider>
         </ThemeProvider>
+        <GlobalLoader />
       </body>
     </html>
   );

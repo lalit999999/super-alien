@@ -376,29 +376,57 @@ function FinalCTA() {
 
 function Footer() {
   return (
-    <footer className="border-t border-ps-border bg-ps-bg py-12">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
-          <div className="flex items-center gap-2.5">
-            <Image
-              src="/Logo.png"
-              alt="SuperAlien"
-              width={28}
-              height={28}
-              className="rounded-lg"
-            />
-            <span className="text-sm font-semibold text-ps-text">SuperAlien</span>
+    <footer className="border-t border-ps-border bg-ps-surface/50 backdrop-blur-sm">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-6 py-12 sm:grid-cols-3 md:grid-cols-5">
+        <div>
+          <div className="mb-3 flex items-center gap-2.5">
+            <Image src="/Logo.png" alt="SuperAlien" width={24} height={24} className="rounded-lg" />
+            <span className="font-semibold text-ps-text">SuperAlien</span>
           </div>
-
-          <div className="flex flex-wrap gap-6 text-sm text-ps-secondary">
-            <a href="#" className="hover:text-ps-accent transition-colors">Privacy</a>
-            <a href="#" className="hover:text-ps-accent transition-colors">Terms</a>
-            <a href="#" className="hover:text-ps-accent transition-colors">Security</a>
-            <a href="#" className="hover:text-ps-accent transition-colors">Contact</a>
-          </div>
+          <p className="text-xs text-ps-secondary">
+            Your AI-powered executive assistant for Gmail and Calendar.
+          </p>
         </div>
 
-        <div className="mt-8 border-t border-ps-border pt-8 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+        <div>
+          <h4 className="mb-3 text-sm font-semibold text-ps-text">Product</h4>
+          <ul className="space-y-2 text-xs text-ps-secondary">
+            <li><a href="#features" className="transition-colors hover:text-ps-text">Features</a></li>
+            <li><a href="#how-it-works" className="transition-colors hover:text-ps-text">How it works</a></li>
+            <li><a href="#pricing" className="transition-colors hover:text-ps-text">Pricing</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="mb-3 text-sm font-semibold text-ps-text">Company</h4>
+          <ul className="space-y-2 text-xs text-ps-secondary">
+            <li><a href="/sign-up" className="transition-colors hover:text-ps-text">Sign Up</a></li>
+            <li><a href="/sign-in" className="transition-colors hover:text-ps-text">Sign In</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="mb-3 text-sm font-semibold text-ps-text">Legal</h4>
+          <ul className="space-y-2 text-xs text-ps-secondary">
+            <li><a href="/legal/terms" className="transition-colors hover:text-ps-text">Terms</a></li>
+            <li><a href="/legal/privacy" className="transition-colors hover:text-ps-text">Privacy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="mb-3 text-sm font-semibold text-ps-text">Contact</h4>
+          <ul className="space-y-2 text-xs text-ps-secondary">
+            <li>
+              <a href="mailto:support@superalien.io" className="transition-colors hover:text-ps-text">
+                support@superalien.io
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="border-t border-ps-border px-6 py-6">
+        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
           <p className="text-xs text-ps-muted">
             © {new Date().getFullYear()} SuperAlien. All rights reserved.
           </p>

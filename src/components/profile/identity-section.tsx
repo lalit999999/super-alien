@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Camera, Loader2, CheckCircle, AlertCircle, X } from "lucide-react";
 import { UserAvatar } from "@/components/layout/user-avatar";
+import { formatProfileError } from "@/modules/profile/error-messages";
 
 function SectionCard({ title, description, children }: {
   title: string;
@@ -44,14 +45,14 @@ export function IdentitySection() {
         try {
           await user.update({ username: username || undefined });
         } catch (err) {
-          showToast(`Name saved, but username failed: ${(err as Error).message}`, false);
+          showToast(`Name saved, but username failed: ${formatProfileError(err as Error)}`, false);
           setSaving(false);
           return;
         }
       }
       showToast("Profile updated.", true);
     } catch (err) {
-      showToast((err as Error).message ?? "Failed to update profile.", false);
+      showToast(formatProfileError(err as Error), false);
     } finally {
       setSaving(false);
     }
