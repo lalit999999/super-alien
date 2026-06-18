@@ -26,7 +26,6 @@ export function IdentitySection() {
   const { user } = useUser();
   const [firstName, setFirstName] = useState(user?.firstName ?? "");
   const [lastName, setLastName] = useState(user?.lastName ?? "");
-  const [username, setUsername] = useState(user?.username ?? "");
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -41,15 +40,6 @@ export function IdentitySection() {
     setSaving(true);
     try {
       await user.update({ firstName, lastName });
-      if (username !== (user.username ?? "")) {
-        try {
-          await user.update({ username: username || undefined });
-        } catch (err) {
-          showToast(`Name saved, but username failed: ${formatProfileError(err as Error)}`, false);
-          setSaving(false);
-          return;
-        }
-      }
       showToast("Profile updated.", true);
     } catch (err) {
       showToast(formatProfileError(err as Error), false);
@@ -71,7 +61,7 @@ export function IdentitySection() {
   }
 
   return (
-    <SectionCard title="Identity" description="Your name, username, and profile photo">
+    <SectionCard title="Identity" description="Your name and profile photo">
       {toast && (
         <div
           className={`mb-4 flex items-center gap-2 rounded-xl border px-4 py-2.5 text-xs ${
@@ -127,14 +117,6 @@ export function IdentitySection() {
               className="w-full rounded-lg border border-ps-border bg-ps-bg px-3 py-2 text-sm text-ps-text outline-none focus:border-ps-accent focus:ring-2 focus:ring-ps-accent/10"
             />
           </div>
-        </div>
-        <div>
-          <label className="mb-1.5 block text-xs font-medium text-ps-secondary">Username</label>
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full rounded-lg border border-ps-border bg-ps-bg px-3 py-2 text-sm text-ps-text outline-none focus:border-ps-accent focus:ring-2 focus:ring-ps-accent/10"
-          />
         </div>
         <button
           onClick={handleSave}

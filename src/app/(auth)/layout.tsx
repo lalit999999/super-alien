@@ -16,7 +16,7 @@ export default function AuthLayout({
   return (
     <div className="flex min-h-screen bg-ps-bg">
       {/* Left branding panel — hidden on mobile */}
-      <div className="relative hidden lg:flex lg:w-120 xl:w-130 flex-col justify-between overflow-hidden bg-ps-text px-10 py-12">
+      <div className="relative hidden lg:flex lg:w-120 xl:w-130 flex-col justify-between overflow-hidden bg-ps-text dark:bg-ps-surface-2 px-10 py-12">
         {/* Subtle dot-grid texture */}
         <div
           aria-hidden
@@ -89,7 +89,7 @@ export default function AuthLayout({
               (color, i) => (
                 <div
                   key={i}
-                  className={`h-7 w-7 rounded-full ring-2 ring-ps-text ${color}`}
+                  className={`h-7 w-7 rounded-full ring-2 ring-ps-text dark:ring-ps-surface-2 ${color}`}
                 />
               )
             )}

@@ -5,7 +5,7 @@ const tiers = [
     name: "Free",
     price: "$0",
     period: "/mo",
-    description: "Get started with AI-powered email and calendar basics.",
+    description: "Try the core workflow — AI summaries and calendar sync — before you commit to anything.",
     features: [
       "Up to 100 emails synced",
       "Basic AI summaries",
@@ -18,7 +18,7 @@ const tiers = [
     name: "Pro",
     price: "$19",
     period: "/mo",
-    description: "Everything you need for a fully AI-assisted inbox.",
+    description: "Full AI control of your inbox: unlimited sync, agent-driven actions, and the classification that actually saves you time.",
     features: [
       "Unlimited email sync",
       "Advanced AI classification",

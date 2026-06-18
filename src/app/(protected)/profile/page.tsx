@@ -1,8 +1,6 @@
 "use client";
 
 import { IdentitySection } from "@/components/profile/identity-section";
-import { ContactSection } from "@/components/profile/contact-section";
-import { SecuritySection } from "@/components/profile/security-section";
 import { AccountOverview } from "@/components/profile/account-overview";
 import { AppDataSection } from "@/components/profile/app-data-section";
 import { DangerZone } from "@/components/profile/danger-zone";
@@ -19,8 +17,6 @@ export default function ProfilePage() {
 
       <div className="mx-auto max-w-2xl space-y-6">
         <IdentitySection />
-        <ContactSection />
-        <SecuritySection />
         <AccountOverview />
         <AppDataSection />
         <DangerZone />

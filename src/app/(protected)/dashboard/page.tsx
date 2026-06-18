@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { CalendarSidebar } from "@/components/dashboard/calendar-sidebar";
 import { ImportantEmails } from "@/components/dashboard/important-emails";
-import { TodoList } from "@/components/dashboard/todo-list";
 import { Spinner } from "@/components/loaders/spinner";
 
 type Stat = {
@@ -162,7 +161,6 @@ export default function DashboardPage() {
           </div>
 
           <ImportantEmails />
-          <TodoList />
         </div>
 
         <aside className="space-y-4 sm:space-y-6 lg:sticky lg:top-20 lg:self-start">

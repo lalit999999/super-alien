@@ -26,32 +26,19 @@
 
 ## Demo
 
-> 📌 **TODO (Lalit):** this section is a placeholder. Drop your real assets in and swap the markdown below.
-
-**Video walkthrough**
-
-1. Record a 60–90s walkthrough (Loom, Kap, or OBS) showing: sign-in → inbox sync → AI summarize/classify → agent chat → calendar sync.
-2. Either upload the raw file to `docs/assets/demo.mp4` (GitHub will render an inline player for files <10MB committed via the web UI, or use Git LFS for larger files) **or** host it on YouTube/Loom and link a thumbnail.
-
-```md
-<!-- Option A: self-hosted GIF (best for README — autoplays, no click needed) -->
-![SuperAlien demo](docs/assets/demo.gif)
-
-<!-- Option B: YouTube/Loom thumbnail (better for long videos) -->
-[![Watch the demo](docs/assets/video-thumbnail.png)](https://youtu.be/your-video-id)
-```
+<img src="public/Logo.png" width="400" alt="logo" />
 
 **UI screenshots**
 
 
 <table>
   <tr>
-    <td><img src="docs/assets/screenshots/dashboard.png" width="400" alt="Dashboard" /></td>
-    <td><img src="docs/assets/screenshots/inbox.png" width="400" alt="Inbox" /></td>
+    <td><img src="public/dashboard.png" width="400" alt="Dashboard" /></td>
+    <td><img src="public/inbox.png" width="400" alt="Inbox" /></td>
   </tr>
   <tr>
-    <td><img src="docs/assets/screenshots/agent-chat.png" width="400" alt="Agent chat" /></td>
-    <td><img src="docs/assets/screenshots/calendar.png" width="400" alt="Calendar" /></td>
+    <td><img src="public/chat.png" width="400" alt="Agent chat" /></td>
+    <td><img src="public/calander.png" width="400" alt="Calendar" /></td>
   </tr>
 </table>
 

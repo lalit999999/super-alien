@@ -84,9 +84,9 @@ function Hero() {
         </h1>
 
         <p className="mx-auto mt-6 max-w-2xl text-lg text-ps-secondary">
-          Manage emails, meetings, and workflows using AI. SuperAlien reads
-          your inbox, understands your calendar, and acts on your behalf so
-          you can focus on work that matters.
+          SuperAlien reads your inbox, tracks your calendar, and handles the
+          busywork — drafting replies, flagging what's urgent, and keeping
+          your day straight — so you're managing outcomes, not email.
         </p>
 
         {/* CTAs */}
@@ -223,25 +223,25 @@ const features = [
     icon: Brain,
     title: "AI Inbox",
     description:
-      "Every email is classified, summarized, and prioritized automatically. Focus on what matters, skip the noise.",
+      "Every email gets classified and prioritized the moment it lands — so the one thing that matters doesn't get buried under twelve that don't.",
   },
   {
     icon: Calendar,
     title: "Smart Calendar",
     description:
-      "Sync your Google Calendar and let AI schedule meetings, surface conflicts, and remind you of what's next.",
+      "Your Google Calendar synced and AI-aware: it catches double-bookings, schedules around your real availability, and tells you what's next before you have to ask.",
   },
   {
     icon: MessageSquare,
     title: "Agent Chat",
     description:
-      'Ask natural questions like "Draft a reply to John" or "Show me finance emails from last week" and get instant results.',
+      'Type it like you\'d ask a person — "draft a reply to John," "show me finance emails from last week" — and get the answer, not a search results page.',
   },
   {
     icon: Clock,
     title: "Zero Inbox",
     description:
-      "AI drafts replies, categorizes threads, and handles routine emails on your behalf — automatically.",
+      "Routine email — replies, filing, follow-ups — handled automatically, so your inbox reflects decisions made, not messages piling up.",
   },
 ];
 
@@ -293,7 +293,7 @@ const steps = [
   {
     step: "03",
     title: "Chat with AI",
-    description: 'Ask the agent anything: "What did I miss today?" or "Schedule a call with the team."',
+    description: 'Ask anything in plain language — "what did I miss today," "schedule a call with the team" — and get it done, not just answered.',
     icon: MessageSquare,
   },
   {
@@ -349,7 +349,7 @@ function FinalCTA() {
           <span className="text-ps-accent">Start delegating it.</span>
         </h2>
         <p className="mt-4 text-ps-muted text-lg">
-          Join professionals who use SuperAlien to reclaim their time and inbox.
+          Your inbox doesn't need more willpower from you. It needs an assistant.
         </p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Link
