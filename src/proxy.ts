@@ -32,7 +32,11 @@ async function hasActiveSubscription(clerkUserId: string): Promise<boolean> {
     if (!user) return false;
 
     const sub = await prisma.subscription.findFirst({
-      where: { userId: user.id, status: SubscriptionStatus.ACTIVE },
+      where: {
+        userId: user.id,
+        status: SubscriptionStatus.ACTIVE,
+        currentPeriodEnd: { gt: new Date() },
+      },
       select: { id: true },
     });
     return sub !== null;

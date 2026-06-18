@@ -1,12 +1,12 @@
 import { type NextRequest } from "next/server";
-import { handleCreateSubscription } from "@/modules/billing";
+import { handleCreateOrder } from "@/modules/billing";
 import { fail } from "@/lib/response";
 
 export async function POST(req: NextRequest) {
   try {
-    return await handleCreateSubscription(req);
+    return await handleCreateOrder(req);
   } catch (err) {
     console.error("[api/billing/subscribe] POST:", err);
-    return fail("Subscription creation failed", "INTERNAL_ERROR", 500);
+    return fail("Order creation failed", "INTERNAL_ERROR", 500);
   }
 }

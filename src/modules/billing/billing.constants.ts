@@ -1,5 +1,8 @@
 export const BILLING_EXEMPT_PATHS = ["/billing", "/settings", "/onboarding"] as const;
 
+export const PRO_PLAN_AMOUNT_PAISE = 99900; // ₹999.00
+export const BILLING_PERIOD_DAYS = 30;
+
 export const RAZORPAY_WEBHOOK_EVENTS = {
   SUBSCRIPTION_ACTIVATED: "subscription.activated",
   SUBSCRIPTION_CHARGED: "subscription.charged",

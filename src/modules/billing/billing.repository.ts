@@ -6,7 +6,11 @@ export class BillingRepository {
 
   async findActiveSubscriptionByUserId(userId: string) {
     return this.db.subscription.findFirst({
-      where: { userId, status: SubscriptionStatus.ACTIVE },
+      where: {
+        userId,
+        status: SubscriptionStatus.ACTIVE,
+        currentPeriodEnd: { gt: new Date() },
+      },
       orderBy: { createdAt: "desc" },
     });
   }

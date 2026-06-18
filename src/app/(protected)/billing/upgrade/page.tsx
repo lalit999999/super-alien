@@ -13,7 +13,20 @@ const FEATURES = [
 
 declare global {
   interface Window {
-    Razorpay: new (options: Record<string, unknown>) => { open(): void };
+    Razorpay: new (options: {
+      key: string;
+      order_id: string;
+      amount: number;
+      currency: string;
+      name?: string;
+      description?: string;
+      theme?: { color?: string };
+      handler: (response: {
+        razorpay_order_id: string;
+        razorpay_payment_id: string;
+        razorpay_signature: string;
+      }) => void;
+    }) => { open(): void };
   }
 }
 
@@ -47,27 +60,34 @@ export default function UpgradePage() {
       }
 
       const { data } = await res.json() as {
-        data: { subscriptionId: string; keyId: string; shortUrl: string | null };
+        data: { orderId: string; amount: number; currency: string; keyId: string };
       };
 
       const loaded = await loadRazorpayScript();
 
       if (!loaded || typeof window.Razorpay === "undefined") {
-        if (data.shortUrl) {
-          window.location.href = data.shortUrl;
-          return;
-        }
         throw new Error("Could not load Razorpay checkout");
       }
 
       const rzp = new window.Razorpay({
         key: data.keyId,
-        subscription_id: data.subscriptionId,
+        order_id: data.orderId,
+        amount: data.amount,
+        currency: data.currency,
         name: "SuperAlien",
         description: "Pro Plan — Monthly",
         theme: { color: "#BE5103" },
-        handler: () => {
-          window.location.href = "/billing";
+        handler: async (response) => {
+          const verifyRes = await fetch("/api/billing/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(response),
+          });
+          if (verifyRes.ok) {
+            window.location.href = "/billing";
+          } else {
+            setError("Payment succeeded but verification failed. Contact support.");
+          }
         },
       });
 

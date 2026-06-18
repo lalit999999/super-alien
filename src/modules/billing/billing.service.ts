@@ -1,8 +1,9 @@
+import crypto from "crypto";
 import type Razorpay from "razorpay";
 import type { BillingRepository } from "./billing.repository";
 import type { UsageRepository } from "@/modules/usage/usage.repository";
 import { SubscriptionStatus, PaymentStatus } from "@/config/generated/prisma/client";
-import { RAZORPAY_WEBHOOK_EVENTS } from "./billing.constants";
+import { RAZORPAY_WEBHOOK_EVENTS, PRO_PLAN_AMOUNT_PAISE, BILLING_PERIOD_DAYS } from "./billing.constants";
 import type { RazorpayWebhookPayload, UsageDashboard, PaymentHistoryPage } from "./billing.types";
 import { rateLimitService } from "@/modules/rate-limit";
 import { env } from "@/config/env";
@@ -14,41 +15,67 @@ export class BillingService {
     private readonly usageRepo?: UsageRepository
   ) {}
 
-  async createSubscription(userId: string, planId?: string): Promise<{ subscriptionId: string; shortUrl: string | null }> {
-    const resolvedPlanId = planId ?? env.RAZORPAY_PLAN_ID;
-
-    const subscription = await this.razorpay.subscriptions.create({
-      plan_id: resolvedPlanId,
-      total_count: 12,
-      quantity: 1,
+  async createOneTimeOrder(userId: string): Promise<{ orderId: string; amount: number; currency: string }> {
+    const order = await this.razorpay.orders.create({
+      amount: PRO_PLAN_AMOUNT_PAISE,
+      currency: "INR",
+      receipt: `receipt_${userId}_${Date.now()}`,
+      notes: { userId },
     });
+    return { orderId: order.id, amount: PRO_PLAN_AMOUNT_PAISE, currency: "INR" };
+  }
 
-    await this.repo.createSubscription({
+  async verifyAndActivate(
+    userId: string,
+    orderId: string,
+    paymentId: string,
+    signature: string
+  ): Promise<{ currentPeriodEnd: Date }> {
+    const expected = crypto
+      .createHmac("sha256", env.RAZORPAY_KEY_SECRET)
+      .update(`${orderId}|${paymentId}`)
+      .digest("hex");
+
+    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
+      throw new Error("Invalid payment signature");
+    }
+
+    const now = new Date();
+    const periodEnd = new Date(now.getTime() + BILLING_PERIOD_DAYS * 24 * 60 * 60 * 1000);
+
+    const sub = await this.repo.createSubscription({
       userId,
-      razorpaySubscriptionId: subscription.id,
-      razorpayPlanId: resolvedPlanId,
-      status: SubscriptionStatus.CREATED,
+      razorpaySubscriptionId: orderId,
+      razorpayPlanId: "one-time-monthly",
+      status: SubscriptionStatus.ACTIVE,
+    });
+    await this.repo.updateSubscriptionStatus(orderId, SubscriptionStatus.ACTIVE, {
+      currentPeriodStart: now,
+      currentPeriodEnd: periodEnd,
+    });
+    await this.repo.createPayment({
+      userId,
+      subscriptionId: sub.id,
+      razorpayPaymentId: paymentId,
+      amount: PRO_PLAN_AMOUNT_PAISE,
+      currency: "INR",
+      status: PaymentStatus.CAPTURED,
     });
 
-    return {
-      subscriptionId: subscription.id,
-      shortUrl: (subscription as unknown as { short_url?: string }).short_url ?? null,
-    };
+    return { currentPeriodEnd: periodEnd };
   }
 
   async cancelSubscription(userId: string): Promise<void> {
     const sub = await this.repo.findSubscriptionByUserId(userId);
     if (!sub) throw new Error("No subscription found for user");
 
-    await this.razorpay.subscriptions.cancel(sub.razorpaySubscriptionId, false);
     await this.repo.updateSubscriptionStatus(sub.razorpaySubscriptionId, SubscriptionStatus.CANCELLED);
   }
 
-  // Schedules cancellation at Razorpay without flipping local status — webhook will update it.
   async initiateCancel(userId: string): Promise<void> {
     const sub = await this.repo.findSubscriptionByUserId(userId);
     if (!sub) throw new Error("No active subscription found");
-    await this.razorpay.subscriptions.cancel(sub.razorpaySubscriptionId, false);
+    await this.repo.updateSubscriptionStatus(sub.razorpaySubscriptionId, SubscriptionStatus.CANCELLED);
   }
 
   async getUsageDashboard(userId: string): Promise<UsageDashboard> {

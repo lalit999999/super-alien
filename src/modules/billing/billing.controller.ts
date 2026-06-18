@@ -7,7 +7,7 @@ import { env } from "@/config/env";
 import { BillingRepository } from "./billing.repository";
 import { BillingService } from "./billing.service";
 import { razorpay } from "./billing.provider";
-import { createSubscriptionSchema, historyQuerySchema } from "./billing.schema";
+import { verifyPaymentSchema, historyQuerySchema } from "./billing.schema";
 import type { RazorpayWebhookPayload } from "./billing.types";
 import { UsageRepository } from "@/modules/usage/usage.repository";
 
@@ -25,22 +25,43 @@ async function resolveInternalUserId(clerkUserId: string) {
   return user?.id ?? null;
 }
 
-export async function handleCreateSubscription(req: Request) {
+export async function handleCreateOrder(req: Request) {
   try {
     const { userId } = await requireAuth();
+    const internalId = await resolveInternalUserId(userId);
+    if (!internalId) return fail("User not found", "USER_NOT_FOUND", 404);
 
+    const service = buildService();
+    const result = await service.createOneTimeOrder(internalId);
+
+    return ok({ ...result, keyId: env.RAZORPAY_KEY_ID }, 201);
+  } catch (err) {
+    console.error("[billing/subscribe]", err);
+    return fail(String(err), "INTERNAL_ERROR", 500);
+  }
+}
+
+export async function handleVerifyPayment(req: Request) {
+  try {
+    const { userId } = await requireAuth();
     const body = await req.json().catch(() => ({}));
-    const { planId } = createSubscriptionSchema.parse(body);
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      verifyPaymentSchema.parse(body);
 
     const internalId = await resolveInternalUserId(userId);
     if (!internalId) return fail("User not found", "USER_NOT_FOUND", 404);
 
     const service = buildService();
-    const result = await service.createSubscription(internalId, planId);
+    const result = await service.verifyAndActivate(
+      internalId,
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature
+    );
 
-    return ok({ ...result, keyId: env.RAZORPAY_KEY_ID }, 201);
+    return ok(result);
   } catch (err) {
-    console.error("[billing/subscribe]", err);
+    console.error("[billing/verify]", err);
     return fail(String(err), "INTERNAL_ERROR", 500);
   }
 }
