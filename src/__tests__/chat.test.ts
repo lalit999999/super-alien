@@ -72,6 +72,8 @@ describe("ChatService", () => {
     addMessage: vi.fn(),
     getRecentMessages: vi.fn(),
     updateTitle: vi.fn(),
+    getActiveContext: vi.fn(),
+    updateActiveContext: vi.fn(),
   };
 
   const mockAgent = {
@@ -127,6 +129,7 @@ describe("ChatService", () => {
       messages: [],
     };
     mockRepo.getSession.mockResolvedValue(session);
+    mockRepo.getActiveContext.mockResolvedValue(null);
     mockRepo.addMessage
       .mockResolvedValueOnce({ id: "m1", role: "USER", content: "hello" })
       .mockResolvedValueOnce({ id: "m2", role: "ASSISTANT", content: "Hi there!" });

@@ -38,10 +38,18 @@ export async function listalluser() {
     return;
   }
 
-  console.log(`Found ${users.length} user(s):\n`);
-  console.log(users);
+  const simplified = users.map((user) => ({
+    userId: user.id,
+    name: [user.firstName, user.lastName].filter(Boolean).join(" ") || "(no name)",
+    email:
+      user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)
+        ?.emailAddress ?? user.emailAddresses[0]?.emailAddress ?? "(no email)",
+  }));
 
-  return users;
+  console.log(`Found ${simplified.length} user(s):\n`);
+  console.table(simplified);
+
+  return simplified;
 }
 
 listalluser().catch((err) => {
