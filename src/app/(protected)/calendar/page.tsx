@@ -5,6 +5,7 @@ import { RefreshCw, CalendarDays, Clock, Users, Plus } from "lucide-react";
 import { OnboardingEmptyState } from "@/components/onboarding/empty-state";
 import { NewEventDialog } from "@/components/calendar/new-event-dialog";
 import { isToday, isTomorrow } from "@/lib/date-buckets";
+import { useAutoSync } from "@/hooks/useAutoSync";
 
 // ─── Color palette ─────────────────────────────────────────────────────────────
 
@@ -189,6 +190,7 @@ const VIEWS = ["Today", "Tomorrow", "This Week", "Upcoming"] as const;
 type View = (typeof VIEWS)[number];
 
 export default function CalendarPage() {
+  useAutoSync("calendar");
   const [calendarConnected, setCalendarConnected] = useState<boolean | null>(null);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);

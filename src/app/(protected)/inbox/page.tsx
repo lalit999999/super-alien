@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { OnboardingEmptyState } from "@/components/onboarding/empty-state";
 import { ComposeModal } from "@/components/inbox/compose-modal";
+import { useAutoSync } from "@/hooks/useAutoSync";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -252,6 +253,7 @@ function LoadingSkeleton() {
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function InboxPage() {
+  useAutoSync("gmail");
   const router = useRouter();
   const [gmailConnected, setGmailConnected] = useState<boolean | null>(null);
   const [emails, setEmails] = useState<Email[]>([]);
