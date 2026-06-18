@@ -64,6 +64,7 @@ describe("AI Cache Integration — classifyEmail cache-miss", () => {
       getDraftsByEmailId: vi.fn(),
       getLatestDraftByEmailId: vi.fn(),
       getEmailsByIds: vi.fn(),
+      findUserIdByClerkId: vi.fn().mockResolvedValue(null),
     };
     const aiResult = { category: "FINANCE", confidence: 0.88, reasoning: "Invoice" };
     const openai = {

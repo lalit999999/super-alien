@@ -13,6 +13,7 @@ function makeRepo(overrides: Record<string, unknown> = {}) {
     saveDraft: vi.fn(),
     getDraftsByEmailId: vi.fn(),
     getLatestDraftByEmailId: vi.fn(),
+    findUserIdByClerkId: vi.fn().mockResolvedValue(null),
     ...overrides,
   };
 }

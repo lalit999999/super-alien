@@ -4,6 +4,15 @@ import { RATE_LIMIT_CONFIGS } from "./rate-limit.constants";
 import { buildRateLimitKey, resolveUserTier } from "./rate-limit.utils";
 import { metricsService } from "@/modules/monitoring";
 
+// Read-only peek: evicts expired entries then counts current ones without consuming a slot
+const PEEK_SCRIPT = `
+local key = KEYS[1]
+local now = tonumber(ARGV[1])
+local window = tonumber(ARGV[2])
+redis.call('ZREMRANGEBYSCORE', key, '-inf', now - window)
+return tonumber(redis.call('ZCARD', key))
+`.trim();
+
 // Atomic sliding-window via Lua: returns {1, remaining} or {0, 0}
 const SLIDING_WINDOW_SCRIPT = `
 local key = KEYS[1]
@@ -29,7 +38,7 @@ export class RateLimitService {
     action: RateLimitAction,
     tier?: UserTier
   ): Promise<RateLimitResult> {
-    const resolvedTier = tier ?? resolveUserTier(userId);
+    const resolvedTier = tier ?? (await resolveUserTier(userId));
     const config = RATE_LIMIT_CONFIGS[action][resolvedTier];
     const key = buildRateLimitKey(userId, action);
     const nowMs = Date.now();
@@ -75,6 +84,43 @@ export class RateLimitService {
 
   async checkGmailActions(userId: string): Promise<RateLimitResult> {
     return this.check(userId, "gmail-actions");
+  }
+
+  async peek(
+    userId: string,
+    action: RateLimitAction,
+    tier?: UserTier
+  ): Promise<RateLimitResult> {
+    const resolvedTier = tier ?? (await resolveUserTier(userId));
+    const config = RATE_LIMIT_CONFIGS[action][resolvedTier];
+    const key = buildRateLimitKey(userId, action);
+    const nowMs = Date.now();
+
+    const used = ((await redis.eval(PEEK_SCRIPT, [key], [
+      String(nowMs),
+      String(config.windowMs),
+    ])) as number) ?? 0;
+
+    const remaining = Math.max(0, config.limit - used);
+
+    return {
+      allowed: remaining > 0,
+      remaining,
+      limit: config.limit,
+      resetAt: nowMs + config.windowMs,
+    };
+  }
+
+  async peekChat(userId: string, tier?: UserTier): Promise<RateLimitResult> {
+    return this.peek(userId, "chat", tier);
+  }
+
+  async peekSummaries(userId: string): Promise<RateLimitResult> {
+    return this.peek(userId, "summaries");
+  }
+
+  async peekDrafts(userId: string): Promise<RateLimitResult> {
+    return this.peek(userId, "drafts");
   }
 }
 

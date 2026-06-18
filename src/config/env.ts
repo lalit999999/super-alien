@@ -22,6 +22,12 @@ const envSchema = z.object({
   UPSTASH_REDIS_REST_URL: z.string().min(1, "UPSTASH_REDIS_REST_URL is required"),
   UPSTASH_REDIS_REST_TOKEN: z.string().min(1, "UPSTASH_REDIS_REST_TOKEN is required"),
 
+  // Razorpay
+  RAZORPAY_KEY_ID: z.string().min(1, "RAZORPAY_KEY_ID is required"),
+  RAZORPAY_KEY_SECRET: z.string().min(1, "RAZORPAY_KEY_SECRET is required"),
+  RAZORPAY_PLAN_ID: z.string().min(1, "RAZORPAY_PLAN_ID is required"),
+  RAZORPAY_WEBHOOK_SECRET: z.string().min(1, "RAZORPAY_WEBHOOK_SECRET is required"),
+
   // App
   NEXT_PUBLIC_APP_URL: z.string().optional(),
 });

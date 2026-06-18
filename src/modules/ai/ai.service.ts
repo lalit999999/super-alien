@@ -28,18 +28,45 @@ import {
   AI_DRAFT_MAX_TOKENS,
   AI_ERRORS,
 } from "./ai.constants";
+import type { UsageService } from "@/modules/usage/usage.service";
+import { UsageFeature } from "@/config/generated/prisma/client";
 
 export class AiService {
   constructor(
     private readonly openai: OpenAI,
-    private readonly repo: AiRepository
+    private readonly repo: AiRepository,
+    private readonly usageService?: UsageService
   ) {}
+
+  private async tryLogUsage(
+    userId: string | null | undefined,
+    feature: UsageFeature,
+    usage: OpenAI.CompletionUsage | undefined | null,
+    model: string
+  ): Promise<void> {
+    if (!userId || !usage || !this.usageService) return;
+    try {
+      await this.usageService.recordUsage(
+        userId,
+        feature,
+        {
+          promptTokens: usage.prompt_tokens ?? 0,
+          completionTokens: usage.completion_tokens ?? 0,
+          totalTokens: usage.total_tokens ?? 0,
+        },
+        model
+      );
+    } catch (err) {
+      console.error("[AiService] usage logging failed:", err);
+    }
+  }
 
   // ── Legacy: priority classify + single summary in one call ─────────────────
 
   async classifyAndSummarizeEmail(
     emailId: string,
-    input: ClassifyEmailInput
+    input: ClassifyEmailInput,
+    userId?: string
   ): Promise<ClassificationOutput & { emailId: string }> {
     const messages = buildClassifyEmailMessages(input);
 
@@ -49,6 +76,8 @@ export class AiService {
       messages,
       response_format: zodResponseFormat(classificationOutputSchema, "classification"),
     });
+
+    void this.tryLogUsage(userId, UsageFeature.CLASSIFY, response.usage, AI_MODEL);
 
     const result = response.choices[0].message.parsed;
     if (!result) throw new Error(AI_ERRORS.NO_RESULT);
@@ -97,6 +126,9 @@ export class AiService {
       messages,
       response_format: zodResponseFormat(categoryOutputSchema, "category"),
     });
+
+    const userId = await this.repo.findUserIdByClerkId(clerkUserId);
+    void this.tryLogUsage(userId, UsageFeature.CLASSIFY, response.usage, AI_MODEL);
 
     const result = response.choices[0].message.parsed;
     if (!result) throw new Error(AI_ERRORS.NO_RESULT);
@@ -165,6 +197,9 @@ export class AiService {
       response_format: zodResponseFormat(multiSummaryOutputSchema, "summary"),
     });
 
+    const userId = await this.repo.findUserIdByClerkId(clerkUserId);
+    void this.tryLogUsage(userId, UsageFeature.SUMMARIZE, response.usage, AI_MODEL);
+
     const result = response.choices[0].message.parsed;
     if (!result) throw new Error(AI_ERRORS.NO_RESULT);
 
@@ -226,6 +261,9 @@ export class AiService {
       response_format: zodResponseFormat(replyDraftOutputSchema, "draft"),
     });
 
+    const userId = await this.repo.findUserIdByClerkId(clerkUserId);
+    void this.tryLogUsage(userId, UsageFeature.DRAFT, response.usage, AI_MODEL);
+
     const result = response.choices[0].message.parsed;
     if (!result) throw new Error(AI_ERRORS.NO_RESULT);
 
@@ -240,7 +278,7 @@ export class AiService {
 
   // ── Free-form draft (prompt + context) ────────────────────────────────────
 
-  async generateDraft(input: GenerateDraftInput): Promise<DraftOutput> {
+  async generateDraft(input: GenerateDraftInput, userId?: string): Promise<DraftOutput> {
     const messages = buildGenerateEmailMessages(input.prompt, input.context);
 
     const response = await this.openai.chat.completions.parse({
@@ -250,6 +288,8 @@ export class AiService {
       response_format: zodResponseFormat(draftOutputSchema, "draft"),
     });
 
+    void this.tryLogUsage(userId, UsageFeature.DRAFT, response.usage, AI_MODEL);
+
     const result = response.choices[0].message.parsed;
     if (!result) throw new Error(AI_ERRORS.NO_RESULT);
 
@@ -258,7 +298,7 @@ export class AiService {
 
   // ── Legacy: simple single summary ─────────────────────────────────────────
 
-  async summarizeEmail(subject: string, body: string): Promise<SummaryOutput> {
+  async summarizeEmail(subject: string, body: string, userId?: string): Promise<SummaryOutput> {
     const messages = buildSummarizeEmailMessages(subject, body);
 
     const response = await this.openai.chat.completions.parse({
@@ -267,6 +307,8 @@ export class AiService {
       messages,
       response_format: zodResponseFormat(summaryOutputSchema, "summary"),
     });
+
+    void this.tryLogUsage(userId, UsageFeature.SUMMARIZE, response.usage, AI_MODEL);
 
     const result = response.choices[0].message.parsed;
     if (!result) throw new Error(AI_ERRORS.NO_RESULT);

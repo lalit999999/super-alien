@@ -2,6 +2,8 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { rateLimitService } from "@/modules/rate-limit";
 import { getRateLimitHeaders } from "@/modules/rate-limit";
+import { prisma } from "@/lib/prisma";
+import { SubscriptionStatus } from "@/config/generated/prisma/client";
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -11,6 +13,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/corsair(.*)",
   "/api/test-auth(.*)",
   "/api/test(.*)",
+  "/api/billing/subscribe",
 ]);
 
 const isRateLimitedApiRoute = createRouteMatcher([
@@ -19,6 +22,24 @@ const isRateLimitedApiRoute = createRouteMatcher([
   "/api/calendar(.*)",
   "/api/agent(.*)",
 ]);
+
+async function hasActiveSubscription(clerkUserId: string): Promise<boolean> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { clerkUserId },
+      select: { id: true },
+    });
+    if (!user) return false;
+
+    const sub = await prisma.subscription.findFirst({
+      where: { userId: user.id, status: SubscriptionStatus.ACTIVE },
+      select: { id: true },
+    });
+    return sub !== null;
+  } catch {
+    return false;
+  }
+}
 
 export default clerkMiddleware(async (auth, request) => {
   const requestHeaders = new Headers(request.headers);
@@ -31,6 +52,18 @@ export default clerkMiddleware(async (auth, request) => {
   if (isRateLimitedApiRoute(request)) {
     const { userId } = await auth();
     if (userId) {
+      const active = await hasActiveSubscription(userId);
+      if (!active) {
+        return new NextResponse(
+          JSON.stringify({
+            success: false,
+            error: "An active subscription is required.",
+            code: "SUBSCRIPTION_REQUIRED",
+          }),
+          { status: 402, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
       const result = await rateLimitService.checkApi(userId);
       if (!result.allowed) {
         return new NextResponse(

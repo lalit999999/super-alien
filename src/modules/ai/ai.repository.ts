@@ -139,4 +139,12 @@ export class AiRepository {
       orderBy: { createdAt: "desc" },
     });
   }
+
+  async findUserIdByClerkId(clerkUserId: string): Promise<string | null> {
+    const user = await this.db.user.findUnique({
+      where: { clerkUserId },
+      select: { id: true },
+    });
+    return user?.id ?? null;
+  }
 }

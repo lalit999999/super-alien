@@ -9,6 +9,9 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User'
+export type * from './models/Subscription'
+export type * from './models/Payment'
+export type * from './models/TokenUsage'
 export type * from './models/Email'
 export type * from './models/CalendarEvent'
 export type * from './models/EmailClassification'

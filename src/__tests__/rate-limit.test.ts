@@ -64,8 +64,8 @@ describe("Rate Limit Constants", () => {
 });
 
 describe("resolveUserTier", () => {
-  it("defaults to FREE tier", () => {
-    expect(resolveUserTier("any-user-id")).toBe("FREE");
+  it("defaults to FREE tier when no subscription exists", async () => {
+    await expect(resolveUserTier("any-user-id")).resolves.toBe("FREE");
   });
 });
 

@@ -40,6 +40,87 @@ model User {
   agentExecutions AgentExecution[]
   chatSessions    ChatSession[]
   syncRecords     SyncRecord[]
+  subscriptions   Subscription[]
+  payments        Payment[]
+  tokenUsages     TokenUsage[]
+}
+
+// ─── Billing ──────────────────────────────────────────────────────────────────
+
+model Subscription {
+  id                     String             @id @default(cuid())
+  userId                 String
+  razorpaySubscriptionId String             @unique
+  razorpayPlanId         String
+  status                 SubscriptionStatus
+  currentPeriodStart     DateTime?
+  currentPeriodEnd       DateTime?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id])
+  payments Payment[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  userId            String
+  subscriptionId    String
+  razorpayPaymentId String        @unique
+  amount            Int
+  currency          String        @default("INR")
+  status            PaymentStatus
+  createdAt         DateTime      @default(now())
+
+  user         User         @relation(fields: [userId], references: [id])
+  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@index([userId])
+  @@index([subscriptionId])
+}
+
+model TokenUsage {
+  id               String       @id @default(cuid())
+  userId           String
+  feature          UsageFeature
+  promptTokens     Int
+  completionTokens Int
+  totalTokens      Int
+  model            String
+  createdAt        DateTime     @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([userId, feature])
+  @@index([createdAt])
+}
+
+enum SubscriptionStatus {
+  CREATED
+  AUTHENTICATED
+  ACTIVE
+  PAST_DUE
+  HALTED
+  CANCELLED
+  COMPLETED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  CAPTURED
+  FAILED
+  REFUNDED
+}
+
+enum UsageFeature {
+  CHAT
+  SUMMARIZE
+  DRAFT
+  CLASSIFY
 }
 
 model Email {

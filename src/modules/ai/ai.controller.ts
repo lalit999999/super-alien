@@ -14,9 +14,12 @@ import {
   batchClassifyRequestSchema,
 } from "./ai.schema";
 import { AI_ERRORS } from "./ai.constants";
+import { UsageRepository } from "@/modules/usage/usage.repository";
+import { UsageService } from "@/modules/usage/usage.service";
 
 function makeService(): AiService {
-  return new AiService(openai, new AiRepository(prisma));
+  const usageService = new UsageService(new UsageRepository(prisma));
+  return new AiService(openai, new AiRepository(prisma), usageService);
 }
 
 async function enforceRateLimit(

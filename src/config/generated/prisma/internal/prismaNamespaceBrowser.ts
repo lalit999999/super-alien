@@ -52,6 +52,9 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Subscription: 'Subscription',
+  Payment: 'Payment',
+  TokenUsage: 'TokenUsage',
   Email: 'Email',
   CalendarEvent: 'CalendarEvent',
   EmailClassification: 'EmailClassification',
@@ -106,6 +109,49 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  razorpaySubscriptionId: 'razorpaySubscriptionId',
+  razorpayPlanId: 'razorpayPlanId',
+  status: 'status',
+  currentPeriodStart: 'currentPeriodStart',
+  currentPeriodEnd: 'currentPeriodEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const PaymentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  subscriptionId: 'subscriptionId',
+  razorpayPaymentId: 'razorpayPaymentId',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+export const TokenUsageScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  feature: 'feature',
+  promptTokens: 'promptTokens',
+  completionTokens: 'completionTokens',
+  totalTokens: 'totalTokens',
+  model: 'model',
+  createdAt: 'createdAt'
+} as const
+
+export type TokenUsageScalarFieldEnum = (typeof TokenUsageScalarFieldEnum)[keyof typeof TokenUsageScalarFieldEnum]
 
 
 export const EmailScalarFieldEnum = {

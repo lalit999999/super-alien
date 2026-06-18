@@ -6,6 +6,8 @@ import { Topbar } from "@/components/layout/topbar";
 import { prisma } from "@/lib/prisma";
 import { OnboardingRepository } from "@/modules/onboarding/onboarding.repository";
 import { ONBOARDING_EXEMPT_PATHS } from "@/modules/onboarding/onboarding.constants";
+import { BillingRepository } from "@/modules/billing/billing.repository";
+import { BILLING_EXEMPT_PATHS } from "@/modules/billing/billing.constants";
 
 export default async function ProtectedLayout({
   children,
@@ -21,14 +23,32 @@ export default async function ProtectedLayout({
   const headersList = await headers();
   const pathname = headersList.get("x-pathname") ?? "";
 
-  const isExempt = ONBOARDING_EXEMPT_PATHS.some((p) => pathname.startsWith(p));
+  const isOnboardingExempt = ONBOARDING_EXEMPT_PATHS.some((p) => pathname.startsWith(p));
 
-  if (!isExempt) {
+  if (!isOnboardingExempt) {
     const repo = new OnboardingRepository(prisma);
     const status = await repo.findStatusByClerkUserId(userId);
 
     if (!status || !status.onboardingCompleted) {
       redirect("/onboarding");
+    }
+  }
+
+  const isBillingExempt = BILLING_EXEMPT_PATHS.some((p) => pathname.startsWith(p));
+
+  if (!isBillingExempt) {
+    const user = await prisma.user.findUnique({
+      where: { clerkUserId: userId },
+      select: { id: true },
+    });
+
+    if (user) {
+      const billingRepo = new BillingRepository(prisma);
+      const activeSub = await billingRepo.findActiveSubscriptionByUserId(user.id);
+
+      if (!activeSub) {
+        redirect("/billing/upgrade");
+      }
     }
   }
 

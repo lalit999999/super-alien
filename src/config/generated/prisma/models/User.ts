@@ -322,6 +322,9 @@ export type UserWhereInput = {
   agentExecutions?: Prisma.AgentExecutionListRelationFilter
   chatSessions?: Prisma.ChatSessionListRelationFilter
   syncRecords?: Prisma.SyncRecordListRelationFilter
+  subscriptions?: Prisma.SubscriptionListRelationFilter
+  payments?: Prisma.PaymentListRelationFilter
+  tokenUsages?: Prisma.TokenUsageListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -348,6 +351,9 @@ export type UserOrderByWithRelationInput = {
   agentExecutions?: Prisma.AgentExecutionOrderByRelationAggregateInput
   chatSessions?: Prisma.ChatSessionOrderByRelationAggregateInput
   syncRecords?: Prisma.SyncRecordOrderByRelationAggregateInput
+  subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
+  payments?: Prisma.PaymentOrderByRelationAggregateInput
+  tokenUsages?: Prisma.TokenUsageOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -377,6 +383,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   agentExecutions?: Prisma.AgentExecutionListRelationFilter
   chatSessions?: Prisma.ChatSessionListRelationFilter
   syncRecords?: Prisma.SyncRecordListRelationFilter
+  subscriptions?: Prisma.SubscriptionListRelationFilter
+  payments?: Prisma.PaymentListRelationFilter
+  tokenUsages?: Prisma.TokenUsageListRelationFilter
 }, "id" | "clerkUserId" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -451,6 +460,9 @@ export type UserCreateInput = {
   agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
   chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
   syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -477,6 +489,9 @@ export type UserUncheckedCreateInput = {
   agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
   chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
   syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -503,6 +518,9 @@ export type UserUpdateInput = {
   agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
   syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -529,6 +547,9 @@ export type UserUncheckedUpdateInput = {
   agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
   syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -694,6 +715,48 @@ export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
 
+export type UserCreateNestedOneWithoutSubscriptionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionsInput, Prisma.UserUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSubscriptionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSubscriptionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionsInput, Prisma.UserUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSubscriptionsInput
+  upsert?: Prisma.UserUpsertWithoutSubscriptionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSubscriptionsInput, Prisma.UserUpdateWithoutSubscriptionsInput>, Prisma.UserUncheckedUpdateWithoutSubscriptionsInput>
+}
+
+export type UserCreateNestedOneWithoutPaymentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPaymentsInput, Prisma.UserUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPaymentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPaymentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPaymentsInput, Prisma.UserUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPaymentsInput
+  upsert?: Prisma.UserUpsertWithoutPaymentsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPaymentsInput, Prisma.UserUpdateWithoutPaymentsInput>, Prisma.UserUncheckedUpdateWithoutPaymentsInput>
+}
+
+export type UserCreateNestedOneWithoutTokenUsagesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTokenUsagesInput, Prisma.UserUncheckedCreateWithoutTokenUsagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTokenUsagesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTokenUsagesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTokenUsagesInput, Prisma.UserUncheckedCreateWithoutTokenUsagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTokenUsagesInput
+  upsert?: Prisma.UserUpsertWithoutTokenUsagesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTokenUsagesInput, Prisma.UserUpdateWithoutTokenUsagesInput>, Prisma.UserUncheckedUpdateWithoutTokenUsagesInput>
+}
+
 export type UserCreateNestedOneWithoutEmailsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutEmailsInput, Prisma.UserUncheckedCreateWithoutEmailsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailsInput
@@ -778,6 +841,390 @@ export type UserUpdateOneRequiredWithoutSyncRecordsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSyncRecordsInput, Prisma.UserUpdateWithoutSyncRecordsInput>, Prisma.UserUncheckedUpdateWithoutSyncRecordsInput>
 }
 
+export type UserCreateWithoutSubscriptionsInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
+  emails?: Prisma.EmailCreateNestedManyWithoutUserInput
+  events?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
+  agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSubscriptionsInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
+  emails?: Prisma.EmailUncheckedCreateNestedManyWithoutUserInput
+  events?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
+  agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSubscriptionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionsInput, Prisma.UserUncheckedCreateWithoutSubscriptionsInput>
+}
+
+export type UserUpsertWithoutSubscriptionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSubscriptionsInput, Prisma.UserUncheckedUpdateWithoutSubscriptionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionsInput, Prisma.UserUncheckedCreateWithoutSubscriptionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSubscriptionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSubscriptionsInput, Prisma.UserUncheckedUpdateWithoutSubscriptionsInput>
+}
+
+export type UserUpdateWithoutSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
+  emails?: Prisma.EmailUpdateManyWithoutUserNestedInput
+  events?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
+  agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  emails?: Prisma.EmailUncheckedUpdateManyWithoutUserNestedInput
+  events?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
+  agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPaymentsInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
+  emails?: Prisma.EmailCreateNestedManyWithoutUserInput
+  events?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
+  agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPaymentsInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
+  emails?: Prisma.EmailUncheckedCreateNestedManyWithoutUserInput
+  events?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
+  agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPaymentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPaymentsInput, Prisma.UserUncheckedCreateWithoutPaymentsInput>
+}
+
+export type UserUpsertWithoutPaymentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPaymentsInput, Prisma.UserUncheckedUpdateWithoutPaymentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPaymentsInput, Prisma.UserUncheckedCreateWithoutPaymentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPaymentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPaymentsInput, Prisma.UserUncheckedUpdateWithoutPaymentsInput>
+}
+
+export type UserUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
+  emails?: Prisma.EmailUpdateManyWithoutUserNestedInput
+  events?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
+  agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  emails?: Prisma.EmailUncheckedUpdateManyWithoutUserNestedInput
+  events?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
+  agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutTokenUsagesInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutUserInput
+  emails?: Prisma.EmailCreateNestedManyWithoutUserInput
+  events?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
+  agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutTokenUsagesInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  gmailConnected?: boolean
+  calendarConnected?: boolean
+  gmailConnectedAt?: Date | string | null
+  calendarConnectedAt?: Date | string | null
+  lastGmailSync?: Date | string | null
+  lastCalendarSync?: Date | string | null
+  onboardingCompleted?: boolean
+  gmailSyncStatus?: $Enums.SyncStatus
+  calendarSyncStatus?: $Enums.SyncStatus
+  gmailSyncProgress?: number
+  calendarSyncProgress?: number
+  initialSyncCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutUserInput
+  emails?: Prisma.EmailUncheckedCreateNestedManyWithoutUserInput
+  events?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
+  agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutTokenUsagesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTokenUsagesInput, Prisma.UserUncheckedCreateWithoutTokenUsagesInput>
+}
+
+export type UserUpsertWithoutTokenUsagesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTokenUsagesInput, Prisma.UserUncheckedUpdateWithoutTokenUsagesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTokenUsagesInput, Prisma.UserUncheckedCreateWithoutTokenUsagesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTokenUsagesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTokenUsagesInput, Prisma.UserUncheckedUpdateWithoutTokenUsagesInput>
+}
+
+export type UserUpdateWithoutTokenUsagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutUserNestedInput
+  emails?: Prisma.EmailUpdateManyWithoutUserNestedInput
+  events?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
+  agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTokenUsagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  gmailConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendarConnected?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calendarConnectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastGmailSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCalendarSync?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  gmailSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  calendarSyncStatus?: Prisma.EnumSyncStatusFieldUpdateOperationsInput | $Enums.SyncStatus
+  gmailSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarSyncProgress?: Prisma.IntFieldUpdateOperationsInput | number
+  initialSyncCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  emails?: Prisma.EmailUncheckedUpdateManyWithoutUserNestedInput
+  events?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
+  agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutEmailsInput = {
   id?: string
   clerkUserId: string
@@ -801,6 +1248,9 @@ export type UserCreateWithoutEmailsInput = {
   agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
   chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
   syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEmailsInput = {
@@ -826,6 +1276,9 @@ export type UserUncheckedCreateWithoutEmailsInput = {
   agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
   chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
   syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEmailsInput = {
@@ -867,6 +1320,9 @@ export type UserUpdateWithoutEmailsInput = {
   agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
   syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmailsInput = {
@@ -892,6 +1348,9 @@ export type UserUncheckedUpdateWithoutEmailsInput = {
   agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
   syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutEventsInput = {
@@ -917,6 +1376,9 @@ export type UserCreateWithoutEventsInput = {
   agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
   chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
   syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEventsInput = {
@@ -942,6 +1404,9 @@ export type UserUncheckedCreateWithoutEventsInput = {
   agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
   chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
   syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEventsInput = {
@@ -983,6 +1448,9 @@ export type UserUpdateWithoutEventsInput = {
   agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
   syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEventsInput = {
@@ -1008,6 +1476,9 @@ export type UserUncheckedUpdateWithoutEventsInput = {
   agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
   syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAgentExecutionsInput = {
@@ -1033,6 +1504,9 @@ export type UserCreateWithoutAgentExecutionsInput = {
   events?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
   chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
   syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAgentExecutionsInput = {
@@ -1058,6 +1532,9 @@ export type UserUncheckedCreateWithoutAgentExecutionsInput = {
   events?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
   chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
   syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAgentExecutionsInput = {
@@ -1099,6 +1576,9 @@ export type UserUpdateWithoutAgentExecutionsInput = {
   events?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
   syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAgentExecutionsInput = {
@@ -1124,6 +1604,9 @@ export type UserUncheckedUpdateWithoutAgentExecutionsInput = {
   events?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
   syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPreferencesInput = {
@@ -1149,6 +1632,9 @@ export type UserCreateWithoutPreferencesInput = {
   agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
   chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
   syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPreferencesInput = {
@@ -1174,6 +1660,9 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
   chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
   syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPreferencesInput = {
@@ -1215,6 +1704,9 @@ export type UserUpdateWithoutPreferencesInput = {
   agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
   syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPreferencesInput = {
@@ -1240,6 +1732,9 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
   syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutChatSessionsInput = {
@@ -1265,6 +1760,9 @@ export type UserCreateWithoutChatSessionsInput = {
   events?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
   agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
   syncRecords?: Prisma.SyncRecordCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutChatSessionsInput = {
@@ -1290,6 +1788,9 @@ export type UserUncheckedCreateWithoutChatSessionsInput = {
   events?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
   agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
   syncRecords?: Prisma.SyncRecordUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutChatSessionsInput = {
@@ -1331,6 +1832,9 @@ export type UserUpdateWithoutChatSessionsInput = {
   events?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
   agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
   syncRecords?: Prisma.SyncRecordUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutChatSessionsInput = {
@@ -1356,6 +1860,9 @@ export type UserUncheckedUpdateWithoutChatSessionsInput = {
   events?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
   agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
   syncRecords?: Prisma.SyncRecordUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSyncRecordsInput = {
@@ -1381,6 +1888,9 @@ export type UserCreateWithoutSyncRecordsInput = {
   events?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
   agentExecutions?: Prisma.AgentExecutionCreateNestedManyWithoutUserInput
   chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSyncRecordsInput = {
@@ -1406,6 +1916,9 @@ export type UserUncheckedCreateWithoutSyncRecordsInput = {
   events?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
   agentExecutions?: Prisma.AgentExecutionUncheckedCreateNestedManyWithoutUserInput
   chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  tokenUsages?: Prisma.TokenUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSyncRecordsInput = {
@@ -1447,6 +1960,9 @@ export type UserUpdateWithoutSyncRecordsInput = {
   events?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
   agentExecutions?: Prisma.AgentExecutionUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSyncRecordsInput = {
@@ -1472,6 +1988,9 @@ export type UserUncheckedUpdateWithoutSyncRecordsInput = {
   events?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
   agentExecutions?: Prisma.AgentExecutionUncheckedUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  tokenUsages?: Prisma.TokenUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1485,6 +2004,9 @@ export type UserCountOutputType = {
   agentExecutions: number
   chatSessions: number
   syncRecords: number
+  subscriptions: number
+  payments: number
+  tokenUsages: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1493,6 +2015,9 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   agentExecutions?: boolean | UserCountOutputTypeCountAgentExecutionsArgs
   chatSessions?: boolean | UserCountOutputTypeCountChatSessionsArgs
   syncRecords?: boolean | UserCountOutputTypeCountSyncRecordsArgs
+  subscriptions?: boolean | UserCountOutputTypeCountSubscriptionsArgs
+  payments?: boolean | UserCountOutputTypeCountPaymentsArgs
+  tokenUsages?: boolean | UserCountOutputTypeCountTokenUsagesArgs
 }
 
 /**
@@ -1540,6 +2065,27 @@ export type UserCountOutputTypeCountSyncRecordsArgs<ExtArgs extends runtime.Type
   where?: Prisma.SyncRecordWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SubscriptionWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PaymentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTokenUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TokenUsageWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1565,6 +2111,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   agentExecutions?: boolean | Prisma.User$agentExecutionsArgs<ExtArgs>
   chatSessions?: boolean | Prisma.User$chatSessionsArgs<ExtArgs>
   syncRecords?: boolean | Prisma.User$syncRecordsArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
+  payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
+  tokenUsages?: boolean | Prisma.User$tokenUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1636,6 +2185,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   agentExecutions?: boolean | Prisma.User$agentExecutionsArgs<ExtArgs>
   chatSessions?: boolean | Prisma.User$chatSessionsArgs<ExtArgs>
   syncRecords?: boolean | Prisma.User$syncRecordsArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
+  payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
+  tokenUsages?: boolean | Prisma.User$tokenUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1650,6 +2202,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     agentExecutions: Prisma.$AgentExecutionPayload<ExtArgs>[]
     chatSessions: Prisma.$ChatSessionPayload<ExtArgs>[]
     syncRecords: Prisma.$SyncRecordPayload<ExtArgs>[]
+    subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
+    payments: Prisma.$PaymentPayload<ExtArgs>[]
+    tokenUsages: Prisma.$TokenUsagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2069,6 +2624,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   agentExecutions<T extends Prisma.User$agentExecutionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$agentExecutionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AgentExecutionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chatSessions<T extends Prisma.User$chatSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   syncRecords<T extends Prisma.User$syncRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$syncRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SyncRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  subscriptions<T extends Prisma.User$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tokenUsages<T extends Prisma.User$tokenUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$tokenUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TokenUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2644,6 +3202,78 @@ export type User$syncRecordsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.SyncRecordScalarFieldEnum | Prisma.SyncRecordScalarFieldEnum[]
+}
+
+/**
+ * User.subscriptions
+ */
+export type User$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Subscription
+   */
+  select?: Prisma.SubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Subscription
+   */
+  omit?: Prisma.SubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubscriptionInclude<ExtArgs> | null
+  where?: Prisma.SubscriptionWhereInput
+  orderBy?: Prisma.SubscriptionOrderByWithRelationInput | Prisma.SubscriptionOrderByWithRelationInput[]
+  cursor?: Prisma.SubscriptionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SubscriptionScalarFieldEnum | Prisma.SubscriptionScalarFieldEnum[]
+}
+
+/**
+ * User.payments
+ */
+export type User$paymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Payment
+   */
+  select?: Prisma.PaymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Payment
+   */
+  omit?: Prisma.PaymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentInclude<ExtArgs> | null
+  where?: Prisma.PaymentWhereInput
+  orderBy?: Prisma.PaymentOrderByWithRelationInput | Prisma.PaymentOrderByWithRelationInput[]
+  cursor?: Prisma.PaymentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[]
+}
+
+/**
+ * User.tokenUsages
+ */
+export type User$tokenUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TokenUsage
+   */
+  select?: Prisma.TokenUsageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TokenUsage
+   */
+  omit?: Prisma.TokenUsageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TokenUsageInclude<ExtArgs> | null
+  where?: Prisma.TokenUsageWhereInput
+  orderBy?: Prisma.TokenUsageOrderByWithRelationInput | Prisma.TokenUsageOrderByWithRelationInput[]
+  cursor?: Prisma.TokenUsageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TokenUsageScalarFieldEnum | Prisma.TokenUsageScalarFieldEnum[]
 }
 
 /**

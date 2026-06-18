@@ -9,6 +9,39 @@
 * 🟢 You can import this file directly.
 */
 
+export const SubscriptionStatus = {
+  CREATED: 'CREATED',
+  AUTHENTICATED: 'AUTHENTICATED',
+  ACTIVE: 'ACTIVE',
+  PAST_DUE: 'PAST_DUE',
+  HALTED: 'HALTED',
+  CANCELLED: 'CANCELLED',
+  COMPLETED: 'COMPLETED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
+
+
+export const PaymentStatus = {
+  CAPTURED: 'CAPTURED',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
+} as const
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const UsageFeature = {
+  CHAT: 'CHAT',
+  SUMMARIZE: 'SUMMARIZE',
+  DRAFT: 'DRAFT',
+  CLASSIFY: 'CLASSIFY'
+} as const
+
+export type UsageFeature = (typeof UsageFeature)[keyof typeof UsageFeature]
+
+
 export const EmailPriority = {
   URGENT: 'URGENT',
   IMPORTANT: 'IMPORTANT',
