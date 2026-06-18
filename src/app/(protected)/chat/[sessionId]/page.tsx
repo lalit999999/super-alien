@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Send, Bot, User, Loader2, AlertCircle, Wrench, Trash2 } from "lucide-react";
 
@@ -101,6 +102,7 @@ export default function ChatSessionPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -135,6 +137,7 @@ export default function ChatSessionPage() {
     setMessages((prev) => [...prev, optimisticUser]);
     setInput("");
     setError(null);
+    setErrorCode(null);
     setSending(true);
     if (textareaRef.current) textareaRef.current.style.height = "auto";
 
@@ -149,6 +152,7 @@ export default function ChatSessionPage() {
       if (!json.success) {
         setMessages((prev) => prev.filter((m) => m.id !== optimisticUser.id));
         setError(json.error);
+        setErrorCode(json.code);
         return;
       }
 
@@ -241,7 +245,23 @@ export default function ChatSessionPage() {
       </div>
 
       {/* Error */}
-      {error && (
+      {error && errorCode === "RATE_LIMIT_EXCEEDED" && (
+        <div className="mx-auto w-full max-w-3xl px-4 pb-2 sm:px-6">
+          <div className="flex flex-col gap-2 rounded-lg border border-ps-accent/30 bg-ps-accent-light px-4 py-3 text-xs text-ps-text sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0 text-ps-accent" />
+              <span>You've hit your daily limit on the Free plan. Upgrade to Pro for 5,000 messages a day.</span>
+            </div>
+            <Link
+              href="/billing/upgrade"
+              className="shrink-0 rounded-lg bg-ps-accent px-3 py-1.5 text-center text-xs font-semibold text-white transition-colors hover:bg-ps-accent-dark"
+            >
+              Upgrade to Pro
+            </Link>
+          </div>
+        </div>
+      )}
+      {error && errorCode !== "RATE_LIMIT_EXCEEDED" && (
         <div className="mx-auto w-full max-w-3xl px-4 pb-2 sm:px-6">
           <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-xs text-red-600 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400">
             <AlertCircle className="h-3.5 w-3.5 shrink-0" />

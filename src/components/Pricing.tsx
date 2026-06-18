@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Check } from "lucide-react";
 
 const tiers = [
@@ -97,20 +98,17 @@ export function Pricing() {
               </ul>
 
               <div>
-                <span className="mb-2 inline-block rounded-full border border-ps-border bg-ps-surface-2 px-2.5 py-0.5 text-xs font-medium text-ps-muted">
-                  Coming Soon
-                </span>
-                <button
-                  disabled
+                <Link
+                  href={tier.name === "Enterprise" ? "mailto:support@superalien.app?subject=Enterprise%20plan%20inquiry" : "/sign-up"}
                   className={[
-                    "w-full rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+                    "block w-full rounded-xl border px-4 py-2.5 text-center text-sm font-semibold transition-colors",
                     tier.popular
-                      ? "border-ps-accent bg-ps-accent text-white"
-                      : "border-ps-border bg-ps-surface text-ps-text",
+                      ? "border-ps-accent bg-ps-accent text-white hover:bg-ps-accent-dark"
+                      : "border-ps-border bg-ps-surface text-ps-text hover:bg-ps-surface-2",
                   ].join(" ")}
                 >
-                  Coming Soon
-                </button>
+                  {tier.name === "Enterprise" ? "Contact sales" : "Get started"}
+                </Link>
               </div>
             </div>
           ))}

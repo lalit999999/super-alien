@@ -23,6 +23,11 @@ const isRateLimitedApiRoute = createRouteMatcher([
   "/api/agent(.*)",
 ]);
 
+const isSubscriptionGatedApiRoute = createRouteMatcher([
+  "/api/chat(.*)",
+  "/api/agent(.*)",
+]);
+
 async function hasActiveSubscription(clerkUserId: string): Promise<boolean> {
   try {
     const user = await prisma.user.findUnique({
@@ -56,16 +61,18 @@ export default clerkMiddleware(async (auth, request) => {
   if (isRateLimitedApiRoute(request)) {
     const { userId } = await auth();
     if (userId) {
-      const active = await hasActiveSubscription(userId);
-      if (!active) {
-        return new NextResponse(
-          JSON.stringify({
-            success: false,
-            error: "An active subscription is required.",
-            code: "SUBSCRIPTION_REQUIRED",
-          }),
-          { status: 402, headers: { "Content-Type": "application/json" } }
-        );
+      if (isSubscriptionGatedApiRoute(request)) {
+        const active = await hasActiveSubscription(userId);
+        if (!active) {
+          return new NextResponse(
+            JSON.stringify({
+              success: false,
+              error: "An active subscription is required.",
+              code: "SUBSCRIPTION_REQUIRED",
+            }),
+            { status: 402, headers: { "Content-Type": "application/json" } }
+          );
+        }
       }
 
       const result = await rateLimitService.checkApi(userId);
