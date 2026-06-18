@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Camera, Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { Camera, Loader2, CheckCircle, AlertCircle, X } from "lucide-react";
 import { UserAvatar } from "@/components/layout/user-avatar";
 
 function SectionCard({ title, description, children }: {
@@ -32,14 +32,23 @@ export function IdentitySection() {
 
   function showToast(msg: string, ok: boolean) {
     setToast({ msg, ok });
-    setTimeout(() => setToast(null), 3000);
+    if (ok) setTimeout(() => setToast(null), 3000);
   }
 
   async function handleSave() {
     if (!user) return;
     setSaving(true);
     try {
-      await user.update({ firstName, lastName, username: username || undefined });
+      await user.update({ firstName, lastName });
+      if (username !== (user.username ?? "")) {
+        try {
+          await user.update({ username: username || undefined });
+        } catch (err) {
+          showToast(`Name saved, but username failed: ${(err as Error).message}`, false);
+          setSaving(false);
+          return;
+        }
+      }
       showToast("Profile updated.", true);
     } catch (err) {
       showToast((err as Error).message ?? "Failed to update profile.", false);
@@ -71,7 +80,12 @@ export function IdentitySection() {
           }`}
         >
           {toast.ok ? <CheckCircle className="h-3.5 w-3.5 shrink-0" /> : <AlertCircle className="h-3.5 w-3.5 shrink-0" />}
-          {toast.msg}
+          <span className="flex-1">{toast.msg}</span>
+          {!toast.ok && (
+            <button onClick={() => setToast(null)} className="shrink-0 opacity-60 hover:opacity-100">
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       )}
 

@@ -2,11 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
-type CalendarEvent = {
-  id: string;
-  startTime: string;
-};
+import type { DashboardCalendarEvent } from "./types";
 
 function isSameDay(a: Date, b: Date): boolean {
   return (
@@ -16,13 +12,18 @@ function isSameDay(a: Date, b: Date): boolean {
   );
 }
 
-export function MiniMonthCalendar() {
+type Props = {
+  selectedDate: Date | null;
+  onSelectDate: (date: Date, events: DashboardCalendarEvent[]) => void;
+};
+
+export function MiniMonthCalendar({ selectedDate, onSelectDate }: Props) {
   const [viewDate, setViewDate] = useState(() => {
     const d = new Date();
     d.setDate(1);
     return d;
   });
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [events, setEvents] = useState<DashboardCalendarEvent[]>([]);
 
   useEffect(() => {
     const from = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
@@ -50,12 +51,13 @@ export function MiniMonthCalendar() {
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
 
-  const eventDays = new Set(
-    events.map((e) => {
-      const d = new Date(e.startTime);
-      return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-    })
-  );
+  const eventsByDay = new Map<string, DashboardCalendarEvent[]>();
+  for (const e of events) {
+    const d = new Date(e.startTime);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    if (!eventsByDay.has(key)) eventsByDay.set(key, []);
+    eventsByDay.get(key)!.push(e);
+  }
 
   function prevMonth() {
     setViewDate(new Date(year, month - 1, 1));
@@ -98,19 +100,24 @@ export function MiniMonthCalendar() {
 
           const cellDate = new Date(year, month, day);
           const isToday = isSameDay(cellDate, today);
-          const hasEvent = eventDays.has(`${year}-${month}-${day}`);
+          const isSelected = selectedDate ? isSameDay(cellDate, selectedDate) : false;
+          const key = `${year}-${month}-${day}`;
+          const hasEvent = eventsByDay.has(key);
 
           return (
             <div key={day} className="flex flex-col items-center py-0.5">
-              <span
-                className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium ${
+              <button
+                onClick={() => onSelectDate(cellDate, eventsByDay.get(key) ?? [])}
+                className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium transition-colors ${
                   isToday
                     ? "bg-ps-accent text-white"
+                    : isSelected
+                    ? "ring-2 ring-ps-accent text-ps-text"
                     : "text-ps-secondary hover:bg-ps-surface"
                 }`}
               >
                 {day}
-              </span>
+              </button>
               {hasEvent && (
                 <span
                   className={`mt-0.5 h-1 w-1 rounded-full ${

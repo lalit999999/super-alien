@@ -145,8 +145,8 @@ export class CalendarRepository {
     return this.db.calendarEvent.findMany({
       where: {
         userId,
-        startTime: { gte: startTime },
-        endTime: { lte: endTime },
+        startTime: { lte: endTime },
+        endTime: { gte: startTime },
       },
       orderBy: { startTime: "asc" },
     });

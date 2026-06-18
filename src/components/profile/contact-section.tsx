@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Plus, Trash2, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { Plus, Trash2, CheckCircle, AlertCircle, Loader2, X } from "lucide-react";
 
 type VerifyStep = {
   type: "email" | "phone";
@@ -20,7 +20,7 @@ export function ContactSection() {
 
   function showToast(msg: string, ok: boolean) {
     setToast({ msg, ok });
-    setTimeout(() => setToast(null), 3000);
+    if (ok) setTimeout(() => setToast(null), 3000);
   }
 
   async function addEmail() {
@@ -121,7 +121,12 @@ export function ContactSection() {
             }`}
           >
             {toast.ok ? <CheckCircle className="h-3.5 w-3.5 shrink-0" /> : <AlertCircle className="h-3.5 w-3.5 shrink-0" />}
-            {toast.msg}
+            <span className="flex-1">{toast.msg}</span>
+            {!toast.ok && (
+              <button onClick={() => setToast(null)} className="shrink-0 opacity-60 hover:opacity-100">
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
         )}
 
@@ -177,7 +182,23 @@ export function ContactSection() {
               </div>
             ))}
           </div>
-          
+          <div className="flex gap-2">
+            <input
+              value={newEmail}
+              onChange={(ev) => setNewEmail(ev.target.value)}
+              placeholder="new@example.com"
+              type="email"
+              className="flex-1 rounded-lg border border-ps-border bg-ps-bg px-3 py-2 text-sm text-ps-text placeholder:text-ps-muted outline-none focus:border-ps-accent"
+            />
+            <button
+              onClick={addEmail}
+              disabled={loading || !newEmail.trim()}
+              className="flex items-center gap-1.5 rounded-lg border border-ps-border bg-ps-surface px-3 py-2 text-xs font-medium text-ps-secondary transition-colors hover:bg-ps-surface-2 disabled:opacity-50"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Add
+            </button>
+          </div>
         </div>
 
         {/* Phone numbers */}

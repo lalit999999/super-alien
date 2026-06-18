@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Mail, CalendarDays, Clock, Inbox, Bot, ArrowRight, TrendingUp } from "lucide-react";
-import { MiniMonthCalendar } from "@/components/dashboard/mini-month-calendar";
-import { EventsPanel } from "@/components/dashboard/events-panel";
+import { CalendarSidebar } from "@/components/dashboard/calendar-sidebar";
 import { ImportantEmails } from "@/components/dashboard/important-emails";
 import { TodoList } from "@/components/dashboard/todo-list";
 
@@ -124,8 +123,7 @@ export default function DashboardPage() {
 
         {/* Right sidebar */}
         <aside className="space-y-4 sm:space-y-6 lg:sticky lg:top-20 lg:self-start">
-          <MiniMonthCalendar />
-          <EventsPanel />
+          <CalendarSidebar />
         </aside>
       </div>
 
