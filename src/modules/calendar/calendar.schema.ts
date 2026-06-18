@@ -5,7 +5,7 @@ const iso8601Schema = z
   .string()
   .datetime({ message: "Must be a valid ISO 8601 date (e.g. 2026-06-17T10:00:00Z)" });
 
-// Page-based pagination (matches Gmail pattern)
+// Page-based pagination (matches Gmail pattern); optional from/to for date-range queries
 export const calendarListQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce
@@ -14,6 +14,8 @@ export const calendarListQuerySchema = z.object({
     .positive()
     .max(CALENDAR_MAX_LIST_LIMIT)
     .default(CALENDAR_DEFAULT_LIST_LIMIT),
+  from: iso8601Schema.optional(),
+  to: iso8601Schema.optional(),
 });
 
 export type CalendarListQuery = z.infer<typeof calendarListQuerySchema>;

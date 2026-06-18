@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { RefreshCw, CalendarDays, Clock, Users, Plus } from "lucide-react";
 import { OnboardingEmptyState } from "@/components/onboarding/empty-state";
 import { NewEventDialog } from "@/components/calendar/new-event-dialog";
+import { isToday, isTomorrow } from "@/lib/date-buckets";
 
 // ─── Color palette ─────────────────────────────────────────────────────────────
 
@@ -61,27 +62,6 @@ function formatEventTime(start: string, end: string): string {
   const fmt = (d: Date) =>
     d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   return `${fmt(s)} – ${fmt(e)}`;
-}
-
-function isToday(date: string): boolean {
-  const d = new Date(date);
-  const today = new Date();
-  return (
-    d.getFullYear() === today.getFullYear() &&
-    d.getMonth() === today.getMonth() &&
-    d.getDate() === today.getDate()
-  );
-}
-
-function isTomorrow(date: string): boolean {
-  const d = new Date(date);
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  return (
-    d.getFullYear() === tomorrow.getFullYear() &&
-    d.getMonth() === tomorrow.getMonth() &&
-    d.getDate() === tomorrow.getDate()
-  );
 }
 
 function getDayLabel(date: string): string {
@@ -285,7 +265,7 @@ export default function CalendarPage() {
       <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div>
           <h1 className="text-xl font-semibold text-ps-text sm:text-2xl">Calendar</h1>
-          <p className="mt-1 text-sm text-ps-secondary">
+          <p className="mt-1 text-sm text-ps-secondary" suppressHydrationWarning>
             {new Date().toLocaleDateString([], { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
           </p>
         </div>

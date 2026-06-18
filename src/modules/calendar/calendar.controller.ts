@@ -55,6 +55,8 @@ export async function handleListEvents(req: NextRequest) {
   const queryParsed = calendarListQuerySchema.safeParse({
     page: searchParams.get("page") ?? undefined,
     limit: searchParams.get("limit") ?? undefined,
+    from: searchParams.get("from") ?? undefined,
+    to: searchParams.get("to") ?? undefined,
   });
 
   if (!queryParsed.success) {
@@ -62,14 +64,23 @@ export async function handleListEvents(req: NextRequest) {
     return fail("Invalid query parameters", "VALIDATION_ERROR");
   }
 
-  const { page, limit } = queryParsed.data;
-  const offset = (page - 1) * limit;
+  const { page, limit, from, to } = queryParsed.data;
 
   const dbUser = await makeAuthRepo().findByClerkUserId(clerkUserId);
   if (!dbUser) {
     return fail("User not found in database", CALENDAR_ERRORS.USER_NOT_FOUND, 404);
   }
 
+  if (from && to) {
+    const events = await makeService().getEventsByDateRange(
+      dbUser.id,
+      new Date(from),
+      new Date(to)
+    );
+    return ok({ events });
+  }
+
+  const offset = (page - 1) * limit;
   const { events, total } = await makeService().getUserEvents(dbUser.id, { limit, offset });
   const totalPages = Math.ceil(total / limit);
 

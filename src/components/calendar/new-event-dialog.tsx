@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { X, Check } from "lucide-react";
 
 // Google Calendar color palette
@@ -140,6 +140,7 @@ export function NewEventDialog({ open, onClose, onCreated }: NewEventDialogProps
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
       <DialogContent className="sm:max-w-[420px] p-0 bg-ps-card border-ps-border overflow-hidden">
+        <DialogTitle className="sr-only">New event</DialogTitle>
         {/* Header bar */}
         <div className="flex items-center justify-between border-b border-ps-border px-4 py-3">
           <span className="text-sm font-semibold text-ps-text">New event</span>

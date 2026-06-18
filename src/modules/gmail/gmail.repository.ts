@@ -127,6 +127,18 @@ export class GmailRepository {
     });
   }
 
+  async getImportantEmails(clerkUserId: string, limit: number): Promise<DbEmail[]> {
+    return this.db.email.findMany({
+      where: {
+        user: { clerkUserId },
+        classification: { priority: { in: ["URGENT", "IMPORTANT"] } },
+      },
+      include: { classification: true },
+      orderBy: { receivedAt: "desc" },
+      take: limit,
+    });
+  }
+
   async searchEmailsInDb(
     clerkUserId: string,
     options: DbEmailSearchOptions
