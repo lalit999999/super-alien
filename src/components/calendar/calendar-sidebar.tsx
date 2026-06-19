@@ -37,7 +37,7 @@ function sameDay(a: Date, b: Date) {
 }
 
 function fmtTime(iso: string) {
-  return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 }
 
 // ─── Day event list ────────────────────────────────────────────────────────────
@@ -208,7 +208,7 @@ function WeeklyView({ events }: { events: CalendarEvent[] }) {
     return d;
   });
 
-  const rangeLabel = `${weekDays[0].toLocaleDateString([], { month: "short", day: "numeric" })} – ${weekDays[6].toLocaleDateString([], { month: "short", day: "numeric" })}`;
+  const rangeLabel = `${weekDays[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })} – ${weekDays[6].toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
 
   const eventsByDay = useMemo(() => {
     const map = new Map<string, CalendarEvent[]>();
@@ -302,7 +302,7 @@ function WeeklyView({ events }: { events: CalendarEvent[] }) {
       {/* Selected day events */}
       <div className="mt-1 border-t border-ps-border pt-3">
         <p className="mb-2 text-[11px] font-semibold text-ps-muted uppercase tracking-wide">
-          {selected.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })}
+          {selected.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
         </p>
         <DayEventList events={events} date={selected} />
       </div>
@@ -334,7 +334,7 @@ function DailyView({ events }: { events: CalendarEvent[] }) {
     return map;
   }, [events, selected]);
 
-  const dayLabel = selected.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
+  const dayLabel = selected.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 
   function prev() {
     const d = new Date(selected);
