@@ -1,4 +1,4 @@
-import { decryptDEK, decryptConfig } from "corsair";
+import { decryptDEK, decryptConfig } from "corsair/core";
 import { corsairInstance } from "./corsair.client";
 import {
   sendEmailSchema,
