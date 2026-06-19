@@ -177,7 +177,7 @@ function MonthlyView({ events }: { events: CalendarEvent[] }) {
       {/* Selected day events */}
       <div className="mt-1 border-t border-ps-border pt-3">
         <p className="mb-2 text-[11px] font-semibold text-ps-muted uppercase tracking-wide">
-          {selected.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })}
+          {selected.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
         </p>
         <DayEventList events={events} date={selected} />
       </div>
