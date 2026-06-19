@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Shield, Sun, Moon, Monitor } from "lucide-react";
 import { useTheme } from "next-themes";
+import { CancelSubscriptionButton } from "@/components/billing/cancel-button";
 
 // ─── Shared UI primitives ──────────────────────────────────────────────────────
 
@@ -96,6 +97,34 @@ function AppearanceSection() {
   );
 }
 
+// ─── Subscription section ──────────────────────────────────────────────────────
+
+function SubscriptionSection() {
+  const [hasActiveSub, setHasActiveSub] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/billing/usage")
+      .then((r) => r.json())
+      .then((body: { data?: { subscription?: { status?: string } | null } }) => {
+        setHasActiveSub(body.data?.subscription?.status === "ACTIVE");
+      })
+      .catch(() => {});
+  }, []);
+
+  if (!hasActiveSub) return null;
+
+  return (
+    <SettingsSection title="Subscription" description="Manage your Pro plan">
+      <SettingsRow
+        label="Cancel subscription"
+        description="Your access continues until the end of the billing period."
+      >
+        <CancelSubscriptionButton />
+      </SettingsRow>
+    </SettingsSection>
+  );
+}
+
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function SettingsPage() {
@@ -167,6 +196,9 @@ export default function SettingsPage() {
             <span className="text-xs text-ps-muted">Never shared</span>
           </SettingsRow>
         </SettingsSection>
+
+        {/* Subscription */}
+        <SubscriptionSection />
       </div>
     </div>
   );

@@ -4,12 +4,13 @@ import { useState, useEffect, useCallback } from "react";
 import { RefreshCw, CalendarDays, Clock, Users, Plus } from "lucide-react";
 import { OnboardingEmptyState } from "@/components/onboarding/empty-state";
 import { NewEventDialog } from "@/components/calendar/new-event-dialog";
+import { CalendarSidebar } from "@/components/calendar/calendar-sidebar";
 import { isToday, isTomorrow } from "@/lib/date-buckets";
 import { useAutoSync } from "@/hooks/useAutoSync";
 
 // ─── Color palette ─────────────────────────────────────────────────────────────
 
-const COLOR_MAP: Record<string, string> = {
+export const COLOR_MAP: Record<string, string> = {
   "1":  "#7986CB",
   "2":  "#33B679",
   "3":  "#8E24AA",
@@ -262,7 +263,8 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="min-h-full bg-ps-bg px-4 py-6 sm:px-6 sm:py-8">
+    <div className="flex gap-6 min-h-full bg-ps-bg px-4 py-6 sm:px-6 sm:py-8">
+      <div className="flex-1 min-w-0">
       {/* Header */}
       <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div>
@@ -375,6 +377,11 @@ export default function CalendarPage() {
         onClose={() => setShowNewEvent(false)}
         onCreated={fetchEvents}
       />
+      </div>
+
+      <div className="hidden lg:block w-80 shrink-0">
+        <CalendarSidebar events={events} />
+      </div>
     </div>
   );
 }

@@ -6,7 +6,6 @@ import { BillingService } from "@/modules/billing/billing.service";
 import { UsageRepository } from "@/modules/usage/usage.repository";
 import { razorpay } from "@/modules/billing/billing.provider";
 import { BillingChart } from "@/components/billing/billing-chart";
-import { CancelSubscriptionButton } from "@/components/billing/cancel-button";
 import {
   Table,
   TableBody,
@@ -95,12 +94,9 @@ export default async function BillingPage() {
           </p>
         </div>
         {sub && (
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 rounded-full bg-ps-accent-light px-3 py-1 text-xs font-medium text-ps-accent">
-              <span className="h-1.5 w-1.5 rounded-full bg-ps-accent" />
-              {statusLabel[sub.status] ?? sub.status}
-            </div>
-            <CancelSubscriptionButton />
+          <div className="flex items-center gap-1.5 rounded-full bg-ps-accent-light px-3 py-1 text-xs font-medium text-ps-accent">
+            <span className="h-1.5 w-1.5 rounded-full bg-ps-accent" />
+            {statusLabel[sub.status] ?? sub.status}
           </div>
         )}
       </div>

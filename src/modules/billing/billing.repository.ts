@@ -9,7 +9,10 @@ export class BillingRepository {
       where: {
         userId,
         status: SubscriptionStatus.ACTIVE,
-        currentPeriodEnd: { gt: new Date() },
+        OR: [
+          { currentPeriodEnd: { gt: new Date() } },
+          { currentPeriodEnd: null },
+        ],
       },
       orderBy: { createdAt: "desc" },
     });
