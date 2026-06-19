@@ -131,7 +131,7 @@ export default function UpgradePage() {
           disabled={loading}
           className="w-full rounded-xl bg-ps-accent px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ps-accent-dark disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading ? "Setting up…" : "Subscribe — ₹999 / month"}
+          {loading ? "Setting up…" : "Subscribe — ₹1999 / month"}
         </button>
 
         <p className="mt-3 text-center text-[11px] text-ps-muted">

@@ -24,17 +24,28 @@ function Navbar() {
             height={32}
             className="rounded-lg"
           />
-          <span className="text-[15px] font-semibold text-ps-text">SuperAlien</span>
+          <span className="text-[15px] font-semibold text-ps-text">
+            SuperAlien
+          </span>
         </div>
 
         <div className="hidden items-center gap-8 md:flex">
-          <a href="#features" className="text-sm font-medium text-ps-secondary hover:text-ps-accent transition-colors">
+          <a
+            href="#features"
+            className="text-sm font-medium text-ps-secondary hover:text-ps-accent transition-colors"
+          >
             Features
           </a>
-          <a href="#how-it-works" className="text-sm font-medium text-ps-secondary hover:text-ps-accent transition-colors">
+          <a
+            href="#how-it-works"
+            className="text-sm font-medium text-ps-secondary hover:text-ps-accent transition-colors"
+          >
             How it works
           </a>
-          <a href="#pricing" className="text-sm font-medium text-ps-secondary hover:text-ps-accent transition-colors">
+          <a
+            href="/pricing"
+            className="text-sm font-medium text-ps-secondary hover:text-ps-accent transition-colors"
+          >
             Pricing
           </a>
         </div>
@@ -85,8 +96,8 @@ function Hero() {
 
         <p className="mx-auto mt-6 max-w-2xl text-lg text-ps-secondary">
           SuperAlien reads your inbox, tracks your calendar, and handles the
-          busywork — drafting replies, flagging what's urgent, and keeping
-          your day straight — so you're managing outcomes, not email.
+          busywork — drafting replies, flagging what's urgent, and keeping your
+          day straight — so you're managing outcomes, not email.
         </p>
 
         {/* CTAs */}
@@ -129,9 +140,7 @@ function Hero() {
                 <div
                   key={item}
                   className={`mb-1 flex items-center gap-2 rounded-lg px-3 py-2 ${
-                    i === 1
-                      ? "bg-ps-accent"
-                      : "hover:bg-ps-surface-2"
+                    i === 1 ? "bg-ps-accent" : "hover:bg-ps-surface-2"
                   }`}
                 >
                   <div
@@ -167,7 +176,9 @@ function Hero() {
                     i === 0 ? "bg-ps-accent-light" : ""
                   }`}
                 >
-                  <div className={`mt-0.5 h-7 w-7 shrink-0 rounded-full ${email.colorClass}`} />
+                  <div
+                    className={`mt-0.5 h-7 w-7 shrink-0 rounded-full ${email.colorClass}`}
+                  />
                   <div className="flex-1 space-y-1">
                     <div
                       className={`h-2.5 w-20 rounded ${
@@ -254,7 +265,8 @@ function Features() {
             Built for how you actually work
           </h2>
           <p className="mt-3 text-ps-secondary">
-            AI features designed around your real workflow, not a generic email client.
+            AI features designed around your real workflow, not a generic email
+            client.
           </p>
         </div>
 
@@ -268,7 +280,9 @@ function Features() {
                 <Icon className="h-5 w-5 text-ps-accent" />
               </div>
               <h3 className="mb-2 font-semibold text-ps-text">{title}</h3>
-              <p className="text-sm leading-relaxed text-ps-secondary">{description}</p>
+              <p className="text-sm leading-relaxed text-ps-secondary">
+                {description}
+              </p>
             </div>
           ))}
         </div>
@@ -281,25 +295,29 @@ const steps = [
   {
     step: "01",
     title: "Connect Gmail",
-    description: "Link your Google account in one click. SuperAlien syncs your inbox in seconds.",
+    description:
+      "Link your Google account in one click. SuperAlien syncs your inbox in seconds.",
     icon: Mail,
   },
   {
     step: "02",
     title: "Sync Calendar",
-    description: "Connect Google Calendar and see all your meetings, deadlines, and events in one place.",
+    description:
+      "Connect Google Calendar and see all your meetings, deadlines, and events in one place.",
     icon: Calendar,
   },
   {
     step: "03",
     title: "Chat with AI",
-    description: 'Ask anything in plain language — "what did I miss today," "schedule a call with the team" — and get it done, not just answered.',
+    description:
+      'Ask anything in plain language — "what did I miss today," "schedule a call with the team" — and get it done, not just answered.',
     icon: MessageSquare,
   },
   {
     step: "04",
     title: "Get Work Done",
-    description: "Let AI handle the inbox while you focus on the work only you can do.",
+    description:
+      "Let AI handle the inbox while you focus on the work only you can do.",
     icon: CheckCircle,
   },
 ];
@@ -330,7 +348,9 @@ function HowItWorks() {
                 {step}
               </span>
               <h3 className="mb-2 font-semibold text-ps-text">{title}</h3>
-              <p className="text-sm leading-relaxed text-ps-secondary">{description}</p>
+              <p className="text-sm leading-relaxed text-ps-secondary">
+                {description}
+              </p>
             </div>
           ))}
         </div>
@@ -349,7 +369,8 @@ function FinalCTA() {
           <span className="text-ps-accent">Start delegating it.</span>
         </h2>
         <p className="mt-4 text-ps-muted text-lg">
-          Your inbox doesn't need more willpower from you. It needs an assistant.
+          Your inbox doesn't need more willpower from you. It needs an
+          assistant.
         </p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Link
@@ -380,7 +401,13 @@ function Footer() {
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-6 py-12 sm:grid-cols-3 md:grid-cols-5">
         <div>
           <div className="mb-3 flex items-center gap-2.5">
-            <Image src="/Logo.png" alt="SuperAlien" width={24} height={24} className="rounded-lg" />
+            <Image
+              src="/Logo.png"
+              alt="SuperAlien"
+              width={24}
+              height={24}
+              className="rounded-lg"
+            />
             <span className="font-semibold text-ps-text">SuperAlien</span>
           </div>
           <p className="text-xs text-ps-secondary">
@@ -391,25 +418,74 @@ function Footer() {
         <div>
           <h4 className="mb-3 text-sm font-semibold text-ps-text">Product</h4>
           <ul className="space-y-2 text-xs text-ps-secondary">
-            <li><a href="#features" className="transition-colors hover:text-ps-text">Features</a></li>
-            <li><a href="#how-it-works" className="transition-colors hover:text-ps-text">How it works</a></li>
-            <li><a href="#pricing" className="transition-colors hover:text-ps-text">Pricing</a></li>
+            <li>
+              <a
+                href="#features"
+                className="transition-colors hover:text-ps-text"
+              >
+                Features
+              </a>
+            </li>
+            <li>
+              <a
+                href="#how-it-works"
+                className="transition-colors hover:text-ps-text"
+              >
+                How it works
+              </a>
+            </li>
+            <li>
+              <a
+                href="#pricing"
+                className="transition-colors hover:text-ps-text"
+              >
+                Pricing
+              </a>
+            </li>
           </ul>
         </div>
 
         <div>
           <h4 className="mb-3 text-sm font-semibold text-ps-text">Company</h4>
           <ul className="space-y-2 text-xs text-ps-secondary">
-            <li><a href="/sign-up" className="transition-colors hover:text-ps-text">Sign Up</a></li>
-            <li><a href="/sign-in" className="transition-colors hover:text-ps-text">Sign In</a></li>
+            <li>
+              <a
+                href="/sign-up"
+                className="transition-colors hover:text-ps-text"
+              >
+                Sign Up
+              </a>
+            </li>
+            <li>
+              <a
+                href="/sign-in"
+                className="transition-colors hover:text-ps-text"
+              >
+                Sign In
+              </a>
+            </li>
           </ul>
         </div>
 
         <div>
           <h4 className="mb-3 text-sm font-semibold text-ps-text">Legal</h4>
           <ul className="space-y-2 text-xs text-ps-secondary">
-            <li><a href="/legal/terms" className="transition-colors hover:text-ps-text">Terms</a></li>
-            <li><a href="/legal/privacy" className="transition-colors hover:text-ps-text">Privacy</a></li>
+            <li>
+              <a
+                href="/legal/terms"
+                className="transition-colors hover:text-ps-text"
+              >
+                Terms
+              </a>
+            </li>
+            <li>
+              <a
+                href="/legal/privacy"
+                className="transition-colors hover:text-ps-text"
+              >
+                Privacy
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -417,7 +493,10 @@ function Footer() {
           <h4 className="mb-3 text-sm font-semibold text-ps-text">Contact</h4>
           <ul className="space-y-2 text-xs text-ps-secondary">
             <li>
-              <a href="mailto:support@superalien.io" className="transition-colors hover:text-ps-text">
+              <a
+                href="mailto:support@superalien.io"
+                className="transition-colors hover:text-ps-text"
+              >
                 support@superalien.io
               </a>
             </li>

@@ -3,11 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   Mail,
   Calendar,
   MessageSquare,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AccountMenu } from "@/components/layout/account-menu";
@@ -21,6 +23,18 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [isFreePlan, setIsFreePlan] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/billing/usage")
+      .then((r) => r.json())
+      .then((j) => {
+        if (j.data?.subscription?.status !== "ACTIVE") {
+          setIsFreePlan(true);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-55 flex-col border-r border-ps-border bg-ps-surface lg:flex">
@@ -58,6 +72,20 @@ export function Sidebar() {
             </Link>
           );
         })}
+        {isFreePlan && (
+          <Link
+            href="/billing/upgrade"
+            className={cn(
+              "mt-2 flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+              pathname.startsWith("/billing/upgrade")
+                ? "bg-ps-accent text-white"
+                : "text-ps-accent hover:bg-ps-accent-light"
+            )}
+          >
+            <Zap className="h-4 w-4 shrink-0" />
+            Upgrade to Pro
+          </Link>
+        )}
       </nav>
 
       {/* Bottom */}

@@ -48,25 +48,25 @@ export class GmailService {
     const inputs: GmailUpsertInput[] = [];
     let skipped = 0;
 
-    for (const ref of messageRefs) {
-      if (!ref.id) {
+    const fetchResults = await Promise.allSettled(
+      messageRefs
+        .filter((ref) => !!ref.id)
+        .map((ref) => getEmailById(clerkUserId, ref.id!, "full"))
+    );
+
+    skipped += messageRefs.filter((ref) => !ref.id).length;
+
+    for (const result of fetchResults) {
+      if (result.status === "rejected") {
         skipped++;
         continue;
       }
-
-      try {
-        const message = await getEmailById(clerkUserId, ref.id, "full");
-        const parsed = parseMessage(message);
-
-        if (!parsed) {
-          skipped++;
-          continue;
-        }
-
-        inputs.push({ ...parsed, clerkUserId });
-      } catch {
+      const parsed = parseMessage(result.value);
+      if (!parsed) {
         skipped++;
+        continue;
       }
+      inputs.push({ ...parsed, clerkUserId });
     }
 
     const synced = await this.repo.createManyEmails(inputs);

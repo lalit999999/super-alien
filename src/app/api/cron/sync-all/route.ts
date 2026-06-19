@@ -36,32 +36,38 @@ export async function GET(req: Request) {
 
   const results: { userId: string; gmail?: string; calendar?: string }[] = [];
 
-  for (const user of users) {
-    const result: { userId: string; gmail?: string; calendar?: string } = {
-      userId: user.id,
-    };
+  const userResults = await Promise.allSettled(
+    users.map(async (user) => {
+      const result: { userId: string; gmail?: string; calendar?: string } = {
+        userId: user.id,
+      };
 
-    try {
-      if (user.gmailConnected) {
-        await gmailService.syncEmailsFromCorsair(user.clerkUserId);
-        await onboardingRepo.updateLastGmailSync(user.clerkUserId, new Date());
-        result.gmail = "ok";
+      try {
+        if (user.gmailConnected) {
+          await gmailService.syncEmailsFromCorsair(user.clerkUserId);
+          await onboardingRepo.updateLastGmailSync(user.clerkUserId, new Date());
+          result.gmail = "ok";
+        }
+      } catch (err) {
+        result.gmail = `error: ${err instanceof Error ? err.message : String(err)}`;
       }
-    } catch (err) {
-      result.gmail = `error: ${err instanceof Error ? err.message : String(err)}`;
-    }
 
-    try {
-      if (user.calendarConnected) {
-        await calendarService.syncEventsFromCorsair(user.clerkUserId, user.id);
-        await onboardingRepo.updateLastCalendarSync(user.clerkUserId, new Date());
-        result.calendar = "ok";
+      try {
+        if (user.calendarConnected) {
+          await calendarService.syncEventsFromCorsair(user.clerkUserId, user.id);
+          await onboardingRepo.updateLastCalendarSync(user.clerkUserId, new Date());
+          result.calendar = "ok";
+        }
+      } catch (err) {
+        result.calendar = `error: ${err instanceof Error ? err.message : String(err)}`;
       }
-    } catch (err) {
-      result.calendar = `error: ${err instanceof Error ? err.message : String(err)}`;
-    }
 
-    results.push(result);
+      return result;
+    })
+  );
+
+  for (const r of userResults) {
+    if (r.status === "fulfilled") results.push(r.value);
   }
 
   return NextResponse.json({ synced: results.length, results });

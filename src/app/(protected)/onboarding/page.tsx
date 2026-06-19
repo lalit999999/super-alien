@@ -105,7 +105,7 @@ function OnboardingContent() {
         const s: IntegrationStatus = json.data;
         setStatus(s);
         if (s.onboardingCompleted) {
-          router.replace("/dashboard");
+          router.replace("/billing/upgrade");
         }
       } else {
         setError("Could not load integration status.");
@@ -162,7 +162,7 @@ function OnboardingContent() {
       setPhase("done");
 
       await delay(600);
-      router.replace("/dashboard");
+      router.replace("/billing/upgrade");
     } catch {
       setError("Setup failed. Please try again.");
       setPhase("connect");

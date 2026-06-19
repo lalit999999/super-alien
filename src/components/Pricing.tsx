@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { Check } from "lucide-react";
+import { auth } from "@clerk/nextjs/server";
 
 const tiers = [
   {
     name: "Free",
-    price: "$0",
+    price: "₹0",
     period: "/mo",
     description: "Try the core workflow — AI summaries and calendar sync — before you commit to anything.",
     features: [
@@ -17,7 +18,7 @@ const tiers = [
   },
   {
     name: "Pro",
-    price: "$19",
+    price: "₹1999",
     period: "/mo",
     description: "Full AI control of your inbox: unlimited sync, agent-driven actions, and the classification that actually saves you time.",
     features: [
@@ -43,7 +44,28 @@ const tiers = [
   },
 ];
 
-export function Pricing() {
+export async function Pricing() {
+  const { userId } = await auth();
+  const isLoggedIn = !!userId;
+
+  function getHref(tierName: string) {
+    if (tierName === "Enterprise") {
+      return "mailto:support@superalien.app?subject=Enterprise%20plan%20inquiry";
+    }
+    if (tierName === "Free") {
+      return isLoggedIn ? "/dashboard" : "/sign-up";
+    }
+    // Pro
+    return isLoggedIn ? "/billing/upgrade" : "/sign-up?redirect_url=/billing/upgrade";
+  }
+
+  function getLabel(tierName: string) {
+    if (tierName === "Enterprise") return "Contact sales";
+    if (tierName === "Free") return isLoggedIn ? "Go to dashboard" : "Get started free";
+    // Pro
+    return isLoggedIn ? "Upgrade now" : "Get started";
+  }
+
   return (
     <section id="pricing" className="py-24 bg-ps-surface">
       <div className="mx-auto max-w-6xl px-6">
@@ -99,7 +121,7 @@ export function Pricing() {
 
               <div>
                 <Link
-                  href={tier.name === "Enterprise" ? "mailto:support@superalien.app?subject=Enterprise%20plan%20inquiry" : "/sign-up"}
+                  href={getHref(tier.name)}
                   className={[
                     "block w-full rounded-xl border px-4 py-2.5 text-center text-sm font-semibold transition-colors",
                     tier.popular
@@ -107,7 +129,7 @@ export function Pricing() {
                       : "border-ps-border bg-ps-surface text-ps-text hover:bg-ps-surface-2",
                   ].join(" ")}
                 >
-                  {tier.name === "Enterprise" ? "Contact sales" : "Get started"}
+                  {getLabel(tier.name)}
                 </Link>
               </div>
             </div>
