@@ -38,7 +38,7 @@ import Link from "next/link";
 
 const SUPPORT_EMAIL = "lalitgurjar.dev@gmail.com";
 
-export function AccountMenu() {
+export function AccountMenu({ collapsed = false }: { collapsed?: boolean }) {
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
   const router = useRouter();
@@ -92,19 +92,28 @@ export function AccountMenu() {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-ps-secondary transition-colors hover:bg-ps-surface-2 hover:text-ps-text focus:outline-none focus-visible:ring-2 focus-visible:ring-ps-accent">
+          <button
+            className={`flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-ps-secondary transition-colors hover:bg-ps-surface-2 hover:text-ps-text focus:outline-none focus-visible:ring-2 focus-visible:ring-ps-accent ${
+              collapsed ? "justify-center gap-0" : "gap-2.5"
+            }`}
+            title={collapsed ? displayName : undefined}
+          >
             <UserAvatar size="sm" />
-            <div className="flex-1 min-w-0 text-left">
-              <p className="truncate text-sm font-medium text-ps-text">
-                {displayName}
-              </p>
-            </div>
-            {planLabel && (
-              <span className="shrink-0 rounded-full bg-ps-accent-light px-2 py-0.5 text-[10px] font-semibold text-ps-accent">
-                {planLabel}
-              </span>
+            {!collapsed && (
+              <>
+                <div className="flex-1 min-w-0 text-left">
+                  <p className="truncate text-sm font-medium text-ps-text">
+                    {displayName}
+                  </p>
+                </div>
+                {planLabel && (
+                  <span className="shrink-0 rounded-full bg-ps-accent-light px-2 py-0.5 text-[10px] font-semibold text-ps-accent">
+                    {planLabel}
+                  </span>
+                )}
+                <ChevronUp className="h-3.5 w-3.5 shrink-0 text-ps-muted" />
+              </>
             )}
-            <ChevronUp className="h-3.5 w-3.5 shrink-0 text-ps-muted" />
           </button>
         </DropdownMenuTrigger>
 

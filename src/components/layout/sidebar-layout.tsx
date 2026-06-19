@@ -78,8 +78,22 @@ export function SidebarLayout({
     }
   }, [collapsed]);
 
+  const handleSetCollapsed = useCallback((v: boolean) => {
+    const handle = panelRef.current;
+    if (!handle) return;
+    if (v) {
+      handle.collapse();
+      setCollapsed(true);
+      persistState(lastSizeRef.current, true);
+    } else {
+      handle.expand();
+      setCollapsed(false);
+      persistState(lastSizeRef.current, false);
+    }
+  }, []);
+
   return (
-    <SidebarContext.Provider value={{ collapsed, toggleCollapse }}>
+    <SidebarContext.Provider value={{ collapsed, toggleCollapse, setCollapsed: handleSetCollapsed }}>
       <ResizablePanelGroup orientation="horizontal" className="h-screen bg-ps-bg">
         <ResizablePanel
           panelRef={panelRef}

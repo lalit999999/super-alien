@@ -41,7 +41,7 @@ export async function GET(req: Request) {
       await service.markCalendarConnected(result.tenantId);
     }
 
-    return Response.redirect(`${APP_URL}/onboarding?connected=${result.plugin}`);
+    return Response.redirect(`${APP_URL}/inbox`);
   } catch (error) {
     return Response.redirect(`${APP_URL}/onboarding?error=connection_failed`);
   }
