@@ -23,6 +23,7 @@ import {
   ChevronUp,
   User,
   Plug,
+  Settings,
   CreditCard,
   Sun,
   Moon,
@@ -147,6 +148,13 @@ export function AccountMenu() {
               Profile
             </DropdownMenuItem>
 
+            <DropdownMenuItem
+              className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-2 text-sm text-ps-text hover:bg-ps-surface focus:bg-ps-surface focus:text-ps-text"
+              onClick={() => router.push("/settings")}
+            >
+              <Settings className="h-3.5 w-3.5 text-ps-accent" />
+              Settings
+            </DropdownMenuItem>
             <DropdownMenuItem
               className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-2 text-sm text-ps-text hover:bg-ps-surface focus:bg-ps-surface focus:text-ps-text"
               onClick={() => router.push("/profile#connected-accounts")}
