@@ -202,7 +202,7 @@ model EmailClassification {
   category   String?
   confidence Float?
 
-  email      Email         @relation(fields: [emailId], references: [id])
+  email      Email         @relation(fields: [emailId], references: [id], onDelete: Cascade)
 
   createdAt  DateTime      @default(now())
 }
@@ -215,7 +215,7 @@ model EmailSummary {
   bulletSummary Json
   createdAt     DateTime @default(now())
 
-  email         Email    @relation(fields: [emailId], references: [id])
+  email         Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
 }
 
 model EmailDraft {
@@ -225,7 +225,7 @@ model EmailDraft {
   tone      String
   createdAt DateTime @default(now())
 
-  email     Email    @relation(fields: [emailId], references: [id])
+  email     Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
 
   @@index([emailId])
 }

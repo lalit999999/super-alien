@@ -91,6 +91,24 @@ export class OnboardingRepository {
     });
   }
 
+  async findCorsairAccountByUserId(
+    clerkUserId: string,
+    integrationName: string
+  ): Promise<{ config: Record<string, string>; dek: string | null } | null> {
+    const account = await this.db.corsairAccount.findFirst({
+      where: {
+        tenantId: clerkUserId,
+        integration: { name: integrationName },
+      },
+      select: { config: true, dek: true },
+    });
+    if (!account) return null;
+    return {
+      config: account.config as Record<string, string>,
+      dek: account.dek,
+    };
+  }
+
   async deleteUserEmails(userId: string): Promise<void> {
     await this.db.email.deleteMany({ where: { userId } });
   }

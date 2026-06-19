@@ -1,3 +1,4 @@
+import { decryptDEK, decryptConfig } from "corsair";
 import { corsairInstance } from "./corsair.client";
 import {
   sendEmailSchema,
@@ -299,5 +300,54 @@ export async function markEmailUnread(
     id: messageId,
     addLabelIds: [GMAIL_LABEL.UNREAD],
   });
+}
+
+// ─── Token Revocation ─────────────────────────────────────────────────────────
+
+/**
+ * Revokes the Google OAuth refresh token at Google's end so the app is removed
+ * from the user's "Third-party access" page.
+ *
+ * accountData is obtained by the caller from the CorsairAccount table via a
+ * repository method and passed in to keep Prisma out of this service.
+ * Failures are best-effort: the local DB disconnect has already succeeded.
+ */
+export async function revokeGoogleToken(
+  clerkUserId: string,
+  plugin: "gmail" | "googlecalendar",
+  accountData: { config: Record<string, string>; dek: string | null } | null
+): Promise<void> {
+  if (!accountData?.dek) {
+    console.warn(`[corsair] No Corsair account found for ${clerkUserId}/${plugin} — skipping token revocation`);
+    return;
+  }
+
+  try {
+    const kek = process.env.CORSAIR_KEK;
+    if (!kek) {
+      console.warn("[corsair] CORSAIR_KEK not set — cannot decrypt token for revocation");
+      return;
+    }
+
+    const accountDek = await decryptDEK(accountData.dek, kek);
+    const config = decryptConfig(accountData.config, accountDek);
+    const refreshToken = config["refresh_token"];
+
+    if (!refreshToken) {
+      console.warn(`[corsair] No refresh token stored for ${clerkUserId}/${plugin}`);
+      return;
+    }
+
+    const res = await fetch(
+      `https://oauth2.googleapis.com/revoke?token=${encodeURIComponent(refreshToken)}`,
+      { method: "POST" }
+    );
+
+    if (!res.ok) {
+      console.error(`[corsair] Google token revocation returned ${res.status} for ${clerkUserId}/${plugin}`);
+    }
+  } catch (err) {
+    console.error(`[corsair] Error revoking Google token for ${clerkUserId}/${plugin}:`, err);
+  }
 }
 

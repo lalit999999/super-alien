@@ -2,6 +2,7 @@ import type { OnboardingRepository } from "./onboarding.repository";
 import type { IntegrationStatus, DisconnectPlugin, IntegrationSyncResult } from "./onboarding.types";
 import type { GmailService } from "@/modules/gmail/gmail.service";
 import type { CalendarService } from "@/modules/calendar/calendar.service";
+import { revokeGoogleToken } from "@/modules/corsair";
 
 export class OnboardingService {
   constructor(
@@ -56,11 +57,15 @@ export class OnboardingService {
     if (plugin === "gmail" || plugin === "all") {
       await this.repo.disconnectGmail(clerkUserId);
       await this.repo.deleteUserEmails(userId);
+      const gmailAccount = await this.repo.findCorsairAccountByUserId(clerkUserId, "gmail");
+      await revokeGoogleToken(clerkUserId, "gmail", gmailAccount);
     }
 
     if (plugin === "calendar" || plugin === "all") {
       await this.repo.disconnectCalendar(clerkUserId);
       await this.repo.deleteUserEvents(userId);
+      const calAccount = await this.repo.findCorsairAccountByUserId(clerkUserId, "googlecalendar");
+      await revokeGoogleToken(clerkUserId, "googlecalendar", calAccount);
     }
 
     // Any disconnection breaks the fully-connected state

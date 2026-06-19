@@ -17,6 +17,7 @@ export {
   trashEmail,
   markEmailRead,
   markEmailUnread,
+  revokeGoogleToken,
 } from "./corsair.service";
 
 export {
