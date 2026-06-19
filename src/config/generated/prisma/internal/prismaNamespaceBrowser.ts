@@ -55,6 +55,7 @@ export const ModelName = {
   Subscription: 'Subscription',
   Payment: 'Payment',
   TokenUsage: 'TokenUsage',
+  Task: 'Task',
   Email: 'Email',
   CalendarEvent: 'CalendarEvent',
   EmailClassification: 'EmailClassification',
@@ -152,6 +153,22 @@ export const TokenUsageScalarFieldEnum = {
 } as const
 
 export type TokenUsageScalarFieldEnum = (typeof TokenUsageScalarFieldEnum)[keyof typeof TokenUsageScalarFieldEnum]
+
+
+export const TaskScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  description: 'description',
+  completed: 'completed',
+  dueDate: 'dueDate',
+  priority: 'priority',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
 
 
 export const EmailScalarFieldEnum = {

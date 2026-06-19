@@ -42,6 +42,15 @@ export const UsageFeature = {
 export type UsageFeature = (typeof UsageFeature)[keyof typeof UsageFeature]
 
 
+export const TaskPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH'
+} as const
+
+export type TaskPriority = (typeof TaskPriority)[keyof typeof TaskPriority]
+
+
 export const EmailPriority = {
   URGENT: 'URGENT',
   IMPORTANT: 'IMPORTANT',

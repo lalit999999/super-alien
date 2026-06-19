@@ -62,6 +62,11 @@ export type Payment = Prisma.PaymentModel
  */
 export type TokenUsage = Prisma.TokenUsageModel
 /**
+ * Model Task
+ * 
+ */
+export type Task = Prisma.TaskModel
+/**
  * Model Email
  * 
  */
